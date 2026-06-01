@@ -5,148 +5,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>دليل مدينة حمص الخدمي والتجاري</title>
   <meta name="description" content="منصة تشاركية مفتوحة لتسجيل الأطباء، المحامين، الصيدليات، والمحلات في حمص" />
-
-  <!-- Cairo Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Leaflet Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Cairo', 'sans-serif'] }
-        }
-      }
+      theme: { extend: { fontFamily: { sans: ['Cairo', 'sans-serif'] } } }
     }
   </script>
-
   <style>
     * { font-family: 'Cairo', sans-serif; box-sizing: border-box; }
-    body { background: #f8fafc; }
-    .dark body, body.dark-mode { background: #0f172a; }
-
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(148,163,184,.4); border-radius: 99px; }
-
-    /* Active tab */
-    .tab-active { background:#1d4ed8; color:#fff; border-color:#1d4ed8; box-shadow:0 4px 12px rgba(29,78,216,.25); }
-    .subtab-active { background:#1e293b; color:#fff; }
-    .dark .subtab-active { background:#3b82f6; color:#fff; }
-
-    /* Card gradient tops */
-    .card-medical   { border-top: 3px solid #10b981; }
-    .card-legal     { border-top: 3px solid #8b5cf6; }
-    .card-shopping  { border-top: 3px solid #f59e0b; }
-    .card-food      { border-top: 3px solid #f43f5e; }
-    .card-services  { border-top: 3px solid #3b82f6; }
-    .card-default   { border-top: 3px solid #6b7280; }
-
-    /* Badge colors */
-    .badge-medical   { background:#d1fae5; color:#065f46; }
-    .badge-legal     { background:#ede9fe; color:#4c1d95; }
-    .badge-shopping  { background:#fef3c7; color:#78350f; }
-    .badge-food      { background:#ffe4e6; color:#9f1239; }
-    .badge-services  { background:#dbeafe; color:#1e3a8a; }
-    .badge-default   { background:#f3f4f6; color:#374151; }
-    .dark .badge-medical   { background:#064e3b; color:#6ee7b7; }
-    .dark .badge-legal     { background:#2e1065; color:#c4b5fd; }
-    .dark .badge-shopping  { background:#451a03; color:#fde68a; }
-    .dark .badge-food      { background:#4c0519; color:#fda4af; }
-    .dark .badge-services  { background:#1e3a8a; color:#93c5fd; }
-    .dark .badge-default   { background:#1f2937; color:#9ca3af; }
-
-    /* Toast */
+    .tab-active    { background:#1d4ed8!important; color:#fff!important; border-color:#1d4ed8!important; box-shadow:0 4px 12px rgba(29,78,216,.25); }
+    .subtab-active { background:#1e293b!important; color:#fff!important; }
+    .card-medical  { border-top:3px solid #10b981; }
+    .card-legal    { border-top:3px solid #8b5cf6; }
+    .card-shopping { border-top:3px solid #f59e0b; }
+    .card-food     { border-top:3px solid #f43f5e; }
+    .card-services { border-top:3px solid #3b82f6; }
+    .card-default  { border-top:3px solid #6b7280; }
+    .badge-medical  { background:#d1fae5; color:#065f46; }
+    .badge-legal    { background:#ede9fe; color:#4c1d95; }
+    .badge-shopping { background:#fef3c7; color:#78350f; }
+    .badge-food     { background:#ffe4e6; color:#9f1239; }
+    .badge-services { background:#dbeafe; color:#1e3a8a; }
+    .badge-default  { background:#f3f4f6; color:#374151; }
     #toast {
-      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-      padding: .75rem 1.5rem; border-radius: 1rem; font-weight: 600; font-size:.875rem;
-      color: #fff; z-index: 9999; display: none; white-space: nowrap;
-      box-shadow: 0 10px 25px rgba(0,0,0,.2);
-      animation: slideUp .25s ease;
+      position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%);
+      padding:.75rem 1.5rem; border-radius:1rem; font-weight:600; font-size:.875rem;
+      color:#fff; z-index:9999; display:none; white-space:nowrap;
+      box-shadow:0 10px 25px rgba(0,0,0,.2); animation:slideUp .25s ease;
     }
-    @keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
-
-    /* Skeleton */
-    .skeleton { animation: pulse 1.5s ease-in-out infinite; background: #e5e7eb; border-radius: .5rem; }
-    .dark .skeleton { background: #374151; }
+    @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(12px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+    .skeleton { animation:pulse 1.5s ease-in-out infinite; background:#e5e7eb; border-radius:.5rem; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-
-    /* Collapsible form */
-    #form-body { display: none; }
-    #form-body.open { display: block; }
-
-    /* Map section */
-    #map-section { display: none; }
-    #map-section.open { display: block; }
-
-    /* Dot pulse */
-    .dot-pulse { display:inline-block; width:.5rem; height:.5rem; background:#10b981; border-radius:50%; animation: dotPulse 2s ease-in-out infinite; }
+    #form-body  { display:none; }
+    #form-body.open { display:block; }
+    #map-section { display:none; }
+    #map-section.open { display:block; }
+    .dot-pulse { display:inline-block; width:.5rem; height:.5rem; background:#10b981; border-radius:50%; animation:dotPulse 2s ease-in-out infinite; }
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
+    .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
 
-    /* Dark mode base */
-    .dark-mode {
-      background: #0f172a !important;
-      color: #f1f5f9 !important;
-    }
-    .dark-mode .bg-white { background: #1e293b !important; }
-    .dark-mode .bg-gray-50 { background: #0f172a !important; }
-    .dark-mode .bg-blue-50 { background: rgba(29,78,216,.15) !important; }
-    .dark-mode .bg-amber-50 { background: rgba(180,83,9,.15) !important; }
-    .dark-mode .text-gray-800 { color: #f1f5f9 !important; }
-    .dark-mode .text-gray-700 { color: #e2e8f0 !important; }
-    .dark-mode .text-gray-600 { color: #cbd5e1 !important; }
-    .dark-mode .text-gray-500 { color: #94a3b8 !important; }
-    .dark-mode .text-gray-400 { color: #64748b !important; }
-    .dark-mode .border-gray-100 { border-color: #334155 !important; }
-    .dark-mode .border-gray-200 { border-color: #334155 !important; }
-    .dark-mode input, .dark-mode select, .dark-mode textarea {
-      background: #0f172a !important;
-      border-color: #334155 !important;
-      color: #f1f5f9 !important;
-    }
-    .dark-mode input::placeholder { color: #475569 !important; }
-    .dark-mode .hover\:bg-gray-50:hover { background: #1e293b !important; }
-    .dark-mode .hover\:bg-gray-100:hover { background: #334155 !important; }
-    .dark-mode .bg-gray-100 { background: #334155 !important; }
-    .dark-mode .bg-gray-800 { background: #0f172a !important; }
-    .dark-mode .text-blue-800 { color: #93c5fd !important; }
-
+    /* ===== DARK MODE ===== */
+    .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
+    .dark-mode .bg-white           { background:#1e293b!important; }
+    .dark-mode .bg-gray-50         { background:#0f172a!important; }
+    .dark-mode .bg-blue-50         { background:rgba(29,78,216,.15)!important; }
+    .dark-mode .bg-amber-50        { background:rgba(180,83,9,.15)!important; }
+    .dark-mode .text-gray-800      { color:#f1f5f9!important; }
+    .dark-mode .text-gray-700      { color:#e2e8f0!important; }
+    .dark-mode .text-gray-600      { color:#cbd5e1!important; }
+    .dark-mode .text-gray-500      { color:#94a3b8!important; }
+    .dark-mode .text-gray-400      { color:#64748b!important; }
+    .dark-mode .border-gray-100    { border-color:#334155!important; }
+    .dark-mode .border-gray-200    { border-color:#334155!important; }
+    .dark-mode input, .dark-mode select { background:#0f172a!important; border-color:#334155!important; color:#f1f5f9!important; }
+    .dark-mode input::placeholder  { color:#475569!important; }
+    .dark-mode .bg-gray-100        { background:#334155!important; }
+    .dark-mode .text-blue-800      { color:#93c5fd!important; }
+    .dark-mode .badge-medical  { background:#064e3b!important; color:#6ee7b7!important; }
+    .dark-mode .badge-legal    { background:#2e1065!important; color:#c4b5fd!important; }
+    .dark-mode .badge-shopping { background:#451a03!important; color:#fde68a!important; }
+    .dark-mode .badge-food     { background:#4c0519!important; color:#fda4af!important; }
+    .dark-mode .badge-services { background:#1e3a8a!important; color:#93c5fd!important; }
+    .dark-mode .badge-default  { background:#1f2937!important; color:#9ca3af!important; }
+    .dark-mode .subtab-active  { background:#3b82f6!important; }
+    .dark-mode .skeleton       { background:#374151!important; }
+    .dark-mode .entry-card:hover { box-shadow:0 12px 24px rgba(0,0,0,.4); }
     input[type="search"]::-webkit-search-cancel-button { display:none; }
-
-    /* Card hover */
-    .entry-card { transition: transform .2s ease, box-shadow .2s ease; }
-    .entry-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,.1); }
-    .dark-mode .entry-card:hover { box-shadow: 0 12px 24px rgba(0,0,0,.4); }
-
-    /* Smooth transitions */
-    .transition-all { transition: all .25s ease; }
   </style>
 </head>
 
-<body id="body" class="min-h-screen flex flex-col text-gray-800">
+<body id="body" class="min-h-screen flex flex-col text-gray-800" style="background:#f8fafc">
 
-<!-- ===== HEADER ===== -->
+<!-- ══════════════ HEADER ══════════════ -->
 <header class="relative overflow-hidden">
   <div class="absolute inset-0 bg-gradient-to-l from-blue-900 via-blue-800 to-indigo-900"></div>
-  <div class="absolute inset-0 opacity-10"
-    style="background-image:url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/svg%3E')">
-  </div>
   <div class="relative max-w-7xl mx-auto px-4 py-5 sm:py-7">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="text-center sm:text-right">
         <div class="flex items-center justify-center sm:justify-start gap-3 mb-1">
           <div class="bg-white/20 rounded-xl p-2">
-            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold text-white">دليل مدينة حمص الخدمي والتجاري</h1>
         </div>
@@ -155,16 +105,14 @@
       <div class="flex items-center gap-2">
         <div class="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-center hidden sm:block">
           <p class="text-emerald-300 text-xs font-bold">🔒 وضع الحماية</p>
-          <p id="hdr-count" class="text-white/70 text-[10px] mt-0.5">0 جهة مسجّلة</p>
+          <p id="hdr-count" class="text-white/70 text-[10px] mt-0.5">جاري التحميل...</p>
         </div>
-        <button onclick="fetchData()" id="refresh-btn"
-          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all" title="تحديث البيانات">
+        <button onclick="fetchData()" title="تحديث" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg id="refresh-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
         </button>
-        <button onclick="toggleDark()"
-          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all" title="الوضع الليلي">
+        <button onclick="toggleDark()" title="تبديل المظهر" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg id="dark-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
           </svg>
@@ -174,17 +122,15 @@
   </div>
 </header>
 
-<!-- ===== MAIN ===== -->
+<!-- ══════════════ MAIN ══════════════ -->
 <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
 
-  <!-- Error Banner -->
   <div id="error-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2">
     ⚠️ <span id="error-msg"></span>
   </div>
 
-  <!-- ===== ADD ENTRY FORM ===== -->
+  <!-- ══ نموذج الإضافة ══ -->
   <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <!-- Form Toggle -->
     <button type="button" onclick="toggleForm()"
       class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-all">
       <div class="flex items-center gap-3">
@@ -198,108 +144,122 @@
           <p class="text-xs text-gray-400 mt-0.5">انقر لفتح نموذج الإضافة</p>
         </div>
       </div>
-      <svg id="form-chevron" class="w-5 h-5 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
       </svg>
     </button>
 
-    <!-- Form Body -->
     <div id="form-body">
       <div class="border-t border-gray-100 p-5">
         <div class="bg-blue-50 border-r-4 border-blue-500 rounded-l-xl p-3 mb-5">
           <p class="text-xs text-blue-800 leading-relaxed">
-            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> وسيظهر تبويبه تلقائياً بعد الحفظ.
+            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة وسيظهر تبويبه تلقائياً بعد الحفظ.
           </p>
         </div>
+
         <form id="dir-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
+          <!-- اسم المكان -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري / اسم المهني *</label>
             <input id="f-name" type="text" required placeholder="مثال: د. أحمد فلان — عيادة الأطفال"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
+          <!-- القسم الرئيسي -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
             <select id="f-main" onchange="onMainChange()" required
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="">— اختر القسم الرئيسي —</option>
             </select>
             <input id="f-new-main" type="text" placeholder="اكتب اسم القسم الرئيسي الجديد" style="display:none"
-              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none transition-all" />
+              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
           </div>
 
+          <!-- التصنيف الفرعي -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">التصنيف الفرعي / التخصص *</label>
             <select id="f-sub" onchange="onSubChange()" required
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="">— اختر التصنيف الفرعي —</option>
             </select>
-            <input id="f-new-sub" type="text" placeholder="اكتب اسم التخصص / القسم الفرعي" style="display:none"
-              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none transition-all" />
+            <input id="f-new-sub" type="text" placeholder="اكتب اسم التخصص الجديد" style="display:none"
+              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
           </div>
 
+          <!-- العنوان -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص *</label>
             <input id="f-address" type="text" required placeholder="مثال: الإنشاءات — شارع البرازيل"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
+          <!-- الهاتف -->
           <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">رقم الهاتف</label>
+            <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
             <input id="f-phone" type="text" dir="ltr" placeholder="09xxxxxxxx"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
+          <!-- أوقات الدوام -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام / ملاحظات</label>
             <input id="f-notes" type="text" placeholder="مثال: السبت–الأربعاء (4–8 مساءً)"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
-          <!-- Map Toggle -->
-          <div class="col-span-1 md:col-span-2 lg:col-span-3">
+          <!-- رابط السوشيال -->
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
+            <input id="f-social" type="url" dir="ltr" placeholder="https://facebook.com/..."
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <!-- زر الخريطة -->
+          <div class="md:col-span-2 lg:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 mb-1">الموقع الجغرافي (اختياري)</label>
             <button type="button" onclick="toggleMap()"
-              class="flex items-center gap-2 text-xs text-blue-700 border border-blue-200 bg-blue-50 px-3 py-2 rounded-xl hover:bg-blue-100 transition-all mb-3">
+              class="flex items-center gap-2 text-xs text-blue-700 border border-blue-200 bg-blue-50 px-3 py-2 rounded-xl hover:bg-blue-100 transition-all">
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
               </svg>
-              <span id="map-toggle-txt">تحديد الموقع على الخريطة (اختياري)</span>
+              <span id="map-toggle-txt">تحديد الموقع على الخريطة</span>
             </button>
-
-            <div id="map-section" class="space-y-2 mb-3">
-              <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-semibold text-gray-600">انقر على الخريطة لتحديد الموقع</p>
-                <div class="flex gap-2">
-                  <button type="button" onclick="geoLocate()"
-                    class="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    </svg>
-                    موقعي الحالي
-                  </button>
-                  <button type="button" onclick="clearMap()"
-                    class="text-xs text-gray-500 border border-gray-200 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-all">✕ إلغاء</button>
-                </div>
-              </div>
-              <div id="leaflet-map" style="height:260px; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;"></div>
-              <p id="coords-display" class="text-[11px] text-gray-400 text-center font-mono hidden"></p>
-            </div>
           </div>
 
-          <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end">
+          <!-- الخريطة -->
+          <div id="map-section" class="col-span-1 md:col-span-2 lg:col-span-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold text-gray-600">انقر على الخريطة لتحديد الموقع</p>
+              <div class="flex gap-2">
+                <button type="button" onclick="geoLocate()"
+                  class="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all">
+                  📍 موقعي الحالي
+                </button>
+                <button type="button" onclick="clearMap()"
+                  class="text-xs text-gray-500 border border-gray-200 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-all">✕ إلغاء</button>
+              </div>
+            </div>
+            <div id="leaflet-map" style="height:260px;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;"></div>
+            <p id="coords-display" class="text-[11px] text-gray-400 text-center font-mono hidden"></p>
+          </div>
+
+          <!-- زر الحفظ -->
+          <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end pt-1">
             <button type="submit" id="submit-btn"
-              class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-md text-sm disabled:opacity-60">
+              class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-xl shadow-md text-sm transition-all disabled:opacity-60">
               <span id="submit-icon">🚀</span>
               <span id="submit-txt">حفظ وإدراج في الدليل العام</span>
             </button>
           </div>
+
         </form>
       </div>
     </div>
   </div>
 
-  <!-- ===== BROWSE SECTION ===== -->
+  <!-- ══ تصفح الدليل ══ -->
   <section class="space-y-4">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-200">
       <div>
@@ -311,64 +271,68 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
         <input type="search" id="search-input" oninput="onSearch()" placeholder="ابحث بالاسم، العنوان، التخصص..."
-          class="w-full border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm" />
+          class="w-full border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm" />
       </div>
     </div>
-
-    <!-- Main Tabs -->
     <div id="main-tabs" class="flex flex-wrap gap-2"></div>
-
-    <!-- Sub Filters -->
-    <div id="sub-tabs" class="flex flex-wrap gap-1.5 pt-1 border-t border-gray-100" style="display:none!important"></div>
+    <div id="sub-tabs" class="flex flex-wrap gap-1.5 pt-1 border-t border-gray-100" style="display:none"></div>
   </section>
 
-  <!-- ===== DIRECTORY GRID ===== -->
-  <section id="grid-section">
-    <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- Skeletons while loading -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="h-2 skeleton w-1/3 mb-4"></div>
-        <div class="h-4 skeleton w-3/4 mb-3"></div>
-        <div class="h-3 skeleton w-2/3 mb-2"></div>
-        <div class="h-3 skeleton w-1/2"></div>
-      </div>
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="h-2 skeleton w-1/4 mb-4"></div>
-        <div class="h-4 skeleton w-4/5 mb-3"></div>
-        <div class="h-3 skeleton w-3/5 mb-2"></div>
-        <div class="h-3 skeleton w-2/5"></div>
-      </div>
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="h-2 skeleton w-2/5 mb-4"></div>
-        <div class="h-4 skeleton w-2/3 mb-3"></div>
-        <div class="h-3 skeleton w-3/4 mb-2"></div>
-        <div class="h-3 skeleton w-1/3"></div>
-      </div>
+  <!-- ══ الشبكة ══ -->
+  <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div class="h-2 skeleton w-1/3 mb-4"></div><div class="h-4 skeleton w-3/4 mb-3"></div>
+      <div class="h-3 skeleton w-2/3 mb-2"></div><div class="h-3 skeleton w-1/2"></div>
     </div>
-  </section>
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div class="h-2 skeleton w-1/4 mb-4"></div><div class="h-4 skeleton w-4/5 mb-3"></div>
+      <div class="h-3 skeleton w-3/5 mb-2"></div><div class="h-3 skeleton w-2/5"></div>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div class="h-2 skeleton w-2/5 mb-4"></div><div class="h-4 skeleton w-2/3 mb-3"></div>
+      <div class="h-3 skeleton w-3/4 mb-2"></div><div class="h-3 skeleton w-1/3"></div>
+    </div>
+  </div>
 
 </main>
 
-<!-- ===== FOOTER ===== -->
-<footer class="bg-white border-t border-gray-200 py-4 px-6 text-center text-xs text-gray-400">
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="bg-white border-t border-gray-200 py-4 px-6 text-center text-xs text-gray-400 mt-auto">
   دليل مدينة حمص المفتوح والتشاركي © 2026 · مدعوم ببيانات Google Sheets المتزامنة حياً
 </footer>
 
-<!-- Toast -->
 <div id="toast"></div>
 
-<!-- ===== SCRIPT ===== -->
+<!-- ══════════════ SCRIPT ══════════════ -->
 <script>
+// ═══════════════════════════════════════════════════
+//  أسماء أعمدة Google Sheet الحقيقية
+// ═══════════════════════════════════════════════════
 const API_URL = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
 
-const DEFAULT_CATS = {
-  'القطاع الطبي':              ['طبيب أطفال','طبيب عظمية','صيدلية','مخبر تحاليل'],
-  'المهن الحرة والاستشارات':    ['مكتب محاماة','مكتب هندسي','ترجمة محلفة'],
-  'التسوق والتجارة':            ['سوبرماركت','مول تجاري','محلات ألبسة'],
-  'مطاعم ومقاهي':               ['مطعم وجبات سريعة','كافيه ومقهى'],
-  'خدمات عامة وحرفية':          ['صيانة سيارات','صيانة منزلية','مكتب شحن ونقل'],
+// المفاتيح التي يجب إرسالها للـ API تطابق تماماً أسماء أعمدة الشيت
+const COL = {
+  id:      'معرف  id',           // عمود الـ ID (فيه مسافتان)
+  name:    'اسم المكان',
+  main:    'القسم',              // القسم الرئيسي
+  sub:     'الوصف',             // التصنيف الفرعي / التخصص
+  address: 'العنوان بالتفصيل',
+  map:     'الخريطة',           // رابط/إحداثيات الموقع
+  phone:   'الهاتف / الجوال',
+  notes:   'اوقات الدوام ',     // انتبه: فيه مسافة في النهاية
+  social:  'رابط الفيسبوك / انستغرام',
+  rating:  'التقييم',
+  status:  'الحالة',
 };
 
+// الأقسام الافتراضية
+const DEFAULT_CATS = {
+  'القطاع الطبي':           ['طبيب أطفال','طبيب عظمية','صيدلية','مخبر تحاليل','طبيب عام'],
+  'المهن الحرة والاستشارات':['مكتب محاماة','مكتب هندسي','ترجمة محلفة','محاسب قانوني'],
+  'التسوق والتجارة':         ['سوبرماركت','مول تجاري','محلات ألبسة','إلكترونيات'],
+  'مطاعم ومقاهي':            ['مطعم وجبات سريعة','كافيه ومقهى','مطعم عائلي'],
+  'خدمات عامة وحرفية':       ['صيانة سيارات','صيانة منزلية','مكتب شحن ونقل','نجارة وديكور'],
+};
 const CAT_ICONS = {
   'القطاع الطبي':'🏥',
   'المهن الحرة والاستشارات':'⚖️',
@@ -376,8 +340,7 @@ const CAT_ICONS = {
   'مطاعم ومقاهي':'🍽️',
   'خدمات عامة وحرفية':'🔧',
 };
-
-const CAT_CLASS = {
+const CAT_CLS = {
   'القطاع الطبي':           { card:'card-medical',  badge:'badge-medical'  },
   'المهن الحرة والاستشارات':{ card:'card-legal',    badge:'badge-legal'    },
   'التسوق والتجارة':         { card:'card-shopping', badge:'badge-shopping' },
@@ -385,60 +348,68 @@ const CAT_CLASS = {
   'خدمات عامة وحرفية':       { card:'card-services', badge:'badge-services' },
 };
 
-// State
-let allEntries = [];
-let categoryMap = {};   // { main: Set(subs) }
-let activeMain = 'الكل';
-let activeSub  = 'الكل';
-let searchQ    = '';
-let isDark     = false;
-let leafMap    = null;
-let leafMarker = null;
-let pickedLat  = null;
-let pickedLng  = null;
+// الحالة
+let allEntries   = [];
+let categoryMap  = {};
+let activeMain   = 'الكل';
+let activeSub    = 'الكل';
+let searchQ      = '';
+let isDark       = false;
+let leafMap      = null;
+let leafMarker   = null;
+let pickedLat    = null;
+let pickedLng    = null;
+let formOpen     = false;
+let mapOpen      = false;
 
-// ── Init ──────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
-  isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
   applyDark();
   fetchData();
 });
 
-// ── Dark Mode ─────────────────────────────────────────
-function toggleDark() {
-  isDark = !isDark;
-  applyDark();
-}
+// ── Dark Mode ────────────────────────────────────
+function toggleDark() { isDark = !isDark; applyDark(); }
 function applyDark() {
   const body = document.getElementById('body');
   const icon = document.getElementById('dark-icon');
-  if (isDark) {
-    body.classList.add('dark-mode');
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
-  } else {
-    body.classList.remove('dark-mode');
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
-  }
+  body.classList.toggle('dark-mode', isDark);
+  body.style.background = isDark ? '#0f172a' : '#f8fafc';
+  icon.innerHTML = isDark
+    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>'
+    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
 }
 
-// ── Fetch Data ────────────────────────────────────────
+// ── جلب البيانات ─────────────────────────────────
 async function fetchData() {
   const icon = document.getElementById('refresh-icon');
   icon.style.animation = 'spin 1s linear infinite';
-  icon.style.display = 'block';
-  if (!icon.querySelector) {
-    icon.classList.add('animate-spin');
-  }
   document.getElementById('error-banner').classList.add('hidden');
 
   try {
     const res = await fetch(API_URL);
-    if (!res.ok) throw new Error('خطأ في الاتصال');
-    const data = await res.json();
-    allEntries = Array.isArray(data) ? data : [];
-  } catch(e) {
+    if (!res.ok) throw new Error('خطأ HTTP ' + res.status);
+    const raw = await res.json();
+
+    // تحويل أسماء الأعمدة العربية إلى مفاتيح داخلية
+    allEntries = (Array.isArray(raw) ? raw : []).map(r => ({
+      ID:          r[COL.id]      || '',
+      Name:        r[COL.name]    || '',
+      MainCategory:r[COL.main]    || '',
+      SubCategory: r[COL.sub]     || '',
+      Address:     r[COL.address] || '',
+      MapLink:     r[COL.map]     || '',
+      Phone:       r[COL.phone]   || '',
+      Notes:       r[COL.notes]   || '',
+      Social:      r[COL.social]  || '',
+      Rating:      r[COL.rating]  || '',
+      Status:      r[COL.status]  || '',
+    })).filter(e => e.Name.trim() !== '');
+
+  } catch(err) {
     allEntries = [];
-    document.getElementById('error-msg').textContent = 'تعذّر الاتصال بالسيرفر، يُعرض ما هو مخزّن محلياً.';
+    document.getElementById('error-msg').textContent = 'تعذّر الاتصال: ' + err.message;
     document.getElementById('error-banner').classList.remove('hidden');
   }
 
@@ -446,49 +417,45 @@ async function fetchData() {
   renderTabs();
   populateFormDropdowns();
   renderGrid();
-
-  const cnt = allEntries.length;
-  document.getElementById('hdr-count').textContent = `${cnt} جهة مسجّلة`;
+  document.getElementById('hdr-count').textContent = allEntries.length + ' جهة مسجّلة';
   icon.style.animation = '';
 }
 
-// ── Category Map ──────────────────────────────────────
+// ── بناء خريطة الأقسام ───────────────────────────
 function buildCategoryMap() {
   categoryMap = {};
   Object.entries(DEFAULT_CATS).forEach(([m, subs]) => {
     categoryMap[m] = new Set(subs);
   });
   allEntries.forEach(e => {
-    const m = (e.MainCategory || '').trim();
-    const s = (e.SubCategory  || '').trim();
+    const m = e.MainCategory.trim();
+    const s = e.SubCategory.trim();
     if (!m) return;
     if (!categoryMap[m]) categoryMap[m] = new Set();
     if (s) categoryMap[m].add(s);
   });
 }
 
-// ── Tabs ──────────────────────────────────────────────
+// ── التبويبات ────────────────────────────────────
 function renderTabs() {
   const cont = document.getElementById('main-tabs');
   cont.innerHTML = '';
-
-  const btn = (label, active, onclick, primary = true) => {
+  const mk = (label, active, fn, big = true) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.textContent = label;
     b.className = [
       'px-3.5 py-1.5 rounded-xl font-semibold border transition-all',
-      primary ? 'text-xs' : 'text-[11px]',
+      big ? 'text-xs' : 'text-[11px]',
       active ? 'tab-active' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50',
     ].join(' ');
-    b.onclick = onclick;
+    b.onclick = fn;
     return b;
   };
-
-  cont.appendChild(btn('📂 عرض الكل', activeMain === 'الكل', () => selectMain('الكل')));
+  cont.appendChild(mk('📂 عرض الكل', activeMain === 'الكل', () => selectMain('الكل')));
   Object.keys(categoryMap).forEach(cat => {
     const icon = CAT_ICONS[cat] || '📁';
-    cont.appendChild(btn(`${icon} ${cat}`, activeMain === cat, () => selectMain(cat)));
+    cont.appendChild(mk(`${icon} ${cat}`, activeMain === cat, () => selectMain(cat)));
   });
   renderSubTabs();
 }
@@ -496,15 +463,10 @@ function renderTabs() {
 function renderSubTabs() {
   const cont = document.getElementById('sub-tabs');
   cont.innerHTML = '';
-
-  if (activeMain === 'الكل') {
-    cont.style.cssText = 'display:none!important';
-    return;
-  }
-  cont.style.cssText = 'display:flex!important;flex-wrap:wrap;gap:.375rem;padding-top:.25rem;border-top:1px solid #f3f4f6';
-
+  if (activeMain === 'الكل') { cont.style.display = 'none'; return; }
+  cont.style.cssText = 'display:flex;flex-wrap:wrap;gap:.375rem;padding-top:.25rem;border-top:1px solid #f3f4f6';
   const subs = categoryMap[activeMain] ? Array.from(categoryMap[activeMain]) : [];
-  const mkSub = (label, active) => {
+  const mkS = (label, active) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.textContent = label;
@@ -512,78 +474,71 @@ function renderSubTabs() {
     b.onclick = () => { activeSub = label; renderSubTabs(); renderGrid(); };
     return b;
   };
-
-  const allBtn = mkSub('الكل', activeSub === 'الكل');
-  allBtn.onclick = () => { activeSub = 'الكل'; renderSubTabs(); renderGrid(); };
-  cont.appendChild(allBtn);
-  subs.forEach(s => cont.appendChild(mkSub(s, activeSub === s)));
+  const allB = mkS('الكل', activeSub === 'الكل');
+  allB.onclick = () => { activeSub = 'الكل'; renderSubTabs(); renderGrid(); };
+  cont.appendChild(allB);
+  subs.forEach(s => cont.appendChild(mkS(s, activeSub === s)));
 }
 
 function selectMain(cat) {
-  activeMain = cat;
-  activeSub  = 'الكل';
-  searchQ    = '';
+  activeMain = cat; activeSub = 'الكل'; searchQ = '';
   document.getElementById('search-input').value = '';
-  renderTabs();
-  renderGrid();
+  renderTabs(); renderGrid();
 }
 
-// ── Search ────────────────────────────────────────────
+// ── البحث ────────────────────────────────────────
 function onSearch() {
   searchQ = document.getElementById('search-input').value.trim();
   renderGrid();
 }
 
-// ── Grid ──────────────────────────────────────────────
+// ── عرض الكروت ───────────────────────────────────
 function renderGrid() {
-  let filtered = allEntries;
-
+  let list = allEntries;
   if (activeMain !== 'الكل') {
-    filtered = filtered.filter(e => e.MainCategory === activeMain);
-    if (activeSub !== 'الكل') {
-      filtered = filtered.filter(e => e.SubCategory === activeSub);
-    }
+    list = list.filter(e => e.MainCategory === activeMain);
+    if (activeSub !== 'الكل') list = list.filter(e => e.SubCategory === activeSub);
   }
-
   if (searchQ) {
     const q = searchQ.toLowerCase();
-    filtered = filtered.filter(e =>
-      [e.Name, e.Address, e.SubCategory, e.MainCategory, e.Notes, e.Phone]
+    list = list.filter(e =>
+      [e.Name, e.Address, e.SubCategory, e.MainCategory, e.Notes, e.Phone, e.Social]
         .some(v => v && v.toLowerCase().includes(q))
     );
   }
 
-  const total = filtered.length;
-  const all   = allEntries.length;
   document.getElementById('entries-count').textContent =
-    searchQ ? `${total} نتيجة من أصل ${all}` : `${total} جهة مسجّلة`;
+    searchQ ? `${list.length} نتيجة من أصل ${allEntries.length}` : `${list.length} جهة مسجّلة`;
 
   const grid = document.getElementById('directory-grid');
   grid.innerHTML = '';
 
-  if (total === 0) {
+  if (list.length === 0) {
     grid.innerHTML = `
       <div class="col-span-3 flex flex-col items-center py-20 text-center">
-        <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4 text-3xl">
-          ${searchQ ? '🔍' : '➕'}
-        </div>
+        <div class="text-4xl mb-4">${searchQ ? '🔍' : '➕'}</div>
         <h3 class="text-lg font-bold text-gray-700 mb-2">${searchQ ? 'لا توجد نتائج' : 'لا توجد جهات مسجّلة هنا بعد'}</h3>
-        <p class="text-sm text-gray-400 max-w-xs">
-          ${searchQ ? `لم نجد نتيجة لـ "${searchQ}" — جرّب كلمات أخرى` : 'كن أول من يُضيف بيانات في هذا القسم!'}
-        </p>
-        ${!searchQ ? '<button onclick="toggleForm()" class="mt-4 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all">إضافة الآن</button>' : ''}
+        <p class="text-sm text-gray-400 max-w-xs">${searchQ ? `لم نجد نتيجة لـ "${searchQ}"` : 'كن أول من يُضيف بيانات هنا!'}</p>
+        ${!searchQ ? '<button onclick="toggleForm()" class="mt-4 bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-800">إضافة الآن</button>' : ''}
       </div>`;
     return;
   }
 
-  filtered.forEach(e => {
-    const cls = CAT_CLASS[e.MainCategory] || { card: 'card-default', badge: 'badge-default' };
-    const hasCoords = e.Latitude && e.Longitude;
-    const mapLink = hasCoords
-      ? `<a href="https://www.google.com/maps?q=${e.Latitude},${e.Longitude}" target="_blank" rel="noopener"
-           class="flex items-center gap-1 text-[10px] text-blue-600 hover:underline">
-           📍 الخريطة ↗
-         </a>` : '';
+  list.forEach(e => {
+    const cls = CAT_CLS[e.MainCategory] || { card:'card-default', badge:'badge-default' };
+
+    // رابط الخريطة
+    let mapHtml = '';
+    if (e.MapLink) {
+      const href = e.MapLink.startsWith('http') ? e.MapLink : `https://www.google.com/maps?q=${e.MapLink}`;
+      mapHtml = `<a href="${href}" target="_blank" rel="noopener" class="flex items-center gap-1 text-[10px] text-blue-600 hover:underline">📍 الخريطة ↗</a>`;
+    }
+
+    // رابط السوشيال
+    let socialHtml = '';
+    if (e.Social) {
+      socialHtml = `<div class="flex items-center gap-2"><span class="text-gray-400">🔗</span><a href="${e.Social}" target="_blank" rel="noopener" class="text-blue-600 text-[11px] hover:underline truncate max-w-[180px]">${e.Social.replace(/^https?:\/\/(www\.)?/,'')}</a></div>`;
+    }
 
     const card = document.createElement('div');
     card.className = `entry-card bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
@@ -593,77 +548,52 @@ function renderGrid() {
           <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg ${cls.badge}">${e.SubCategory || 'تصنيف عام'}</span>
           ${e.ID ? `<span class="text-gray-300 text-[10px] font-mono">#${e.ID}</span>` : ''}
         </div>
-        <h3 class="text-base font-bold text-gray-800 mb-4 leading-snug">${e.Name || ''}</h3>
+        <h3 class="text-base font-bold text-gray-800 mb-4 leading-snug">${e.Name}</h3>
         <div class="space-y-2 text-xs text-gray-600 flex-grow">
-          <div class="flex items-start gap-2">
-            <span class="text-gray-400 mt-0.5">📍</span>
-            <span class="leading-relaxed">${e.Address || ''}</span>
-          </div>
-          ${e.Phone ? `
-          <div class="flex items-center gap-2">
-            <span class="text-gray-400">📞</span>
-            <a href="tel:${e.Phone}" dir="ltr" class="text-blue-600 font-mono hover:underline">${e.Phone}</a>
-          </div>` : ''}
-          ${e.Notes ? `
-          <div class="flex items-start gap-2 bg-gray-50 rounded-lg p-2.5 mt-1">
-            <span class="text-gray-400 mt-0.5">🕐</span>
-            <span class="text-gray-500 text-[11px] leading-relaxed">${e.Notes}</span>
-          </div>` : ''}
+          ${e.Address ? `<div class="flex items-start gap-2"><span class="mt-0.5">📍</span><span class="leading-relaxed">${e.Address}</span></div>` : ''}
+          ${e.Phone   ? `<div class="flex items-center gap-2"><span>📞</span><a href="tel:${e.Phone}" dir="ltr" class="text-blue-600 font-mono hover:underline">${e.Phone}</a></div>` : ''}
+          ${e.Notes   ? `<div class="flex items-start gap-2 bg-gray-50 rounded-lg p-2.5"><span class="mt-0.5">🕐</span><span class="text-gray-500 text-[11px]">${e.Notes}</span></div>` : ''}
+          ${socialHtml}
         </div>
         <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="dot-pulse"></span>
             <span class="text-[10px] text-gray-400">موثّق تشاركياً</span>
           </div>
-          ${mapLink}
+          ${mapHtml}
         </div>
       </div>`;
     grid.appendChild(card);
   });
 }
 
-// ── Form ──────────────────────────────────────────────
-let formOpen = false;
-function toggleForm() {
-  formOpen = !formOpen;
-  const body    = document.getElementById('form-body');
-  const chevron = document.getElementById('form-chevron');
-  body.classList.toggle('open', formOpen);
-  chevron.style.transform = formOpen ? 'rotate(180deg)' : '';
-}
-
+// ── قوائم الفورم ─────────────────────────────────
 function populateFormDropdowns() {
-  const mainSel = document.getElementById('f-main');
-  const prev = mainSel.value;
-  mainSel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
-  Object.keys(categoryMap).forEach(c => {
-    mainSel.innerHTML += `<option value="${c}">${c}</option>`;
-  });
-  mainSel.innerHTML += '<option value="__NEW__">➕ إضافة قسم رئيسي جديد...</option>';
-  if (prev) mainSel.value = prev;
+  const sel = document.getElementById('f-main');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
+  Object.keys(categoryMap).forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+  sel.innerHTML += '<option value="__NEW__">➕ إضافة قسم رئيسي جديد...</option>';
+  if (prev) sel.value = prev;
   refreshSubDropdown();
 }
 
 function refreshSubDropdown() {
-  const mainVal = document.getElementById('f-main').value;
-  const subSel  = document.getElementById('f-sub');
-  subSel.innerHTML = '<option value="">— اختر التصنيف الفرعي —</option>';
-  if (mainVal && mainVal !== '__NEW__' && categoryMap[mainVal]) {
-    Array.from(categoryMap[mainVal]).forEach(s => {
-      subSel.innerHTML += `<option value="${s}">${s}</option>`;
-    });
+  const main = document.getElementById('f-main').value;
+  const sub  = document.getElementById('f-sub');
+  sub.innerHTML = '<option value="">— اختر التصنيف الفرعي —</option>';
+  if (main && main !== '__NEW__' && categoryMap[main]) {
+    Array.from(categoryMap[main]).forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`);
   }
-  subSel.innerHTML += '<option value="__NEW__">➕ إضافة تخصص جديد...</option>';
+  sub.innerHTML += '<option value="__NEW__">➕ إضافة تخصص جديد...</option>';
 }
 
 function onMainChange() {
   const val = document.getElementById('f-main').value;
   const ni  = document.getElementById('f-new-main');
-  const ns  = document.getElementById('f-new-sub');
-  const ss  = document.getElementById('f-sub');
   if (val === '__NEW__') {
     ni.style.display = 'block'; ni.required = true;
-    ss.value = '__NEW__'; onSubChange();
+    document.getElementById('f-sub').value = '__NEW__'; onSubChange();
   } else {
     ni.style.display = 'none'; ni.required = false; ni.value = '';
     refreshSubDropdown();
@@ -680,65 +610,91 @@ function onSubChange() {
   }
 }
 
+// ═══════════════════════════════════════════════════
+//  إرسال النموذج — يرسل البيانات بأسماء الأعمدة الحقيقية
+// ═══════════════════════════════════════════════════
 async function handleSubmit(e) {
   e.preventDefault();
+
   let mainCat = document.getElementById('f-main').value;
   if (mainCat === '__NEW__') mainCat = document.getElementById('f-new-main').value.trim();
+
   let subCat = document.getElementById('f-sub').value;
   if (subCat === '__NEW__') subCat = document.getElementById('f-new-sub').value.trim();
 
-  if (!mainCat || !subCat) { showToast('error','يرجى اختيار أو كتابة القسم والتخصص'); return; }
+  if (!mainCat || !subCat) {
+    showToast('error', 'يرجى اختيار أو كتابة القسم والتخصص أولاً');
+    return;
+  }
 
+  // رابط الخريطة: إذا تم تحديد موقع نحوّله لرابط Google Maps
+  let mapValue = '';
+  if (pickedLat !== null && pickedLng !== null) {
+    mapValue = `https://www.google.com/maps?q=${pickedLat.toFixed(6)},${pickedLng.toFixed(6)}`;
+  }
+
+  // الـ payload يستخدم أسماء الأعمدة العربية الحقيقية للشيت
   const payload = {
-    ID:          allEntries.length + 1,
-    Name:        document.getElementById('f-name').value.trim(),
-    MainCategory:mainCat,
-    SubCategory: subCat,
-    Address:     document.getElementById('f-address').value.trim(),
-    Phone:       document.getElementById('f-phone').value.trim(),
-    Notes:       document.getElementById('f-notes').value.trim(),
-    Latitude:    pickedLat !== null ? String(pickedLat) : '',
-    Longitude:   pickedLng !== null ? String(pickedLng) : '',
+    [COL.id]:      allEntries.length + 1,
+    [COL.name]:    document.getElementById('f-name').value.trim(),
+    [COL.main]:    mainCat,
+    [COL.sub]:     subCat,
+    [COL.address]: document.getElementById('f-address').value.trim(),
+    [COL.phone]:   document.getElementById('f-phone').value.trim(),
+    [COL.notes]:   document.getElementById('f-notes').value.trim(),
+    [COL.map]:     mapValue,
+    [COL.social]:  document.getElementById('f-social').value.trim(),
+    [COL.rating]:  '',
+    [COL.status]:  'نشط',
   };
 
   setSubmitting(true);
   try {
     const res = await fetch(API_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify([payload])
     });
-    if (!res.ok) throw new Error();
-    showToast('success', `تم إدراج "${payload.Name}" بنجاح!`);
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errText}`);
+    }
+
+    showToast('success', `✅ تم إدراج "${payload[COL.name]}" بنجاح في الدليل!`);
     document.getElementById('dir-form').reset();
     document.getElementById('f-new-main').style.display = 'none';
     document.getElementById('f-new-sub').style.display  = 'none';
     clearMap();
+    if (mapOpen) toggleMap();
     toggleForm();
     await fetchData();
-  } catch {
-    showToast('error','فشل الحفظ — تحقق من اتصالك وحاول مجدداً');
+
+  } catch(err) {
+    console.error('POST error:', err);
+    showToast('error', 'فشل الحفظ: ' + err.message);
   }
   setSubmitting(false);
 }
 
 function setSubmitting(v) {
-  const btn = document.getElementById('submit-btn');
-  const icon = document.getElementById('submit-icon');
-  const txt  = document.getElementById('submit-txt');
-  btn.disabled = v;
-  icon.textContent = v ? '⏳' : '🚀';
-  txt.textContent  = v ? 'جاري الحفظ...' : 'حفظ وإدراج في الدليل العام';
+  document.getElementById('submit-btn').disabled = v;
+  document.getElementById('submit-icon').textContent = v ? '⏳' : '🚀';
+  document.getElementById('submit-txt').textContent  = v ? 'جاري الحفظ...' : 'حفظ وإدراج في الدليل العام';
 }
 
-// ── Map ───────────────────────────────────────────────
-let mapOpen = false;
+// ── فتح/إغلاق الفورم ─────────────────────────────
+function toggleForm() {
+  formOpen = !formOpen;
+  document.getElementById('form-body').classList.toggle('open', formOpen);
+  document.getElementById('form-chevron').style.transform = formOpen ? 'rotate(180deg)' : '';
+}
+
+// ── الخريطة ───────────────────────────────────────
 function toggleMap() {
   mapOpen = !mapOpen;
-  const sec = document.getElementById('map-section');
-  const txt = document.getElementById('map-toggle-txt');
-  sec.classList.toggle('open', mapOpen);
-  txt.textContent = mapOpen ? 'إخفاء الخريطة' : 'تحديد الموقع على الخريطة (اختياري)';
+  document.getElementById('map-section').classList.toggle('open', mapOpen);
+  document.getElementById('map-toggle-txt').textContent = mapOpen ? 'إخفاء الخريطة' : 'تحديد الموقع على الخريطة';
   if (mapOpen && !leafMap) initMap();
 }
 
@@ -747,11 +703,7 @@ function initMap() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org">OpenStreetMap</a>'
   }).addTo(leafMap);
-  leafMap.on('click', function(ev) {
-    pickedLat = ev.latlng.lat;
-    pickedLng = ev.latlng.lng;
-    placeMarker(pickedLat, pickedLng);
-  });
+  leafMap.on('click', ev => { pickedLat = ev.latlng.lat; pickedLng = ev.latlng.lng; placeMarker(pickedLat, pickedLng); });
 }
 
 function placeMarker(lat, lng) {
@@ -772,22 +724,21 @@ function clearMap() {
 function geoLocate() {
   if (!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(pos => {
-    if (!leafMap) initMap();
-    const {latitude: lat, longitude: lng} = pos.coords;
-    pickedLat = lat; pickedLng = lng;
-    placeMarker(lat, lng);
-  });
+    if (!leafMap) { document.getElementById('map-section').classList.add('open'); initMap(); }
+    pickedLat = pos.coords.latitude; pickedLng = pos.coords.longitude;
+    placeMarker(pickedLat, pickedLng);
+  }, () => showToast('error', 'تعذّر الوصول إلى الموقع'));
 }
 
-// ── Toast ─────────────────────────────────────────────
+// ── Toast ─────────────────────────────────────────
 let toastTimer;
 function showToast(type, msg) {
   const t = document.getElementById('toast');
-  t.textContent = (type === 'success' ? '✅  ' : '❌  ') + msg;
+  t.textContent = msg;
   t.style.background = type === 'success' ? '#059669' : '#dc2626';
   t.style.display = 'block';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
 </script>
 
