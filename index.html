@@ -50,95 +50,102 @@
     #map-section { display:none; }
     #map-section.open { display:block; }
     #leaflet-map {
-      height: 260px; width: 100%; border-radius: 12px; overflow: hidden;
-      border: 1px solid #e5e7eb; background: #e5e7eb; position: relative; z-index: 1;
+      height:260px; width:100%; border-radius:12px; overflow:hidden;
+      border:1px solid #e5e7eb; background:#e5e7eb; position:relative; z-index:1;
     }
-    .leaflet-pane { z-index: 1 !important; }
-    .leaflet-top, .leaflet-bottom { z-index: 2 !important; }
+    .leaflet-pane { z-index:1!important; }
+    .leaflet-top, .leaflet-bottom { z-index:2!important; }
     #view-map-panel {
-      display: none; background: #fff; border-radius: 16px;
-      border: 1px solid #e2e8f0; box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-      overflow: hidden; margin-bottom: 8px;
+      display:none; background:#fff; border-radius:16px;
+      border:1px solid #e2e8f0; box-shadow:0 4px 24px rgba(0,0,0,.10);
+      overflow:hidden; margin-bottom:8px;
     }
-    #view-map-panel.open { display: block; }
+    #view-map-panel.open { display:block; }
     #view-map-panel-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 16px; border-bottom: 1px solid #f1f5f9; background: #f8fafc;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-bottom:1px solid #f1f5f9; background:#f8fafc;
     }
     #view-map-title {
-      font-size: 14px; font-weight: 700; color: #1e293b; flex: 1;
-      text-align: right; overflow: hidden; text-overflow: ellipsis;
-      white-space: nowrap; margin-left: 8px;
+      font-size:14px; font-weight:700; color:#1e293b; flex:1;
+      text-align:right; overflow:hidden; text-overflow:ellipsis;
+      white-space:nowrap; margin-left:8px;
     }
     #close-view-map-btn {
-      display: flex; align-items: center; gap: 4px; padding: 5px 12px;
-      border-radius: 8px; background: #fee2e2; border: 1px solid #fca5a5;
-      color: #dc2626; font-size: 12px; font-weight: 700; cursor: pointer;
-      flex-shrink: 0; transition: background .15s;
+      display:flex; align-items:center; gap:4px; padding:5px 12px;
+      border-radius:8px; background:#fee2e2; border:1px solid #fca5a5;
+      color:#dc2626; font-size:12px; font-weight:700; cursor:pointer;
+      flex-shrink:0; transition:background .15s;
     }
-    #close-view-map-btn:hover { background: #fecaca; }
-    #view-leaflet-map { display: block; width: 100%; height: 340px; background: #e5e7eb; }
+    #close-view-map-btn:hover { background:#fecaca; }
+    #view-leaflet-map { display:block; width:100%; height:340px; background:#e5e7eb; }
     #view-map-status {
-      padding: 6px 16px; font-size: 11px; color: #94a3b8; text-align: center;
-      font-family: monospace; background: #f8fafc; border-top: 1px solid #f1f5f9;
+      padding:6px 16px; font-size:11px; color:#94a3b8; text-align:center;
+      font-family:monospace; background:#f8fafc; border-top:1px solid #f1f5f9;
     }
-    .dark-mode #view-map-panel { background:#1e293b; border-color:#334155; }
+    .dark-mode #view-map-panel  { background:#1e293b; border-color:#334155; }
     .dark-mode #view-map-panel-header { background:#0f172a; border-color:#334155; }
-    .dark-mode #view-map-title { color:#f1f5f9; }
+    .dark-mode #view-map-title  { color:#f1f5f9; }
     .dark-mode #view-map-status { background:#0f172a; border-color:#334155; }
-    .dot-pulse { display:inline-block; width:.5rem; height:.5rem; background:#10b981; border-radius:50%; animation:dotPulse 2s ease-in-out infinite; }
+    .dot-pulse {
+      display:inline-block; width:.5rem; height:.5rem; background:#10b981;
+      border-radius:50%; animation:dotPulse 2s ease-in-out infinite;
+    }
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
     .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
     .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
 
     /* ═══ Star Rating ═══ */
-    .star-row { display:flex; align-items:center; gap:3px; direction:ltr; }
+    .star-row { display:flex; align-items:center; gap:2px; direction:ltr; }
     .star-btn {
-      background:none; border:none; padding:1px; cursor:pointer;
-      font-size:18px; line-height:1; transition:transform .15s;
-      color:#d1d5db;
+      background:none; border:none; padding:2px; cursor:pointer;
+      font-size:20px; line-height:1; color:#d1d5db;
+      transition:color .15s, transform .15s;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
     }
-    .star-btn:hover { transform:scale(1.2); }
-    .star-btn.filled { color:#f59e0b; }
-    .star-btn.half  { color:#fbbf24; }
-    .star-btn:disabled { cursor:default; opacity:1; }
-    .star-btn:disabled:hover { transform:none; }
-    .rating-info { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    .star-btn:not(:disabled):hover  { transform:scale(1.25); color:#f59e0b; }
+    .star-btn:not(:disabled):active { transform:scale(1.1); }
+    .star-btn.filled  { color:#f59e0b; }
+    .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
+    @keyframes starPulse { from{opacity:.6} to{opacity:1} }
+    .star-btn:disabled { cursor:default; }
+    .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
     .rated-badge {
-      display:inline-flex; align-items:center; gap:3px;
-      font-size:10px; font-weight:700; color:#059669;
-      background:#d1fae5; border-radius:6px; padding:2px 7px;
+      display:inline-flex; align-items:center; gap:3px; font-size:10px;
+      font-weight:700; color:#059669; background:#d1fae5; border-radius:6px;
+      padding:2px 7px;
     }
-    .dark-mode .star-btn { color:#4b5563; }
-    .dark-mode .star-btn.filled { color:#f59e0b; }
-    .dark-mode .rating-info { color:#64748b; }
-    .dark-mode .rated-badge { background:#064e3b; color:#6ee7b7; }
+    .dark-mode .star-btn           { color:#4b5563; }
+    .dark-mode .star-btn.filled    { color:#f59e0b; }
+    .dark-mode .star-btn:not(:disabled):hover { color:#f59e0b; }
+    .dark-mode .rating-label       { color:#64748b; }
+    .dark-mode .rated-badge        { background:#064e3b; color:#6ee7b7; }
 
     /* ═══ DARK MODE ═══ */
     .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
-    .dark-mode .bg-white           { background:#1e293b!important; }
-    .dark-mode .bg-gray-50         { background:#0f172a!important; }
-    .dark-mode .bg-blue-50         { background:rgba(29,78,216,.15)!important; }
-    .dark-mode .bg-amber-50        { background:rgba(180,83,9,.15)!important; }
-    .dark-mode .text-gray-800      { color:#f1f5f9!important; }
-    .dark-mode .text-gray-700      { color:#e2e8f0!important; }
-    .dark-mode .text-gray-600      { color:#cbd5e1!important; }
-    .dark-mode .text-gray-500      { color:#94a3b8!important; }
-    .dark-mode .text-gray-400      { color:#64748b!important; }
-    .dark-mode .border-gray-100    { border-color:#334155!important; }
-    .dark-mode .border-gray-200    { border-color:#334155!important; }
+    .dark-mode .bg-white        { background:#1e293b!important; }
+    .dark-mode .bg-gray-50      { background:#0f172a!important; }
+    .dark-mode .bg-blue-50      { background:rgba(29,78,216,.15)!important; }
+    .dark-mode .bg-amber-50     { background:rgba(180,83,9,.15)!important; }
+    .dark-mode .text-gray-800   { color:#f1f5f9!important; }
+    .dark-mode .text-gray-700   { color:#e2e8f0!important; }
+    .dark-mode .text-gray-600   { color:#cbd5e1!important; }
+    .dark-mode .text-gray-500   { color:#94a3b8!important; }
+    .dark-mode .text-gray-400   { color:#64748b!important; }
+    .dark-mode .border-gray-100 { border-color:#334155!important; }
+    .dark-mode .border-gray-200 { border-color:#334155!important; }
     .dark-mode input, .dark-mode select { background:#0f172a!important; border-color:#334155!important; color:#f1f5f9!important; }
-    .dark-mode input::placeholder  { color:#475569!important; }
-    .dark-mode .bg-gray-100        { background:#334155!important; }
-    .dark-mode .text-blue-800      { color:#93c5fd!important; }
-    .dark-mode .badge-medical  { background:#064e3b!important; color:#6ee7b7!important; }
-    .dark-mode .badge-legal    { background:#2e1065!important; color:#c4b5fd!important; }
-    .dark-mode .badge-shopping { background:#451a03!important; color:#fde68a!important; }
-    .dark-mode .badge-food     { background:#4c0519!important; color:#fda4af!important; }
-    .dark-mode .badge-services { background:#1e3a8a!important; color:#93c5fd!important; }
-    .dark-mode .badge-default  { background:#1f2937!important; color:#9ca3af!important; }
-    .dark-mode .subtab-active  { background:#3b82f6!important; }
-    .dark-mode .skeleton       { background:#374151!important; }
+    .dark-mode input::placeholder { color:#475569!important; }
+    .dark-mode .bg-gray-100     { background:#334155!important; }
+    .dark-mode .text-blue-800   { color:#93c5fd!important; }
+    .dark-mode .badge-medical   { background:#064e3b!important; color:#6ee7b7!important; }
+    .dark-mode .badge-legal     { background:#2e1065!important; color:#c4b5fd!important; }
+    .dark-mode .badge-shopping  { background:#451a03!important; color:#fde68a!important; }
+    .dark-mode .badge-food      { background:#4c0519!important; color:#fda4af!important; }
+    .dark-mode .badge-services  { background:#1e3a8a!important; color:#93c5fd!important; }
+    .dark-mode .badge-default   { background:#1f2937!important; color:#9ca3af!important; }
+    .dark-mode .subtab-active   { background:#3b82f6!important; }
+    .dark-mode .skeleton        { background:#374151!important; }
     .dark-mode .entry-card:hover { box-shadow:0 12px 24px rgba(0,0,0,.4); }
     input[type="search"]::-webkit-search-cancel-button { display:none; }
   </style>
@@ -155,8 +162,10 @@
         <div class="flex items-center justify-center sm:justify-start gap-3 mb-1">
           <div class="bg-white/20 rounded-xl p-2">
             <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold text-white">دليل مدينة حمص الخدمي والتجاري</h1>
@@ -168,14 +177,18 @@
           <p class="text-emerald-300 text-xs font-bold">🔒 وضع الحماية</p>
           <p id="hdr-count" class="text-white/70 text-[10px] mt-0.5">جاري التحميل...</p>
         </div>
-        <button onclick="fetchData()" title="تحديث" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
+        <button onclick="fetchData()" title="تحديث"
+          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg id="refresh-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
         </button>
-        <button onclick="toggleDark()" title="تبديل المظهر" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
+        <button onclick="toggleDark()" title="تبديل المظهر"
+          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg id="dark-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
           </svg>
         </button>
       </div>
@@ -197,7 +210,8 @@
       <div class="flex items-center gap-3">
         <div class="bg-blue-100 text-blue-700 rounded-xl p-2">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
         <div class="text-right">
@@ -205,7 +219,8 @@
           <p class="text-xs text-gray-400 mt-0.5">انقر لفتح نموذج الإضافة</p>
         </div>
       </div>
-      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s"
+        fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
       </svg>
     </button>
@@ -214,20 +229,20 @@
       <div class="border-t border-gray-100 p-5">
         <div class="bg-blue-50 border-r-4 border-blue-500 rounded-l-xl p-3 mb-5">
           <p class="text-xs text-blue-800 leading-relaxed">
-            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة وسيظهر تبويبه تلقائياً بعد الحفظ.
+            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة
+            وسيظهر تبويبه تلقائياً بعد الحفظ.
           </p>
         </div>
 
-        <form id="dir-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <form id="dir-form" onsubmit="handleSubmit(event)"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-          <!-- اسم المكان -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري / اسم المهني *</label>
             <input id="f-name" type="text" required placeholder="مثال: د. أحمد فلان — عيادة الأطفال"
               class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
-          <!-- القسم الرئيسي -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
             <select id="f-main" onchange="onMainChange()" required
@@ -238,7 +253,6 @@
               class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
           </div>
 
-          <!-- التصنيف الفرعي -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">التصنيف الفرعي / التخصص *</label>
             <select id="f-sub" onchange="onSubChange()" required
@@ -249,42 +263,38 @@
               class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
           </div>
 
-          <!-- العنوان -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص *</label>
             <input id="f-address" type="text" required placeholder="مثال: الإنشاءات — شارع البرازيل"
               class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
-          <!-- الهاتف -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
             <input id="f-phone" type="text" dir="ltr" placeholder="09xxxxxxxx"
               class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
-          <!-- أوقات الدوام -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام / ملاحظات</label>
             <input id="f-notes" type="text" placeholder="مثال: السبت–الأربعاء (4–8 مساءً)"
               class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
-          <!-- رابط السوشيال -->
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
             <input id="f-social" type="url" dir="ltr" placeholder="https://facebook.com/..."
               class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
 
-          <!-- زر الخريطة -->
           <div class="md:col-span-2 lg:col-span-2">
             <label class="block text-xs font-bold text-gray-600 mb-1">الموقع الجغرافي (اختياري)</label>
             <div class="flex flex-wrap gap-2">
               <button type="button" onclick="toggleMap()"
                 class="flex items-center gap-2 text-xs text-blue-700 border border-blue-200 bg-blue-50 px-3 py-2 rounded-xl hover:bg-blue-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                 </svg>
                 <span id="map-toggle-txt">تحديد الموقع على الخريطة</span>
               </button>
@@ -295,7 +305,6 @@
             </div>
           </div>
 
-          <!-- حقل الإدخال اليدوي للإحداثيات -->
           <div id="manual-coords-section" class="col-span-1 md:col-span-2 lg:col-span-3 hidden">
             <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
               <p class="text-xs font-bold text-amber-800">📌 إدخال الإحداثيات يدوياً</p>
@@ -318,7 +327,6 @@
             </div>
           </div>
 
-          <!-- الخريطة -->
           <div id="map-section" class="col-span-1 md:col-span-2 lg:col-span-3 space-y-2">
             <div class="flex items-center justify-between">
               <p class="text-xs font-semibold text-gray-600">انقر على الخريطة لتحديد الموقع</p>
@@ -328,7 +336,9 @@
                   📍 موقعي الحالي
                 </button>
                 <button type="button" onclick="clearMap()"
-                  class="text-xs text-gray-500 border border-gray-200 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-all">✕ إلغاء</button>
+                  class="text-xs text-gray-500 border border-gray-200 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-all">
+                  ✕ إلغاء
+                </button>
               </div>
             </div>
             <div id="map-loading" class="flex items-center justify-center gap-2 py-3 text-xs text-gray-500">
@@ -348,7 +358,6 @@
             <p id="coords-display" class="text-[11px] text-gray-400 text-center font-mono hidden"></p>
           </div>
 
-          <!-- زر الحفظ -->
           <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end pt-1">
             <button type="submit" id="submit-btn"
               class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-xl shadow-md text-sm transition-all disabled:opacity-60">
@@ -370,10 +379,13 @@
         <p id="entries-count" class="text-xs text-gray-400 mt-0.5">جاري تحميل البيانات...</p>
       </div>
       <div class="w-full sm:w-72 relative">
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
-        <input type="search" id="search-input" oninput="onSearch()" placeholder="ابحث بالاسم، العنوان، التخصص..."
+        <input type="search" id="search-input" oninput="onSearch()"
+          placeholder="ابحث بالاسم، العنوان، التخصص..."
           class="w-full border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm" />
       </div>
     </div>
@@ -423,15 +435,18 @@
 
 <!-- ══════════════ SCRIPT ══════════════ -->
 <script>
-const isAndroidWebView = (function() {
-  const ua = navigator.userAgent || '';
-  return /wv/.test(ua) || /Android.*Version\/[\d.]+/.test(ua) && !/Chrome\/[\d.]+/.test(ua)
-    || /Android/.test(ua) && typeof window.Android !== 'undefined';
-})();
+'use strict';
 
-const SHEET_API = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
-const RATINGS_API = '/api/ratings';
+// ═══════════════════════════════════════════════════════════════
+//  API URLs — مطلقة دائماً لضمان العمل داخل Android WebView
+//  window.location.origin يعيد المخطط + المضيف + المنفذ الصحيح
+// ═══════════════════════════════════════════════════════════════
+const SHEET_API   = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
+const RATINGS_API = window.location.origin + '/api/ratings';
 
+// ═══════════════════════════════════════════════════════════════
+//  بيانات Google Sheet
+// ═══════════════════════════════════════════════════════════════
 const COL = {
   id:      'معرف  id',
   name:    'اسم المكان',
@@ -468,33 +483,55 @@ const CAT_CLS = {
   'خدمات عامة وحرفية':       { card:'card-services', badge:'badge-services' },
 };
 
-let allEntries   = [];
-let categoryMap  = {};
-let ratingsMap   = {};   // { [entryId]: { avg, count } }
-let activeMain   = 'الكل';
-let activeSub    = 'الكل';
-let searchQ      = '';
-let isDark       = false;
-let leafMap      = null;
-let leafMarker   = null;
-let pickedLat    = null;
-let pickedLng    = null;
-let formOpen     = false;
-let mapOpen      = false;
-let manualOpen   = false;
+// ─── الحالة العامة ────────────────────────────────────────────
+let allEntries     = [];
+let categoryMap    = {};
+let ratingsMap     = {};          // { entryId: { avg, count } }
+let pendingRatings = new Set();   // يمنع إرسال نفس التقييم مرتين
+let activeMain     = 'الكل';
+let activeSub      = 'الكل';
+let searchQ        = '';
+let isDark         = false;
+let leafMap        = null;
+let leafMarker     = null;
+let pickedLat      = null;
+let pickedLng      = null;
+let formOpen       = false;
+let mapOpen        = false;
+let manualOpen     = false;
 let mapInitialized = false;
 
-// ─── localStorage helpers ───────────────────────────────
-function getUserRatings() {
-  try { return JSON.parse(localStorage.getItem('homs_user_ratings') || '{}'); } catch { return {}; }
-}
-function saveUserRating(entryId, rating) {
-  const obj = getUserRatings();
-  obj[entryId] = rating;
-  localStorage.setItem('homs_user_ratings', JSON.stringify(obj));
+// ═══════════════════════════════════════════════════════════════
+//  localStorage — آمن ضد الاستثناءات (WebView + Private Mode)
+// ═══════════════════════════════════════════════════════════════
+const store = {
+  get(key, fallback = {}) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* نتجاهل */ }
+  },
+};
+
+function getUserRatings()         { return store.get('homs_ratings', {}); }
+function saveUserRating(id, val)  { const r = getUserRatings(); r[id] = val; store.set('homs_ratings', r); }
+
+// ═══════════════════════════════════════════════════════════════
+//  fetch مع مهلة زمنية — 12 ثانية للشبكات البطيئة
+// ═══════════════════════════════════════════════════════════════
+function fetchWithTimeout(url, opts = {}, ms = 12000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  return fetch(url, { ...opts, signal: ctrl.signal })
+    .finally(() => clearTimeout(timer));
 }
 
-// ─── Init ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  تهيئة
+// ═══════════════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
   applyDark();
@@ -502,7 +539,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Promise.all([fetchData(), fetchRatings()]);
 });
 
-// ─── Dark Mode ──────────────────────────────────────────
+// ─── Dark Mode ────────────────────────────────────────────────
 function toggleDark() { isDark = !isDark; applyDark(); }
 function applyDark() {
   const body = document.getElementById('body');
@@ -514,29 +551,29 @@ function applyDark() {
     : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
 }
 
-// ─── جلب البيانات من Google Sheet ───────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  جلب البيانات من Google Sheet
+// ═══════════════════════════════════════════════════════════════
 async function fetchData() {
   const icon = document.getElementById('refresh-icon');
   icon.style.animation = 'spin 1s linear infinite';
   document.getElementById('error-banner').classList.add('hidden');
   try {
-    const res = await fetch(SHEET_API);
-    if (!res.ok) throw new Error('خطأ HTTP ' + res.status);
+    const res = await fetchWithTimeout(SHEET_API);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const raw = await res.json();
     allEntries = (Array.isArray(raw) ? raw : []).map(r => ({
-      ID:          r[COL.id]      || '',
-      Name:        r[COL.name]    || '',
-      MainCategory:r[COL.main]    || '',
-      SubCategory: r[COL.sub]     || '',
-      Address:     r[COL.address] || '',
-      MapLink:     r[COL.map]     || '',
-      Phone:       r[COL.phone]   || '',
-      Notes:       r[COL.notes]   || '',
-      Social:      r[COL.social]  || '',
-      Rating:      r[COL.rating]  || '',
-      Status:      r[COL.status]  || '',
+      ID:           String(r[COL.id]      || '').trim(),
+      Name:         r[COL.name]    || '',
+      MainCategory: r[COL.main]    || '',
+      SubCategory:  r[COL.sub]     || '',
+      Address:      r[COL.address] || '',
+      MapLink:      r[COL.map]     || '',
+      Phone:        r[COL.phone]   || '',
+      Notes:        r[COL.notes]   || '',
+      Social:       r[COL.social]  || '',
     })).filter(e => e.Name.trim() !== '');
-  } catch(err) {
+  } catch (err) {
     allEntries = [];
     document.getElementById('error-msg').textContent = 'تعذّر الاتصال: ' + err.message;
     document.getElementById('error-banner').classList.remove('hidden');
@@ -549,63 +586,114 @@ async function fetchData() {
   icon.style.animation = '';
 }
 
-// ─── جلب التقييمات من قاعدة البيانات ───────────────────
+// ═══════════════════════════════════════════════════════════════
+//  جلب ملخص التقييمات من قاعدة البيانات
+// ═══════════════════════════════════════════════════════════════
 async function fetchRatings() {
   try {
-    const res = await fetch(RATINGS_API + '/summary');
+    const res = await fetchWithTimeout(RATINGS_API + '/summary');
     if (!res.ok) return;
     ratingsMap = await res.json();
     renderGrid();
-  } catch { /* silent fail */ }
-}
-
-// ─── إرسال تقييم ────────────────────────────────────────
-async function submitRating(entryId, rating, cardEl) {
-  if (!entryId) return;
-  try {
-    const res = await fetch(RATINGS_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ entryId: String(entryId), rating }),
-    });
-    if (!res.ok) throw new Error();
-
-    saveUserRating(entryId, rating);
-
-    // تحديث ratingsMap محلياً بدون جلب كامل
-    const prev = ratingsMap[entryId];
-    if (prev) {
-      const total = prev.avg * prev.count + rating;
-      ratingsMap[entryId] = { avg: parseFloat((total / (prev.count + 1)).toFixed(1)), count: prev.count + 1 };
-    } else {
-      ratingsMap[entryId] = { avg: rating, count: 1 };
-    }
-
-    // تحديث عنصر التقييم في البطاقة مباشرة
-    const widget = cardEl.querySelector('.rating-widget');
-    if (widget) widget.innerHTML = buildRatingWidget(entryId, true, rating);
-
-    showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
-  } catch {
-    showToast('error', 'تعذّر حفظ التقييم، حاول مجدداً');
+  } catch (err) {
+    // فشل صامت — التقييمات اختيارية ولا تمنع تحميل الصفحة
+    console.warn('[Ratings] fetchRatings failed:', err.message);
   }
 }
 
-// ─── بناء HTML ودجت التقييم ──────────────────────────────
-function buildRatingWidget(entryId, alreadyRated, userRating) {
-  const info = ratingsMap[entryId];
-  const avg  = info ? info.avg  : 0;
-  const cnt  = info ? info.count : 0;
+// ═══════════════════════════════════════════════════════════════
+//  إرسال التقييم — مع منع التكرار وإعادة الحالة عند الفشل
+// ═══════════════════════════════════════════════════════════════
+async function submitRating(entryId, rating, widgetEl) {
+  if (!entryId || pendingRatings.has(entryId)) return;
+  pendingRatings.add(entryId);
+
+  // حالة الانتظار: نجوم تنبض
+  const stars = widgetEl.querySelectorAll('.star-btn');
+  stars.forEach((s, i) => {
+    s.disabled = true;
+    s.className = 'star-btn' + (i < rating ? ' pending' : '');
+  });
+
+  let success = false;
+  let errorMsg = 'خطأ غير معروف';
+
+  try {
+    const res = await fetchWithTimeout(
+      RATINGS_API,
+      {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
+      },
+      12000
+    );
+
+    if (res.ok) {
+      success = true;
+      // تحديث ratingsMap محلياً
+      const prev = ratingsMap[entryId];
+      if (prev) {
+        const newCount = prev.count + 1;
+        ratingsMap[entryId] = {
+          avg:   parseFloat(((prev.avg * prev.count + rating) / newCount).toFixed(1)),
+          count: newCount,
+        };
+      } else {
+        ratingsMap[entryId] = { avg: rating, count: 1 };
+      }
+      saveUserRating(entryId, rating);
+    } else {
+      // حاول قراءة رسالة الخطأ من الخادم
+      try {
+        const errBody = await res.json();
+        errorMsg = errBody.error || ('HTTP ' + res.status);
+      } catch { errorMsg = 'HTTP ' + res.status; }
+      console.error('[Ratings] server error', res.status, errorMsg);
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      errorMsg = 'انتهت مهلة الاتصال، تحقق من الإنترنت';
+    } else {
+      errorMsg = err.message || 'خطأ في الشبكة';
+    }
+    console.error('[Ratings] fetch error:', err);
+  }
+
+  pendingRatings.delete(entryId);
+
+  if (success) {
+    // تحديث واجهة البطاقة
+    widgetEl.innerHTML = buildRatingHTML(entryId, true, rating);
+    showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
+  } else {
+    // أعد النجوم لحالتها الأصلية لإتاحة المحاولة مجدداً
+    widgetEl.innerHTML = buildRatingHTML(entryId, false, null);
+    showToast('error', 'تعذّر حفظ التقييم: ' + errorMsg);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  بناء HTML ودجت النجوم
+// ═══════════════════════════════════════════════════════════════
+function buildRatingHTML(entryId, alreadyRated, userRating) {
+  const info  = ratingsMap[entryId];
+  const avg   = info ? info.avg   : 0;
+  const cnt   = info ? info.count : 0;
+  const round = Math.round(avg);
 
   let starsHtml = '';
   for (let i = 1; i <= 5; i++) {
-    const filled = alreadyRated
-      ? (i <= (userRating || 0) ? 'filled' : '')
-      : (i <= Math.round(avg) ? 'filled' : '');
     if (alreadyRated) {
-      starsHtml += `<button class="star-btn ${filled}" disabled>★</button>`;
+      // نجوم ثابتة لا تقبل النقر — نعرض تقييم المستخدم
+      const cls = i <= (userRating || 0) ? 'filled' : '';
+      starsHtml += `<button class="star-btn ${cls}" disabled aria-label="${i} نجوم">★</button>`;
     } else {
-      starsHtml += `<button class="star-btn ${filled}" onclick="handleStarClick('${entryId}',${i},this)">★</button>`;
+      // نجوم تفاعلية — نستخدم data-* بدل onclick المضمّن لتجنب مشاكل الأحرف الخاصة
+      const cls = i <= round ? 'filled' : '';
+      starsHtml += `<button class="star-btn ${cls}"
+        data-entry-id="${escHtml(entryId)}" data-star="${i}"
+        aria-label="أعطِ ${i} من 5 نجوم">★</button>`;
     }
   }
 
@@ -613,51 +701,85 @@ function buildRatingWidget(entryId, alreadyRated, userRating) {
   if (alreadyRated) {
     infoHtml = `<span class="rated-badge">✓ قيّمت بـ ${userRating}★</span>`;
   } else if (cnt > 0) {
-    infoHtml = `<span class="rating-info">${avg} (${cnt} ${cnt === 1 ? 'تقييم' : 'تقييمات'})</span>`;
+    infoHtml = `<span class="rating-label">${avg} · ${cnt} ${cnt === 1 ? 'تقييم' : 'تقييمات'}</span>`;
   } else {
-    infoHtml = `<span class="rating-info">قيّم هذه المنشأة</span>`;
+    infoHtml = `<span class="rating-label">قيّم هذه المنشأة</span>`;
   }
 
-  return `
-    <div class="flex items-center justify-between gap-2 flex-wrap">
-      <div class="star-row">${starsHtml}</div>
-      ${infoHtml}
-    </div>`;
+  return `<div class="flex items-center justify-between gap-2 flex-wrap">
+    <div class="star-row">${starsHtml}</div>${infoHtml}</div>`;
 }
 
-// ─── معالج النقر على نجمة ────────────────────────────────
-function handleStarClick(entryId, rating, starBtn) {
-  const card = starBtn.closest('.entry-card');
-  if (!card) return;
-  const widget = card.querySelector('.rating-widget');
-  if (!widget) return;
+// ─── تفويض حدث النقر على النجوم عبر الشبكة (event delegation) ─
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.star-btn[data-entry-id]');
+  if (!btn || btn.disabled) return;
+  const entryId = btn.dataset.entryId;
+  const rating  = parseInt(btn.dataset.star, 10);
+  if (!entryId || !rating) return;
 
-  // تأثير hover مرئي مؤقت قبل الحفظ
-  const stars = widget.querySelectorAll('.star-btn');
-  stars.forEach((s, idx) => {
-    s.classList.toggle('filled', idx < rating);
-    s.disabled = true;
+  const widgetEl = btn.closest('.rating-widget');
+  if (!widgetEl) return;
+
+  // منع إعادة التقييم إذا كان المستخدم قد قيّم من قبل
+  const userRatings = getUserRatings();
+  if (entryId in userRatings) return;
+
+  submitRating(entryId, rating, widgetEl);
+});
+
+// ─── hover preview على النجوم (تفويض أيضاً) ─────────────────
+document.addEventListener('mouseover', function(e) {
+  const btn = e.target.closest('.star-btn[data-entry-id]');
+  if (!btn || btn.disabled) return;
+  const row = btn.parentElement;
+  if (!row) return;
+  const hoverStar = parseInt(btn.dataset.star, 10);
+  row.querySelectorAll('.star-btn').forEach((s, i) => {
+    s.classList.toggle('filled', i < hoverStar);
   });
+});
+document.addEventListener('mouseout', function(e) {
+  const btn = e.target.closest('.star-btn[data-entry-id]');
+  if (!btn || btn.disabled) return;
+  const entryId = btn.dataset.entryId;
+  const info = ratingsMap[entryId];
+  const round = info ? Math.round(info.avg) : 0;
+  const row = btn.parentElement;
+  if (!row) return;
+  row.querySelectorAll('.star-btn').forEach((s, i) => {
+    s.classList.toggle('filled', i < round);
+  });
+});
 
-  submitRating(entryId, rating, card);
+// ═══════════════════════════════════════════════════════════════
+//  مساعد لتهريب HTML (يمنع XSS في data-*)
+// ═══════════════════════════════════════════════════════════════
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
-// ─── بناء خريطة الأقسام ──────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  بناء خريطة الأقسام
+// ═══════════════════════════════════════════════════════════════
 function buildCategoryMap() {
   categoryMap = {};
-  Object.entries(DEFAULT_CATS).forEach(([m, subs]) => {
-    categoryMap[m] = new Set(subs);
-  });
+  Object.entries(DEFAULT_CATS).forEach(([m, subs]) => { categoryMap[m] = new Set(subs); });
   allEntries.forEach(e => {
-    const m = e.MainCategory.trim();
-    const s = e.SubCategory.trim();
+    const m = e.MainCategory.trim(), s = e.SubCategory.trim();
     if (!m) return;
     if (!categoryMap[m]) categoryMap[m] = new Set();
     if (s) categoryMap[m].add(s);
   });
 }
 
-// ─── التبويبات ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  التبويبات
+// ═══════════════════════════════════════════════════════════════
 function renderTabs() {
   const cont = document.getElementById('main-tabs');
   cont.innerHTML = '';
@@ -686,7 +808,8 @@ function renderSubTabs() {
   const mkS = (label, active) => {
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = label;
-    b.className = `px-3 py-1 rounded-lg text-[11px] font-semibold transition-all border ${active ? 'subtab-active border-transparent' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'}`;
+    b.className = `px-3 py-1 rounded-lg text-[11px] font-semibold transition-all border ${
+      active ? 'subtab-active border-transparent' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'}`;
     b.onclick = () => { activeSub = label; renderSubTabs(); renderGrid(); };
     return b;
   };
@@ -702,13 +825,15 @@ function selectMain(cat) {
   renderTabs(); renderGrid();
 }
 
-// ─── البحث ───────────────────────────────────────────────
+// ─── البحث ───────────────────────────────────────────────────
 function onSearch() {
   searchQ = document.getElementById('search-input').value.trim();
   renderGrid();
 }
 
-// ─── عرض الكروت ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  عرض البطاقات
+// ═══════════════════════════════════════════════════════════════
 function renderGrid() {
   let list = allEntries;
   if (activeMain !== 'الكل') {
@@ -734,7 +859,9 @@ function renderGrid() {
       <div class="col-span-3 flex flex-col items-center py-20 text-center">
         <div class="text-4xl mb-4">${searchQ ? '🔍' : '➕'}</div>
         <h3 class="text-lg font-bold text-gray-700 mb-2">${searchQ ? 'لا توجد نتائج' : 'لا توجد جهات مسجّلة هنا بعد'}</h3>
-        <p class="text-sm text-gray-400 max-w-xs">${searchQ ? `لم نجد نتيجة لـ "${searchQ}"` : 'كن أول من يُضيف بيانات هنا!'}</p>
+        <p class="text-sm text-gray-400 max-w-xs">${searchQ
+          ? `لم نجد نتيجة لـ "${escHtml(searchQ)}"`
+          : 'كن أول من يُضيف بيانات هنا!'}</p>
         ${!searchQ ? '<button onclick="toggleForm()" class="mt-4 bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-800">إضافة الآن</button>' : ''}
       </div>`;
     return;
@@ -749,9 +876,9 @@ function renderGrid() {
     if (e.MapLink) {
       const coords = parseMapCoords(e.MapLink);
       if (coords) {
-        const safeName = e.Name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeName = escHtml(e.Name);
         mapHtml = `<button type="button"
-          onclick="showInlineMap(${coords.lat}, ${coords.lng}, '${safeName}')"
+          onclick="showInlineMap(${coords.lat}, ${coords.lng}, '${safeName.replace(/'/g,"&#39;")}')"
           class="flex items-center gap-1.5 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-all active:scale-95">
           📍 عرض الموقع
         </button>`;
@@ -760,42 +887,46 @@ function renderGrid() {
 
     let socialHtml = '';
     if (e.Social) {
-      socialHtml = `<div class="flex items-center gap-2"><span class="text-gray-400">🔗</span><a href="${e.Social}" target="_blank" rel="noopener" class="text-blue-600 text-[11px] hover:underline truncate max-w-[180px]">${e.Social.replace(/^https?:\/\/(www\.)?/,'')}</a></div>`;
+      const displayUrl = e.Social.replace(/^https?:\/\/(www\.)?/, '');
+      socialHtml = `<div class="flex items-center gap-2"><span class="text-gray-400">🔗</span>
+        <a href="${escHtml(e.Social)}" target="_blank" rel="noopener"
+          class="text-blue-600 text-[11px] hover:underline truncate max-w-[180px]">${escHtml(displayUrl)}</a></div>`;
     }
 
-    const mainIcon = CAT_ICONS[e.MainCategory] || '📁';
-    const entryIdStr = String(e.ID || '');
-    const alreadyRated = entryIdStr && (entryIdStr in userRatings);
-    const userRatingVal = alreadyRated ? userRatings[entryIdStr] : null;
+    const mainIcon    = CAT_ICONS[e.MainCategory] || '📁';
+    const entryId     = e.ID;                     // قد يكون فارغاً
+    const alreadyRated = entryId !== '' && (entryId in userRatings);
+    const userRating   = alreadyRated ? userRatings[entryId] : null;
+
+    const ratingSection = entryId
+      ? `<div class="mt-3 pt-3 border-t border-gray-100">
+           <div class="rating-widget">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>
+         </div>`
+      : '';
 
     const card = document.createElement('div');
     card.className = `entry-card bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
     card.innerHTML = `
       <div class="p-5 flex flex-col flex-grow">
-        <!-- القسم الرئيسي -->
         <div class="flex items-center justify-between gap-2 mb-2">
           <div class="flex items-center gap-1.5 min-w-0">
             <span class="text-sm leading-none">${mainIcon}</span>
-            <span class="text-[11px] font-bold text-gray-500 truncate">${e.MainCategory || 'قسم عام'}</span>
+            <span class="text-[11px] font-bold text-gray-500 truncate">${escHtml(e.MainCategory || 'قسم عام')}</span>
           </div>
-          ${e.ID ? `<span class="text-gray-300 text-[10px] font-mono flex-shrink-0">#${e.ID}</span>` : ''}
+          ${e.ID ? `<span class="text-gray-300 text-[10px] font-mono flex-shrink-0">#${escHtml(e.ID)}</span>` : ''}
         </div>
-        <!-- القسم الفرعي (badge) -->
         <div class="mb-3">
           <span class="inline-flex items-center text-[11px] font-bold px-2.5 py-1 rounded-lg ${cls.badge}">
-            ${e.SubCategory || 'تصنيف عام'}
+            ${escHtml(e.SubCategory || 'تصنيف عام')}
           </span>
         </div>
-        <!-- اسم المنشأة -->
-        <h3 class="text-base font-bold text-gray-800 mb-4 leading-snug">${e.Name}</h3>
-        <!-- تفاصيل -->
+        <h3 class="text-base font-bold text-gray-800 mb-4 leading-snug">${escHtml(e.Name)}</h3>
         <div class="space-y-2 text-xs text-gray-600 flex-grow">
-          ${e.Address ? `<div class="flex items-start gap-2"><span class="mt-0.5">📍</span><span class="leading-relaxed">${e.Address}</span></div>` : ''}
-          ${e.Phone   ? `<div class="flex items-center gap-2"><span>📞</span><a href="tel:${e.Phone}" dir="ltr" class="text-blue-600 font-mono hover:underline">${e.Phone}</a></div>` : ''}
-          ${e.Notes   ? `<div class="flex items-start gap-2 bg-gray-50 rounded-lg p-2.5"><span class="mt-0.5">🕐</span><span class="text-gray-500 text-[11px]">${e.Notes}</span></div>` : ''}
+          ${e.Address ? `<div class="flex items-start gap-2"><span class="mt-0.5">📍</span><span class="leading-relaxed">${escHtml(e.Address)}</span></div>` : ''}
+          ${e.Phone   ? `<div class="flex items-center gap-2"><span>📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : ''}
+          ${e.Notes   ? `<div class="flex items-start gap-2 bg-gray-50 rounded-lg p-2.5"><span class="mt-0.5">🕐</span><span class="text-gray-500 text-[11px]">${escHtml(e.Notes)}</span></div>` : ''}
           ${socialHtml}
         </div>
-        <!-- تذييل البطاقة -->
         <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="dot-pulse"></span>
@@ -803,24 +934,22 @@ function renderGrid() {
           </div>
           ${mapHtml}
         </div>
-        <!-- ── التقييم بالنجوم ── -->
-        ${entryIdStr ? `
-        <div class="mt-3 pt-3 border-t border-gray-100">
-          <div class="rating-widget">
-            ${buildRatingWidget(entryIdStr, alreadyRated, userRatingVal)}
-          </div>
-        </div>` : ''}
+        ${ratingSection}
       </div>`;
     grid.appendChild(card);
   });
 }
 
-// ─── قوائم الفورم ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  قوائم النموذج
+// ═══════════════════════════════════════════════════════════════
 function populateFormDropdowns() {
   const sel = document.getElementById('f-main');
   const prev = sel.value;
   sel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
-  Object.keys(categoryMap).forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+  Object.keys(categoryMap).forEach(c => {
+    sel.innerHTML += `<option value="${escHtml(c)}">${escHtml(c)}</option>`;
+  });
   sel.innerHTML += '<option value="__NEW__">➕ إضافة قسم رئيسي جديد...</option>';
   if (prev) sel.value = prev;
   refreshSubDropdown();
@@ -831,7 +960,9 @@ function refreshSubDropdown() {
   const sub  = document.getElementById('f-sub');
   sub.innerHTML = '<option value="">— اختر التصنيف الفرعي —</option>';
   if (main && main !== '__NEW__' && categoryMap[main]) {
-    Array.from(categoryMap[main]).forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`);
+    Array.from(categoryMap[main]).forEach(s => {
+      sub.innerHTML += `<option value="${escHtml(s)}">${escHtml(s)}</option>`;
+    });
   }
   sub.innerHTML += '<option value="__NEW__">➕ إضافة تخصص جديد...</option>';
 }
@@ -858,7 +989,9 @@ function onSubChange() {
   }
 }
 
-// ─── إرسال النموذج ───────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  إرسال النموذج
+// ═══════════════════════════════════════════════════════════════
 async function handleSubmit(e) {
   e.preventDefault();
   let mainCat = document.getElementById('f-main').value;
@@ -888,22 +1021,22 @@ async function handleSubmit(e) {
   };
   setSubmitting(true);
   try {
-    const res = await fetch(SHEET_API, {
+    const res = await fetchWithTimeout(SHEET_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([payload])
+      body: JSON.stringify([payload]),
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     showToast('success', `✅ تم إدراج "${payload[COL.name]}" بنجاح في الدليل!`);
     document.getElementById('dir-form').reset();
     document.getElementById('f-new-main').style.display = 'none';
     document.getElementById('f-new-sub').style.display  = 'none';
     clearMap();
-    if (mapOpen) toggleMap();
+    if (mapOpen)    toggleMap();
     if (manualOpen) toggleManualCoords();
     toggleForm();
     await fetchData();
-  } catch(err) {
+  } catch (err) {
     showToast('error', 'فشل الحفظ: ' + err.message);
   }
   setSubmitting(false);
@@ -921,11 +1054,12 @@ function toggleForm() {
   document.getElementById('form-chevron').style.transform = formOpen ? 'rotate(180deg)' : '';
 }
 
-// ─── الخريطة ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  الخريطة — مُصلَحة للعمل داخل Android WebView
+// ═══════════════════════════════════════════════════════════════
 function toggleMap() {
   mapOpen = !mapOpen;
-  const section = document.getElementById('map-section');
-  section.classList.toggle('open', mapOpen);
+  document.getElementById('map-section').classList.toggle('open', mapOpen);
   document.getElementById('map-toggle-txt').textContent = mapOpen ? 'إخفاء الخريطة' : 'تحديد الموقع على الخريطة';
   if (mapOpen) {
     if (!mapInitialized) {
@@ -942,10 +1076,9 @@ function initMap() {
   try {
     const container = document.getElementById('leaflet-map');
     if (container.offsetHeight === 0 || container.offsetWidth === 0) {
-      setTimeout(() => initMap(), 300);
-      return;
+      setTimeout(() => initMap(), 300); return;
     }
-    leafMap = L.map('leaflet-map', { tap: false, fadeAnimation: true, zoomAnimation: true })
+    leafMap = L.map('leaflet-map', { tap:false, fadeAnimation:true, zoomAnimation:true })
       .setView([34.7324, 36.7137], 13);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '© OpenStreetMap contributors © CARTO',
@@ -963,7 +1096,7 @@ function initMap() {
       }
     }, 400);
     setTimeout(() => { if (leafMap) leafMap.invalidateSize(true); }, 1000);
-  } catch(err) {
+  } catch {
     document.getElementById('map-loading').style.display = 'none';
     document.getElementById('map-error').classList.remove('hidden');
   }
@@ -972,7 +1105,7 @@ function initMap() {
 function retryMap() {
   document.getElementById('map-error').classList.add('hidden');
   document.getElementById('map-loading').style.display = 'flex';
-  if (leafMap) { try { leafMap.remove(); } catch(e) {} leafMap = null; leafMarker = null; mapInitialized = false; }
+  if (leafMap) { try { leafMap.remove(); } catch(_){} leafMap=null; leafMarker=null; mapInitialized=false; }
   setTimeout(() => initMap(), 300);
 }
 
@@ -996,16 +1129,14 @@ function clearMap() {
   document.getElementById('manual-coords-display').classList.add('hidden');
 }
 
-// ─── GPS ─────────────────────────────────────────────────
+// ─── GPS ─────────────────────────────────────────────────────
 function geoLocate() {
   const btn = document.getElementById('geolocate-btn');
   if (!navigator.geolocation) {
     showToast('error', 'خاصية الموقع الجغرافي غير مدعومة في هذا الجهاز');
-    if (!manualOpen) toggleManualCoords();
-    return;
+    if (!manualOpen) toggleManualCoords(); return;
   }
-  btn.textContent = '⏳ جاري التحديد...';
-  btn.disabled = true;
+  btn.textContent = '⏳ جاري التحديد...'; btn.disabled = true;
   navigator.geolocation.getCurrentPosition(
     function(pos) {
       btn.textContent = '📍 موقعي الحالي'; btn.disabled = false;
@@ -1037,14 +1168,15 @@ function geoLocate() {
       showToast('error', msgs[err.code] || 'خطأ في الموقع: ' + err.message);
       if (!manualOpen) setTimeout(() => toggleManualCoords(), 2000);
     },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    { enableHighAccuracy:true, timeout:15000, maximumAge:10000 }
   );
 }
 
 function toggleManualCoords() {
   manualOpen = !manualOpen;
   document.getElementById('manual-coords-section').classList.toggle('hidden', !manualOpen);
-  document.getElementById('manual-coords-txt').textContent = manualOpen ? 'إخفاء الإدخال اليدوي' : 'إدخال إحداثيات يدوياً';
+  document.getElementById('manual-coords-txt').textContent =
+    manualOpen ? 'إخفاء الإدخال اليدوي' : 'إدخال إحداثيات يدوياً';
 }
 
 function onManualCoordsChange() {
@@ -1062,38 +1194,33 @@ function onManualCoordsChange() {
   }
 }
 
-// ─── لوحة الخريطة المضمّنة ───────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  لوحة الخريطة المضمّنة
+// ═══════════════════════════════════════════════════════════════
 let viewMap = null, viewMarker = null;
 
-function parseMapCoords(mapLink) {
-  if (!mapLink) return null;
-  let m = mapLink.match(/[?&]q=([-\d.]+),([-\d.]+)/);
-  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  m = mapLink.match(/[?&]ll=([-\d.]+),([-\d.]+)/);
-  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  m = mapLink.match(/@([-\d.]+),([-\d.]+)/);
-  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  m = mapLink.match(/^([-\d.]+),([-\d.]+)$/);
-  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+function parseMapCoords(link) {
+  if (!link) return null;
+  let m;
+  m = link.match(/[?&]q=([-\d.]+),([-\d.]+)/);   if (m) return { lat:+m[1], lng:+m[2] };
+  m = link.match(/[?&]ll=([-\d.]+),([-\d.]+)/);   if (m) return { lat:+m[1], lng:+m[2] };
+  m = link.match(/@([-\d.]+),([-\d.]+)/);          if (m) return { lat:+m[1], lng:+m[2] };
+  m = link.match(/^([-\d.]+),([-\d.]+)$/);         if (m) return { lat:+m[1], lng:+m[2] };
   return null;
 }
 
 function showInlineMap(lat, lng, name) {
   const panel = document.getElementById('view-map-panel');
-  const status = document.getElementById('view-map-status');
   document.getElementById('view-map-title').textContent = name || 'موقع المنشأة';
-  status.textContent = 'جاري تحميل الخريطة...';
-  if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(e) {} viewMap = null; viewMarker = null; }
+  document.getElementById('view-map-status').textContent = 'جاري تحميل الخريطة...';
+  if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(_){} viewMap=null; viewMarker=null; }
   panel.classList.add('open');
-  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
   setTimeout(() => {
-    const container = document.getElementById('view-leaflet-map');
-    const h = container ? container.offsetHeight : 0;
-    const w = container ? container.offsetWidth  : 0;
-    if (!container || h === 0 || w === 0) {
-      status.textContent = 'جاري الإعداد...';
-      setTimeout(() => _initViewMap(lat, lng, name), 300);
-      return;
+    const c = document.getElementById('view-leaflet-map');
+    if (!c || c.offsetHeight === 0 || c.offsetWidth === 0) {
+      document.getElementById('view-map-status').textContent = 'جاري الإعداد...';
+      setTimeout(() => _initViewMap(lat, lng, name), 300); return;
     }
     _initViewMap(lat, lng, name);
   }, 300);
@@ -1102,31 +1229,37 @@ function showInlineMap(lat, lng, name) {
 function _initViewMap(lat, lng, name) {
   const status = document.getElementById('view-map-status');
   try {
-    viewMap = L.map('view-leaflet-map', { tap: false, zoomControl: true, attributionControl: true, fadeAnimation: false, zoomAnimation: false, markerZoomAnimation: false })
-      .setView([lat, lng], 16);
+    viewMap = L.map('view-leaflet-map', {
+      tap:false, zoomControl:true, attributionControl:true,
+      fadeAnimation:false, zoomAnimation:false, markerZoomAnimation:false,
+    }).setView([lat, lng], 16);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO',
-      subdomains: 'abcd', maxZoom: 20, crossOrigin: 'anonymous',
+      attribution:'© OpenStreetMap © CARTO', subdomains:'abcd', maxZoom:20, crossOrigin:'anonymous',
     }).addTo(viewMap);
     viewMarker = L.marker([lat, lng]).addTo(viewMap);
-    viewMarker.bindPopup(`<b style="font-family:Cairo,sans-serif;font-size:13px;direction:rtl">${name || 'الموقع'}</b>`, { closeButton: false, autoPan: false }).openPopup();
-    const fix = () => { if (viewMap) { viewMap.invalidateSize(true); viewMap.setView([lat, lng], 16); } };
-    [100, 400, 900, 1800].forEach(t => setTimeout(fix, t));
+    viewMarker.bindPopup(
+      `<b style="font-family:Cairo,sans-serif;font-size:13px;direction:rtl">${name || 'الموقع'}</b>`,
+      { closeButton:false, autoPan:false }
+    ).openPopup();
+    const fix = () => { if (viewMap) { viewMap.invalidateSize(true); viewMap.setView([lat,lng],16); } };
+    [100,400,900,1800].forEach(t => setTimeout(fix, t));
     status.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  } catch(err) {
+  } catch {
     status.textContent = '⚠️ تعذّر تحميل الخريطة';
   }
 }
 
 function hideInlineMap() {
   document.getElementById('view-map-panel').classList.remove('open');
-  if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(e) {} viewMap = null; viewMarker = null; }
+  if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(_){} viewMap=null; viewMarker=null; }
   document.getElementById('view-map-status').textContent = 'جاري تحميل الخريطة...';
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hideInlineMap(); });
 
-// ─── Toast ────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  Toast
+// ═══════════════════════════════════════════════════════════════
 let toastTimer;
 function showToast(type, msg) {
   const t = document.getElementById('toast');
