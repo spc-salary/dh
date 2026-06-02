@@ -809,14 +809,13 @@ function initMap() {
       zoomAnimation: true,
     }).setView([34.7324, 36.7137], 13);
 
-    // FIX: استخدام رابط tile بدون {s} subdomain لتجنب مشكلات SSL في WebView
-    // وإضافة crossOrigin لتجنب حجب CORS
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org">OpenStreetMap</a>',
-      maxZoom: 19,
+    // استخدام CARTO tiles كبديل مجاني لا يحجب WebView/Mobile
+    // OSM يحجب التطبيقات — CARTO مسموح به ولا يحتاج API key
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20,
       crossOrigin: 'anonymous',
-      // FIX: خادم احتياطي عند فشل التحميل
-      errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
     }).addTo(leafMap);
 
     leafMap.on('click', ev => {
