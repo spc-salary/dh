@@ -95,20 +95,38 @@
     .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
 
     /* ═══ Star Rating ═══ */
-    .star-row { display:flex; align-items:center; gap:2px; direction:ltr; }
+    .star-row { display:flex; align-items:center; gap:3px; direction:ltr; }
     .star-btn {
-      background:none; border:none; padding:2px; cursor:pointer;
-      font-size:20px; line-height:1; color:#d1d5db;
-      transition:color .15s, transform .15s;
+      background:none; border:none; padding:3px; cursor:pointer;
+      font-size:22px; line-height:1; color:#d1d5db;
+      transition:color .12s ease, transform .12s ease, text-shadow .12s ease, opacity .12s ease;
       -webkit-tap-highlight-color:transparent;
       touch-action:manipulation;
+      will-change:transform;
     }
-    .star-btn:not(:disabled):hover  { transform:scale(1.25); color:#f59e0b; }
-    .star-btn:not(:disabled):active { transform:scale(1.1); }
+    .star-btn:disabled { cursor:default; }
+    /* نجمة محددة نهائياً (بعد التصويت أو متوسط المجتمع) */
     .star-btn.filled  { color:#f59e0b; }
+    /* تأثير hover/touch — كل نجمة في نطاق الاختيار */
+    .star-btn.hover-fill {
+      color:#f59e0b !important;
+      text-shadow:0 0 12px rgba(245,158,11,.75), 0 0 5px rgba(245,158,11,.4);
+    }
+    /* تكبير تدريجي: النجمة الأقرب للمؤشر أكبر */
+    .star-btn.hover-fill[data-star="1"] { transform:scale(1.08); }
+    .star-btn.hover-fill[data-star="2"] { transform:scale(1.13); }
+    .star-btn.hover-fill[data-star="3"] { transform:scale(1.18); }
+    .star-btn.hover-fill[data-star="4"] { transform:scale(1.22); }
+    .star-btn.hover-fill[data-star="5"] { transform:scale(1.28); }
+    /* تعتيم النجوم خارج النطاق لإبراز الاختيار */
+    .star-btn.hover-dim {
+      color:#d1d5db !important;
+      opacity:.45;
+      transform:scale(0.95);
+      text-shadow:none;
+    }
     .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
     @keyframes starPulse { from{opacity:.6} to{opacity:1} }
-    .star-btn:disabled { cursor:default; }
     .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
     .rated-badge {
       display:inline-flex; align-items:center; gap:3px; font-size:10px;
@@ -117,7 +135,7 @@
     }
     .dark-mode .star-btn           { color:#4b5563; }
     .dark-mode .star-btn.filled    { color:#f59e0b; }
-    .dark-mode .star-btn:not(:disabled):hover { color:#f59e0b; }
+    .dark-mode .star-btn.hover-dim { color:#374151 !important; }
     .dark-mode .rating-label       { color:#64748b; }
     .dark-mode .rated-badge        { background:#064e3b; color:#6ee7b7; }
 
@@ -669,18 +687,30 @@ async function submitRating(entryId, rating, widgetEl) {
   widgetEl.innerHTML = buildRatingHTML(entryId, true, rating);
   showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
 
-  // ③ مزامنة مع الخادم في الخلفية — اختيارية تماماً
+  // ③ مزامنة مع الخادم في الخلفية — إذا نجحت نستخدم المتوسط الحقيقي من قاعدة البيانات
   if (RATINGS_API) {
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 8000);
-      await fetch(RATINGS_API, {
+      const res = await fetch(RATINGS_API, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
         signal:  ctrl.signal,
       });
       clearTimeout(timer);
+      if (res.ok) {
+        const data = await res.json();
+        // تحديث ratingsMap بالمتوسط الحقيقي المحسوب من قاعدة البيانات
+        if (data.avg !== undefined && data.count !== undefined) {
+          ratingsMap[entryId] = { avg: data.avg, count: data.count };
+          // تحديث الواجهة بالبيانات الحقيقية من الخادم
+          const widget = document.querySelector(`.rating-widget[data-entry="${escHtml(entryId)}"]`);
+          if (widget) {
+            widget.innerHTML = buildRatingHTML(entryId, true, rating);
+          }
+        }
+      }
     } catch {
       // فشل صامت — localStorage هو المصدر الأساسي للتقييمات
     }
@@ -739,29 +769,58 @@ document.addEventListener('click', function(e) {
   submitRating(entryId, rating, widgetEl);
 });
 
-// ─── hover preview على النجوم ─────────────────────────────────
+// ─── مساعد: تطبيق حالة hover/touch على صف النجوم ────────────────
+function applyStarHover(row, activeStar) {
+  row.querySelectorAll('.star-btn').forEach(s => {
+    const n = parseInt(s.dataset.star, 10);
+    s.classList.toggle('hover-fill', n <= activeStar);
+    s.classList.toggle('hover-dim',  n >  activeStar);
+  });
+}
+function clearStarHover(row) {
+  row.querySelectorAll('.star-btn').forEach(s => {
+    s.classList.remove('hover-fill', 'hover-dim');
+  });
+}
+
+// ─── Desktop: mouseover / mouseout ───────────────────────────────
 document.addEventListener('mouseover', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
   const row = btn.parentElement;
   if (!row) return;
-  const hoverStar = parseInt(btn.dataset.star, 10);
-  row.querySelectorAll('.star-btn').forEach((s, i) => {
-    s.classList.toggle('filled', i < hoverStar);
-  });
+  applyStarHover(row, parseInt(btn.dataset.star, 10));
 });
 document.addEventListener('mouseout', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
-  const entryId = btn.dataset.entryId;
-  const info = ratingsMap[entryId];
-  const round = info ? Math.round(info.avg) : 0;
   const row = btn.parentElement;
   if (!row) return;
-  row.querySelectorAll('.star-btn').forEach((s, i) => {
-    s.classList.toggle('filled', i < round);
-  });
+  clearStarHover(row);
 });
+
+// ─── Mobile: touchstart / touchend ───────────────────────────────
+document.addEventListener('touchstart', function(e) {
+  const btn = e.target.closest('.star-btn[data-entry-id]');
+  if (!btn || btn.disabled) return;
+  const row = btn.parentElement;
+  if (!row) return;
+  applyStarHover(row, parseInt(btn.dataset.star, 10));
+}, { passive: true });
+document.addEventListener('touchend', function(e) {
+  const btn = e.target.closest('.star-btn[data-entry-id]');
+  if (!btn || btn.disabled) return;
+  const row = btn.parentElement;
+  if (!row) return;
+  // تأخير قصير بعد اللمس حتى يرى المستخدم الاختيار قبل إرسال التقييم
+  setTimeout(() => clearStarHover(row), 350);
+}, { passive: true });
+document.addEventListener('touchcancel', function(e) {
+  const btn = e.target.closest('.star-btn[data-entry-id]');
+  if (!btn) return;
+  const row = btn.parentElement;
+  if (row) clearStarHover(row);
+}, { passive: true });
 
 // ═══════════════════════════════════════════════════════════════
 //  مساعد لتهريب HTML (يمنع XSS في data-*)
