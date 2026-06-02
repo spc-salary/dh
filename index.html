@@ -66,6 +66,121 @@
     .leaflet-pane { z-index: 1 !important; }
     .leaflet-top, .leaflet-bottom { z-index: 2 !important; }
 
+    /* ===== نافذة خريطة البطاقات المنبثقة (Modal) ===== */
+    #view-map-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      animation: modalFadeIn .22s ease;
+    }
+    #view-map-modal.open {
+      display: flex;
+    }
+    @keyframes modalFadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+    #view-map-sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 680px;
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+      animation: sheetSlideUp .28s cubic-bezier(.32,1,.4,1);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 640px) {
+      #view-map-modal { align-items: center; padding: 1rem; }
+      #view-map-sheet { border-radius: 20px; max-height: 80vh; }
+    }
+    @keyframes sheetSlideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    #view-map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      flex-shrink: 0;
+    }
+    #view-map-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      flex: 1;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-left: 10px;
+    }
+    #close-map-modal-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #64748b;
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+    #close-map-modal-btn:hover { background: #e2e8f0; }
+    #view-map-container {
+      flex: 1;
+      min-height: 300px;
+      position: relative;
+    }
+    #view-leaflet-map {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      position: absolute;
+      inset: 0;
+    }
+    #view-map-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #64748b;
+      background: #f8fafc;
+      z-index: 5;
+    }
+    #view-map-coords {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      font-size: 11px;
+      color: #94a3b8;
+      text-align: center;
+      font-family: monospace;
+      background: #f8fafc;
+      border-top: 1px solid #f1f5f9;
+    }
+    .dark-mode #view-map-sheet { background: #1e293b; }
+    .dark-mode #view-map-header { border-color: #334155; }
+    .dark-mode #view-map-title  { color: #f1f5f9; }
+    .dark-mode #close-map-modal-btn { background:#334155; color:#94a3b8; }
+    .dark-mode #view-map-coords { background:#0f172a; border-color:#334155; }
+
     .dot-pulse { display:inline-block; width:.5rem; height:.5rem; background:#10b981; border-radius:50%; animation:dotPulse 2s ease-in-out infinite; }
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
     .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
@@ -370,6 +485,33 @@
 
 <div id="toast"></div>
 
+<!-- ══════════════ MODAL: خريطة البطاقات ══════════════ -->
+<div id="view-map-modal" role="dialog" aria-modal="true" aria-label="موقع المنشأة على الخريطة"
+     onclick="handleModalBackdropClick(event)">
+  <div id="view-map-sheet">
+    <div id="view-map-header">
+      <button id="close-map-modal-btn" onclick="closeMapModal()" title="إغلاق">✕</button>
+      <span id="view-map-title">موقع المنشأة</span>
+      <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+    <div id="view-map-container">
+      <div id="view-map-loading">
+        <svg class="w-5 h-5 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        جاري تحميل الخريطة...
+      </div>
+      <div id="view-leaflet-map"></div>
+    </div>
+    <div id="view-map-coords"></div>
+  </div>
+</div>
+
 <!-- ══════════════ SCRIPT ══════════════ -->
 <script>
 // ═══════════════════════════════════════════════════
@@ -606,8 +748,15 @@ function renderGrid() {
 
     let mapHtml = '';
     if (e.MapLink) {
-      const href = e.MapLink.startsWith('http') ? e.MapLink : `https://www.google.com/maps?q=${e.MapLink}`;
-      mapHtml = `<a href="${href}" target="_blank" rel="noopener" class="flex items-center gap-1 text-[10px] text-blue-600 hover:underline">📍 الخريطة ↗</a>`;
+      const coords = parseMapCoords(e.MapLink);
+      if (coords) {
+        const safeName = e.Name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        mapHtml = `<button type="button"
+          onclick="openMapModal(${coords.lat}, ${coords.lng}, '${safeName}')"
+          class="flex items-center gap-1.5 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-all active:scale-95">
+          📍 عرض الموقع
+        </button>`;
+      }
     }
 
     let socialHtml = '';
@@ -1019,6 +1168,134 @@ function onManualCoordsChange() {
     display.classList.add('hidden');
   }
 }
+
+// ═══════════════════════════════════════════════════
+//  نافذة خريطة البطاقات المنبثقة (Modal)
+// ═══════════════════════════════════════════════════
+let viewMap    = null;
+let viewMarker = null;
+
+// استخراج الإحداثيات من رابط Google Maps أو نص الإحداثيات المباشر
+function parseMapCoords(mapLink) {
+  if (!mapLink) return null;
+  // صيغة: https://www.google.com/maps?q=34.732400,36.713700
+  let m = mapLink.match(/[?&]q=([-\d.]+),([-\d.]+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  // صيغة: https://maps.google.com/?ll=34.732400,36.713700
+  m = mapLink.match(/[?&]ll=([-\d.]+),([-\d.]+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  // صيغة: https://www.google.com/maps/@34.732400,36.713700,15z
+  m = mapLink.match(/@([-\d.]+),([-\d.]+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  // صيغة نص مباشر: "34.732400,36.713700"
+  m = mapLink.match(/^([-\d.]+),([-\d.]+)$/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  return null;
+}
+
+function openMapModal(lat, lng, name) {
+  const modal = document.getElementById('view-map-modal');
+  document.getElementById('view-map-title').textContent = name || 'موقع المنشأة';
+  document.getElementById('view-map-coords').textContent =
+    `خط العرض: ${lat.toFixed(6)}  |  خط الطول: ${lng.toFixed(6)}`;
+  document.getElementById('view-map-loading').style.display = 'flex';
+
+  // منع تمرير الصفحة الخلفية
+  document.body.style.overflow = 'hidden';
+  modal.classList.add('open');
+
+  // تدمير الخريطة السابقة إن وجدت لتجنب تعارض الـ container
+  if (viewMap) {
+    try { viewMap.remove(); } catch(e) {}
+    viewMap = null;
+    viewMarker = null;
+  }
+
+  // المفتاح: انتظر حتى يتم رسم الـ Modal في DOM ثم هيّئ Leaflet
+  // هذا هو نفس مشكلة نموذج الإضافة — الحاوية تكون display:none عند بدء التهيئة
+  setTimeout(() => {
+    const container = document.getElementById('view-leaflet-map');
+    if (!container) return;
+
+    try {
+      viewMap = L.map('view-leaflet-map', {
+        tap: false,
+        zoomControl: true,
+        fadeAnimation: true,
+      }).setView([lat, lng], 16);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20,
+        crossOrigin: 'anonymous',
+      }).addTo(viewMap);
+
+      // علامة الموقع مع popup باسم المنشأة
+      viewMarker = L.marker([lat, lng])
+        .addTo(viewMap)
+        .bindPopup(`<b style="font-family:Cairo,sans-serif;font-size:13px">${name || 'الموقع'}</b>`, { closeButton: false })
+        .openPopup();
+
+      // الخطوة الحاسمة: invalidateSize بعد ظهور الحاوية الفعلي
+      setTimeout(() => {
+        if (viewMap) {
+          viewMap.invalidateSize(true);
+          viewMap.setView([lat, lng], 16);
+          document.getElementById('view-map-loading').style.display = 'none';
+        }
+      }, 350);
+
+      // ضمان ثانٍ لأجهزة WebView الأبطأ
+      setTimeout(() => {
+        if (viewMap) viewMap.invalidateSize(true);
+      }, 900);
+
+    } catch(err) {
+      console.error('View map error:', err);
+      document.getElementById('view-map-loading').innerHTML =
+        '<span style="color:#dc2626">⚠️ تعذّر تحميل الخريطة. تأكد من الاتصال بالإنترنت.</span>';
+    }
+  }, 250);
+}
+
+function closeMapModal() {
+  const modal = document.getElementById('view-map-modal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+
+  // تأجيل تدمير الخريطة حتى انتهاء animation الإغلاق
+  setTimeout(() => {
+    if (viewMap) {
+      try { viewMap.remove(); } catch(e) {}
+      viewMap = null;
+      viewMarker = null;
+    }
+    document.getElementById('view-map-loading').style.display = 'flex';
+    document.getElementById('view-map-coords').textContent = '';
+  }, 300);
+}
+
+// إغلاق عند الضغط على الخلفية الداكنة
+function handleModalBackdropClick(event) {
+  if (event.target === document.getElementById('view-map-modal')) {
+    closeMapModal();
+  }
+}
+
+// إغلاق عند الضغط على زر Back في أندرويد
+window.addEventListener('popstate', () => {
+  const modal = document.getElementById('view-map-modal');
+  if (modal.classList.contains('open')) {
+    closeMapModal();
+  }
+});
+
+// دفع حالة في history لاستقبال حدث Back
+document.getElementById('view-map-modal').addEventListener('transitionend', () => {});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMapModal();
+});
 
 // ── Toast ─────────────────────────────────────────
 let toastTimer;
