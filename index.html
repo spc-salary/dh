@@ -66,54 +66,25 @@
     .leaflet-pane { z-index: 1 !important; }
     .leaflet-top, .leaflet-bottom { z-index: 2 !important; }
 
-    /* ===== نافذة خريطة البطاقات المنبثقة (Modal) ===== */
-    #view-map-modal {
+    /* ===== لوحة خريطة البطاقات المضمّنة (Inline Panel) ===== */
+    /* لا position:fixed — يعمل داخل تدفق الصفحة العادي لأقصى توافق مع Android WebView */
+    #view-map-panel {
       display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      align-items: flex-end;
-      justify-content: center;
-      padding: 0;
-      animation: modalFadeIn .22s ease;
-    }
-    #view-map-modal.open {
-      display: flex;
-    }
-    @keyframes modalFadeIn {
-      from { opacity:0; }
-      to   { opacity:1; }
-    }
-    #view-map-sheet {
       background: #fff;
-      width: 100%;
-      max-width: 680px;
-      border-radius: 20px 20px 0 0;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
       overflow: hidden;
-      box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
-      animation: sheetSlideUp .28s cubic-bezier(.32,1,.4,1);
-      max-height: 92vh;
-      display: flex;
-      flex-direction: column;
+      margin-bottom: 8px;
     }
-    @media (min-width: 640px) {
-      #view-map-modal { align-items: center; padding: 1rem; }
-      #view-map-sheet { border-radius: 20px; max-height: 80vh; }
-    }
-    @keyframes sheetSlideUp {
-      from { transform: translateY(100%); }
-      to   { transform: translateY(0); }
-    }
-    #view-map-header {
+    #view-map-panel.open { display: block; }
+    #view-map-panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px 12px;
+      padding: 12px 16px;
       border-bottom: 1px solid #f1f5f9;
-      flex-shrink: 0;
+      background: #f8fafc;
     }
     #view-map-title {
       font-size: 14px;
@@ -124,50 +95,31 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin-left: 10px;
+      margin-left: 8px;
     }
-    #close-map-modal-btn {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: #f1f5f9;
-      border: none;
+    #close-view-map-btn {
+      display: flex; align-items: center; gap: 4px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #dc2626;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: #64748b;
       flex-shrink: 0;
       transition: background .15s;
     }
-    #close-map-modal-btn:hover { background: #e2e8f0; }
-    #view-map-container {
-      flex: 1;
-      min-height: 300px;
-      position: relative;
-    }
+    #close-view-map-btn:hover { background: #fecaca; }
+    /* الارتفاع الثابت بالبيكسل — الأهم للعمل في WebView */
     #view-leaflet-map {
+      display: block;
       width: 100%;
-      height: 100%;
-      min-height: 300px;
-      position: absolute;
-      inset: 0;
+      height: 340px;
+      background: #e5e7eb;
     }
-    #view-map-loading {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 13px;
-      color: #64748b;
-      background: #f8fafc;
-      z-index: 5;
-    }
-    #view-map-coords {
-      flex-shrink: 0;
-      padding: 8px 16px;
+    #view-map-status {
+      padding: 6px 16px;
       font-size: 11px;
       color: #94a3b8;
       text-align: center;
@@ -175,11 +127,10 @@
       background: #f8fafc;
       border-top: 1px solid #f1f5f9;
     }
-    .dark-mode #view-map-sheet { background: #1e293b; }
-    .dark-mode #view-map-header { border-color: #334155; }
-    .dark-mode #view-map-title  { color: #f1f5f9; }
-    .dark-mode #close-map-modal-btn { background:#334155; color:#94a3b8; }
-    .dark-mode #view-map-coords { background:#0f172a; border-color:#334155; }
+    .dark-mode #view-map-panel { background:#1e293b; border-color:#334155; }
+    .dark-mode #view-map-panel-header { background:#0f172a; border-color:#334155; }
+    .dark-mode #view-map-title { color:#f1f5f9; }
+    .dark-mode #view-map-status { background:#0f172a; border-color:#334155; }
 
     .dot-pulse { display:inline-block; width:.5rem; height:.5rem; background:#10b981; border-radius:50%; animation:dotPulse 2s ease-in-out infinite; }
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
@@ -460,6 +411,22 @@
     <div id="sub-tabs" class="flex flex-wrap gap-1.5 pt-1 border-t border-gray-100" style="display:none"></div>
   </section>
 
+  <!-- ══ لوحة عرض الخريطة المضمّنة (بدون Modal / بدون position:fixed) ══ -->
+  <div id="view-map-panel">
+    <div id="view-map-panel-header">
+      <button id="close-view-map-btn" onclick="hideInlineMap()">✕ إغلاق الخريطة</button>
+      <span id="view-map-title">موقع المنشأة</span>
+      <svg style="width:18px;height:18px;color:#3b82f6;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+    <!-- ارتفاع ثابت بالبيكسل — لا يتغير — ضروري لـ Android WebView -->
+    <div id="view-leaflet-map"></div>
+    <div id="view-map-status">جاري تحميل الخريطة...</div>
+  </div>
+
   <!-- ══ الشبكة ══ -->
   <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
@@ -485,32 +452,6 @@
 
 <div id="toast"></div>
 
-<!-- ══════════════ MODAL: خريطة البطاقات ══════════════ -->
-<div id="view-map-modal" role="dialog" aria-modal="true" aria-label="موقع المنشأة على الخريطة"
-     onclick="handleModalBackdropClick(event)">
-  <div id="view-map-sheet">
-    <div id="view-map-header">
-      <button id="close-map-modal-btn" onclick="closeMapModal()" title="إغلاق">✕</button>
-      <span id="view-map-title">موقع المنشأة</span>
-      <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
-    </div>
-    <div id="view-map-container">
-      <div id="view-map-loading">
-        <svg class="w-5 h-5 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-        </svg>
-        جاري تحميل الخريطة...
-      </div>
-      <div id="view-leaflet-map"></div>
-    </div>
-    <div id="view-map-coords"></div>
-  </div>
-</div>
 
 <!-- ══════════════ SCRIPT ══════════════ -->
 <script>
@@ -752,7 +693,7 @@ function renderGrid() {
       if (coords) {
         const safeName = e.Name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         mapHtml = `<button type="button"
-          onclick="openMapModal(${coords.lat}, ${coords.lng}, '${safeName}')"
+          onclick="showInlineMap(${coords.lat}, ${coords.lng}, '${safeName}')"
           class="flex items-center gap-1.5 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-all active:scale-95">
           📍 عرض الموقع
         </button>`;
@@ -764,21 +705,41 @@ function renderGrid() {
       socialHtml = `<div class="flex items-center gap-2"><span class="text-gray-400">🔗</span><a href="${e.Social}" target="_blank" rel="noopener" class="text-blue-600 text-[11px] hover:underline truncate max-w-[180px]">${e.Social.replace(/^https?:\/\/(www\.)?/,'')}</a></div>`;
     }
 
+    const mainIcon = CAT_ICONS[e.MainCategory] || '📁';
+
     const card = document.createElement('div');
     card.className = `entry-card bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
     card.innerHTML = `
       <div class="p-5 flex flex-col flex-grow">
-        <div class="flex items-start justify-between gap-2 mb-3">
-          <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg ${cls.badge}">${e.SubCategory || 'تصنيف عام'}</span>
-          ${e.ID ? `<span class="text-gray-300 text-[10px] font-mono">#${e.ID}</span>` : ''}
+
+        <!-- ── القسم الرئيسي ── -->
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="text-sm leading-none">${mainIcon}</span>
+            <span class="text-[11px] font-bold text-gray-500 truncate">${e.MainCategory || 'قسم عام'}</span>
+          </div>
+          ${e.ID ? `<span class="text-gray-300 text-[10px] font-mono flex-shrink-0">#${e.ID}</span>` : ''}
         </div>
+
+        <!-- ── القسم الفرعي (badge) ── -->
+        <div class="mb-3">
+          <span class="inline-flex items-center text-[11px] font-bold px-2.5 py-1 rounded-lg ${cls.badge}">
+            ${e.SubCategory || 'تصنيف عام'}
+          </span>
+        </div>
+
+        <!-- ── اسم المنشأة ── -->
         <h3 class="text-base font-bold text-gray-800 mb-4 leading-snug">${e.Name}</h3>
+
+        <!-- ── تفاصيل ── -->
         <div class="space-y-2 text-xs text-gray-600 flex-grow">
           ${e.Address ? `<div class="flex items-start gap-2"><span class="mt-0.5">📍</span><span class="leading-relaxed">${e.Address}</span></div>` : ''}
           ${e.Phone   ? `<div class="flex items-center gap-2"><span>📞</span><a href="tel:${e.Phone}" dir="ltr" class="text-blue-600 font-mono hover:underline">${e.Phone}</a></div>` : ''}
           ${e.Notes   ? `<div class="flex items-start gap-2 bg-gray-50 rounded-lg p-2.5"><span class="mt-0.5">🕐</span><span class="text-gray-500 text-[11px]">${e.Notes}</span></div>` : ''}
           ${socialHtml}
         </div>
+
+        <!-- ── تذييل البطاقة ── -->
         <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="dot-pulse"></span>
@@ -1170,7 +1131,8 @@ function onManualCoordsChange() {
 }
 
 // ═══════════════════════════════════════════════════
-//  نافذة خريطة البطاقات المنبثقة (Modal)
+//  لوحة الخريطة المضمّنة — بدون Modal / بدون position:fixed
+//  الأسلوب الأكثر توافقًا مع Android WebView
 // ═══════════════════════════════════════════════════
 let viewMap    = null;
 let viewMarker = null;
@@ -1178,124 +1140,113 @@ let viewMarker = null;
 // استخراج الإحداثيات من رابط Google Maps أو نص الإحداثيات المباشر
 function parseMapCoords(mapLink) {
   if (!mapLink) return null;
-  // صيغة: https://www.google.com/maps?q=34.732400,36.713700
   let m = mapLink.match(/[?&]q=([-\d.]+),([-\d.]+)/);
   if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  // صيغة: https://maps.google.com/?ll=34.732400,36.713700
   m = mapLink.match(/[?&]ll=([-\d.]+),([-\d.]+)/);
   if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  // صيغة: https://www.google.com/maps/@34.732400,36.713700,15z
   m = mapLink.match(/@([-\d.]+),([-\d.]+)/);
   if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  // صيغة نص مباشر: "34.732400,36.713700"
   m = mapLink.match(/^([-\d.]+),([-\d.]+)$/);
   if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
   return null;
 }
 
-function openMapModal(lat, lng, name) {
-  const modal = document.getElementById('view-map-modal');
+function showInlineMap(lat, lng, name) {
+  const panel  = document.getElementById('view-map-panel');
+  const status = document.getElementById('view-map-status');
+
+  // 1. اضبط العنوان والحالة
   document.getElementById('view-map-title').textContent = name || 'موقع المنشأة';
-  document.getElementById('view-map-coords').textContent =
-    `خط العرض: ${lat.toFixed(6)}  |  خط الطول: ${lng.toFixed(6)}`;
-  document.getElementById('view-map-loading').style.display = 'flex';
+  status.textContent = 'جاري تحميل الخريطة...';
 
-  // منع تمرير الصفحة الخلفية
-  document.body.style.overflow = 'hidden';
-  modal.classList.add('open');
-
-  // تدمير الخريطة السابقة إن وجدت لتجنب تعارض الـ container
+  // 2. دمّر أي خريطة سابقة تمامًا لتجنّب "Map container is already initialized"
   if (viewMap) {
-    try { viewMap.remove(); } catch(e) {}
+    try { viewMap.off(); viewMap.remove(); } catch(e) {}
     viewMap = null;
     viewMarker = null;
   }
 
-  // المفتاح: انتظر حتى يتم رسم الـ Modal في DOM ثم هيّئ Leaflet
-  // هذا هو نفس مشكلة نموذج الإضافة — الحاوية تكون display:none عند بدء التهيئة
+  // 3. أظهر اللوحة — الحاوية تصبح display:block قبل أي شيء آخر
+  panel.classList.add('open');
+
+  // 4. مرّر الصفحة إلى اللوحة فورًا
+  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+
+  // 5. انتظر 300ms ليضمن المتصفح/WebView أن العنصر مرئي ومحسوب الأبعاد
+  //    ثم هيّئ Leaflet — هذا هو جوهر الإصلاح
   setTimeout(() => {
     const container = document.getElementById('view-leaflet-map');
-    if (!container) return;
 
-    try {
-      viewMap = L.map('view-leaflet-map', {
-        tap: false,
-        zoomControl: true,
-        fadeAnimation: true,
-      }).setView([lat, lng], 16);
+    // تحقق أن الحاوية لها ارتفاع فعلي (لازم يكون 340px من CSS)
+    const h = container ? container.offsetHeight : 0;
+    const w = container ? container.offsetWidth  : 0;
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20,
-        crossOrigin: 'anonymous',
-      }).addTo(viewMap);
-
-      // علامة الموقع مع popup باسم المنشأة
-      viewMarker = L.marker([lat, lng])
-        .addTo(viewMap)
-        .bindPopup(`<b style="font-family:Cairo,sans-serif;font-size:13px">${name || 'الموقع'}</b>`, { closeButton: false })
-        .openPopup();
-
-      // الخطوة الحاسمة: invalidateSize بعد ظهور الحاوية الفعلي
-      setTimeout(() => {
-        if (viewMap) {
-          viewMap.invalidateSize(true);
-          viewMap.setView([lat, lng], 16);
-          document.getElementById('view-map-loading').style.display = 'none';
-        }
-      }, 350);
-
-      // ضمان ثانٍ لأجهزة WebView الأبطأ
-      setTimeout(() => {
-        if (viewMap) viewMap.invalidateSize(true);
-      }, 900);
-
-    } catch(err) {
-      console.error('View map error:', err);
-      document.getElementById('view-map-loading').innerHTML =
-        '<span style="color:#dc2626">⚠️ تعذّر تحميل الخريطة. تأكد من الاتصال بالإنترنت.</span>';
+    if (!container || h === 0 || w === 0) {
+      // الحاوية لا تزال لا ترسم — أعد المحاولة بعد 300ms أخرى
+      status.textContent = 'جاري الإعداد...';
+      setTimeout(() => _initViewMap(lat, lng, name), 300);
+      return;
     }
-  }, 250);
-}
-
-function closeMapModal() {
-  const modal = document.getElementById('view-map-modal');
-  modal.classList.remove('open');
-  document.body.style.overflow = '';
-
-  // تأجيل تدمير الخريطة حتى انتهاء animation الإغلاق
-  setTimeout(() => {
-    if (viewMap) {
-      try { viewMap.remove(); } catch(e) {}
-      viewMap = null;
-      viewMarker = null;
-    }
-    document.getElementById('view-map-loading').style.display = 'flex';
-    document.getElementById('view-map-coords').textContent = '';
+    _initViewMap(lat, lng, name);
   }, 300);
 }
 
-// إغلاق عند الضغط على الخلفية الداكنة
-function handleModalBackdropClick(event) {
-  if (event.target === document.getElementById('view-map-modal')) {
-    closeMapModal();
+function _initViewMap(lat, lng, name) {
+  const status = document.getElementById('view-map-status');
+  try {
+    viewMap = L.map('view-leaflet-map', {
+      tap: false,          // تعطيل tap handler لتجنب تعارضات touch في Android
+      zoomControl: true,
+      attributionControl: true,
+      fadeAnimation: false, // تعطيل animation يحسّن الأداء في WebView
+      zoomAnimation: false,
+      markerZoomAnimation: false,
+    }).setView([lat, lng], 16);
+
+    // CARTO tiles — مسموح بها للموبايل وتعمل بدون CORS issues
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20,
+      crossOrigin: 'anonymous',
+    }).addTo(viewMap);
+
+    // علامة الموقع
+    viewMarker = L.marker([lat, lng]).addTo(viewMap);
+    viewMarker.bindPopup(
+      `<b style="font-family:Cairo,sans-serif;font-size:13px;direction:rtl">${name || 'الموقع'}</b>`,
+      { closeButton: false, autoPan: false }
+    ).openPopup();
+
+    // invalidateSize — استدعاء متعدد لضمان الرسم الصحيح في أجهزة مختلفة
+    const fix = () => { if (viewMap) { viewMap.invalidateSize(true); viewMap.setView([lat, lng], 16); } };
+    setTimeout(fix, 100);
+    setTimeout(fix, 400);
+    setTimeout(fix, 900);
+    setTimeout(fix, 1800);
+
+    status.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+  } catch(err) {
+    status.textContent = '⚠️ تعذّر تحميل الخريطة — تأكد من الاتصال بالإنترنت';
+    console.error('Inline map error:', err);
   }
 }
 
-// إغلاق عند الضغط على زر Back في أندرويد
-window.addEventListener('popstate', () => {
-  const modal = document.getElementById('view-map-modal');
-  if (modal.classList.contains('open')) {
-    closeMapModal();
+function hideInlineMap() {
+  const panel = document.getElementById('view-map-panel');
+  panel.classList.remove('open');
+  // دمّر الخريطة لتحرير الذاكرة
+  if (viewMap) {
+    try { viewMap.off(); viewMap.remove(); } catch(e) {}
+    viewMap = null;
+    viewMarker = null;
   }
-});
+  document.getElementById('view-map-status').textContent = 'جاري تحميل الخريطة...';
+}
 
-// دفع حالة في history لاستقبال حدث Back
-document.getElementById('view-map-modal').addEventListener('transitionend', () => {});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeMapModal();
-});
+// زر Escape للمتصفح
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideInlineMap(); });
 
 // ── Toast ─────────────────────────────────────────
 let toastTimer;
