@@ -438,11 +438,20 @@
 'use strict';
 
 // ═══════════════════════════════════════════════════════════════
-//  API URLs — مطلقة دائماً لضمان العمل داخل Android WebView
-//  window.location.origin يعيد المخطط + المضيف + المنفذ الصحيح
+//  API URLs
+//  SHEET_API  : مصدر بيانات Google Sheet (للقراءة والكتابة)
+//  RATINGS_API: نقطة مزامنة التقييمات مع الخادم (اختيارية)
+//              التقييمات تُحفظ أولاً في localStorage دائماً
 // ═══════════════════════════════════════════════════════════════
 const SHEET_API   = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
-const RATINGS_API = window.location.origin + '/api/ratings';
+const RATINGS_API = (function() {
+  try {
+    const origin = window.location.origin;
+    // إذا كان الملف مفتوحاً محلياً (file://) لا نحاول الاتصال بخادم
+    if (!origin || origin === 'null' || origin.startsWith('file')) return null;
+    return origin + '/api/ratings';
+  } catch { return null; }
+})();
 
 // ═══════════════════════════════════════════════════════════════
 //  بيانات Google Sheet
@@ -520,7 +529,7 @@ function getUserRatings()         { return store.get('homs_ratings', {}); }
 function saveUserRating(id, val)  { const r = getUserRatings(); r[id] = val; store.set('homs_ratings', r); }
 
 // ═══════════════════════════════════════════════════════════════
-//  fetch مع مهلة زمنية — 12 ثانية للشبكات البطيئة
+//  fetch مع مهلة زمنية
 // ═══════════════════════════════════════════════════════════════
 function fetchWithTimeout(url, opts = {}, ms = 12000) {
   const ctrl = new AbortController();
@@ -536,8 +545,20 @@ window.addEventListener('DOMContentLoaded', () => {
   isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
   applyDark();
   document.getElementById('map-loading').style.display = 'none';
-  Promise.all([fetchData(), fetchRatings()]);
+  // بناء ratingsMap من localStorage لعرض تقييمات المستخدم السابقة فوراً
+  loadLocalRatingsMap();
+  Promise.all([fetchData(), fetchServerRatings()]);
 });
+
+// ─── تحميل التقييمات من localStorage إلى ratingsMap ──────────
+function loadLocalRatingsMap() {
+  const saved = getUserRatings();
+  Object.entries(saved).forEach(([id, val]) => {
+    if (!ratingsMap[id]) {
+      ratingsMap[id] = { avg: val, count: 1 };
+    }
+  });
+}
 
 // ─── Dark Mode ────────────────────────────────────────────────
 function toggleDark() { isDark = !isDark; applyDark(); }
@@ -587,89 +608,82 @@ async function fetchData() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  جلب ملخص التقييمات من قاعدة البيانات
+//  جلب ملخص التقييمات من الخادم (اختياري — فشل صامت)
 // ═══════════════════════════════════════════════════════════════
-async function fetchRatings() {
+async function fetchServerRatings() {
+  if (!RATINGS_API) return; // لا خادم متاح (file:// أو WebView مستقل)
   try {
-    const res = await fetchWithTimeout(RATINGS_API + '/summary');
+    const res = await fetchWithTimeout(RATINGS_API + '/summary', {}, 8000);
     if (!res.ok) return;
-    ratingsMap = await res.json();
+    const serverMap = await res.json();
+    // دمج تقييمات الخادم مع التقييمات المحلية (الأولوية للخادم)
+    Object.assign(ratingsMap, serverMap);
+    // تطبيق تقييمات المستخدم المحلية فوق تقييمات الخادم
+    const saved = getUserRatings();
+    Object.entries(saved).forEach(([id, val]) => {
+      if (!ratingsMap[id]) ratingsMap[id] = { avg: val, count: 1 };
+    });
     renderGrid();
-  } catch (err) {
-    // فشل صامت — التقييمات اختيارية ولا تمنع تحميل الصفحة
-    console.warn('[Ratings] fetchRatings failed:', err.message);
+  } catch {
+    // فشل صامت — التقييمات المحلية تعمل بشكل مستقل
   }
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  إرسال التقييم — مع منع التكرار وإعادة الحالة عند الفشل
+//  إرسال التقييم — localStorage أولاً، ثم مزامنة خلفية مع الخادم
+//
+//  المنطق:
+//  ① حفظ فوري في localStorage (يعمل دائماً بلا إنترنت أو خادم)
+//  ② تحديث ratingsMap محلياً وعرض النجاح فوراً
+//  ③ محاولة مزامنة مع الخادم في الخلفية (صامتة — لا تؤثر على النتيجة)
 // ═══════════════════════════════════════════════════════════════
 async function submitRating(entryId, rating, widgetEl) {
   if (!entryId || pendingRatings.has(entryId)) return;
   pendingRatings.add(entryId);
 
-  // حالة الانتظار: نجوم تنبض
+  // حالة الانتظار: تعطيل النجوم مؤقتاً
   const stars = widgetEl.querySelectorAll('.star-btn');
   stars.forEach((s, i) => {
     s.disabled = true;
     s.className = 'star-btn' + (i < rating ? ' pending' : '');
   });
 
-  let success = false;
-  let errorMsg = 'خطأ غير معروف';
+  // ① حفظ التقييم فوراً في localStorage — يعمل في كل البيئات
+  saveUserRating(entryId, rating);
 
-  try {
-    const res = await fetchWithTimeout(
-      RATINGS_API,
-      {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
-      },
-      12000
-    );
-
-    if (res.ok) {
-      success = true;
-      // تحديث ratingsMap محلياً
-      const prev = ratingsMap[entryId];
-      if (prev) {
-        const newCount = prev.count + 1;
-        ratingsMap[entryId] = {
-          avg:   parseFloat(((prev.avg * prev.count + rating) / newCount).toFixed(1)),
-          count: newCount,
-        };
-      } else {
-        ratingsMap[entryId] = { avg: rating, count: 1 };
-      }
-      saveUserRating(entryId, rating);
-    } else {
-      // حاول قراءة رسالة الخطأ من الخادم
-      try {
-        const errBody = await res.json();
-        errorMsg = errBody.error || ('HTTP ' + res.status);
-      } catch { errorMsg = 'HTTP ' + res.status; }
-      console.error('[Ratings] server error', res.status, errorMsg);
-    }
-  } catch (err) {
-    if (err.name === 'AbortError') {
-      errorMsg = 'انتهت مهلة الاتصال، تحقق من الإنترنت';
-    } else {
-      errorMsg = err.message || 'خطأ في الشبكة';
-    }
-    console.error('[Ratings] fetch error:', err);
+  // ② تحديث ratingsMap محلياً
+  const prev = ratingsMap[entryId];
+  if (prev) {
+    const newCount = prev.count + 1;
+    ratingsMap[entryId] = {
+      avg:   parseFloat(((prev.avg * prev.count + rating) / newCount).toFixed(1)),
+      count: newCount,
+    };
+  } else {
+    ratingsMap[entryId] = { avg: rating, count: 1 };
   }
 
   pendingRatings.delete(entryId);
 
-  if (success) {
-    // تحديث واجهة البطاقة
-    widgetEl.innerHTML = buildRatingHTML(entryId, true, rating);
-    showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
-  } else {
-    // أعد النجوم لحالتها الأصلية لإتاحة المحاولة مجدداً
-    widgetEl.innerHTML = buildRatingHTML(entryId, false, null);
-    showToast('error', 'تعذّر حفظ التقييم: ' + errorMsg);
+  // ② عرض النجاح فوراً — لا ننتظر الخادم
+  widgetEl.innerHTML = buildRatingHTML(entryId, true, rating);
+  showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
+
+  // ③ مزامنة مع الخادم في الخلفية — اختيارية تماماً
+  if (RATINGS_API) {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      await fetch(RATINGS_API, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
+        signal:  ctrl.signal,
+      });
+      clearTimeout(timer);
+    } catch {
+      // فشل صامت — localStorage هو المصدر الأساسي للتقييمات
+    }
   }
 }
 
@@ -685,11 +699,9 @@ function buildRatingHTML(entryId, alreadyRated, userRating) {
   let starsHtml = '';
   for (let i = 1; i <= 5; i++) {
     if (alreadyRated) {
-      // نجوم ثابتة لا تقبل النقر — نعرض تقييم المستخدم
       const cls = i <= (userRating || 0) ? 'filled' : '';
       starsHtml += `<button class="star-btn ${cls}" disabled aria-label="${i} نجوم">★</button>`;
     } else {
-      // نجوم تفاعلية — نستخدم data-* بدل onclick المضمّن لتجنب مشاكل الأحرف الخاصة
       const cls = i <= round ? 'filled' : '';
       starsHtml += `<button class="star-btn ${cls}"
         data-entry-id="${escHtml(entryId)}" data-star="${i}"
@@ -721,14 +733,13 @@ document.addEventListener('click', function(e) {
   const widgetEl = btn.closest('.rating-widget');
   if (!widgetEl) return;
 
-  // منع إعادة التقييم إذا كان المستخدم قد قيّم من قبل
   const userRatings = getUserRatings();
   if (entryId in userRatings) return;
 
   submitRating(entryId, rating, widgetEl);
 });
 
-// ─── hover preview على النجوم (تفويض أيضاً) ─────────────────
+// ─── hover preview على النجوم ─────────────────────────────────
 document.addEventListener('mouseover', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
@@ -894,7 +905,7 @@ function renderGrid() {
     }
 
     const mainIcon    = CAT_ICONS[e.MainCategory] || '📁';
-    const entryId     = e.ID;                     // قد يكون فارغاً
+    const entryId     = e.ID;
     const alreadyRated = entryId !== '' && (entryId in userRatings);
     const userRating   = alreadyRated ? userRatings[entryId] : null;
 
@@ -992,12 +1003,19 @@ function onSubChange() {
 // ═══════════════════════════════════════════════════════════════
 //  إرسال النموذج
 // ═══════════════════════════════════════════════════════════════
-async function handleSubmit(e) {
-  e.preventDefault();
+async function handleSubmit(event) {
+  event.preventDefault();
   let mainCat = document.getElementById('f-main').value;
-  if (mainCat === '__NEW__') mainCat = document.getElementById('f-new-main').value.trim();
-  let subCat = document.getElementById('f-sub').value;
-  if (subCat === '__NEW__') subCat = document.getElementById('f-new-sub').value.trim();
+  let subCat  = document.getElementById('f-sub').value;
+
+  if (mainCat === '__NEW__') {
+    mainCat = document.getElementById('f-new-main').value.trim();
+    if (!mainCat) { showToast('error', 'يرجى كتابة اسم القسم الرئيسي الجديد'); return; }
+  }
+  if (subCat === '__NEW__') {
+    subCat = document.getElementById('f-new-sub').value.trim();
+    if (!subCat) { showToast('error', 'يرجى كتابة اسم التخصص الجديد'); return; }
+  }
   if (!mainCat || !subCat) {
     showToast('error', 'يرجى اختيار أو كتابة القسم والتخصص أولاً');
     return;
@@ -1269,5 +1287,5 @@ function showToast(type, msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.style.display = 'none'; }, 5000);
 }
-</script>
-</body></html>
+</script></body>
+</html>
