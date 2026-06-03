@@ -93,6 +93,10 @@
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
     .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
     .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
+    .card-details            { display:none; flex-direction:column; gap:3px; padding:6px 10px 8px; border-top:1px solid #f3f4f6; }
+    .card-details.open       { display:flex; }
+    .card-toggle             { font-size:10px; color:#9ca3af; background:none; border:none; cursor:pointer; padding:0 2px; line-height:1; flex-shrink:0; }
+    .card-toggle:hover       { color:#6b7280; }
 
     /* ═══ Star Rating ═══ */
     /* النجوم تتراص من الأسفل حتى تبدو متصاعدة الحجم */
@@ -1019,6 +1023,12 @@ function onSearch() {
 // ═══════════════════════════════════════════════════════════════
 //  عرض البطاقات
 // ═══════════════════════════════════════════════════════════════
+function toggleCardDetails(btn) {
+  const panel = btn.closest('.entry-card').querySelector('.card-details');
+  const open  = panel.classList.toggle('open');
+  btn.textContent = open ? '▲' : '···';
+}
+
 function renderGrid() {
   let list = allEntries;
   if (activeMain !== 'الكل') {
@@ -1064,8 +1074,8 @@ function renderGrid() {
         const safeName = escHtml(e.Name);
         mapHtml = `<button type="button"
           onclick="showInlineMap(${coords.lat}, ${coords.lng}, '${safeName.replace(/'/g,"&#39;")}')"
-          class="flex items-center gap-1.5 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-all active:scale-95">
-          📍 عرض الموقع
+          class="flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-1 rounded-md hover:bg-blue-100 transition-all active:scale-95 flex-shrink-0">
+          📍 موقع
         </button>`;
       }
     }
@@ -1073,55 +1083,63 @@ function renderGrid() {
     let socialHtml = '';
     if (e.Social) {
       const displayUrl = e.Social.replace(/^https?:\/\/(www\.)?/, '');
-      socialHtml = `<div class="flex items-center gap-2"><span class="text-gray-400">🔗</span>
+      socialHtml = `<div class="flex items-center gap-1.5"><span class="text-gray-400 text-[10px]">🔗</span>
         <a href="${escHtml(e.Social)}" target="_blank" rel="noopener"
-          class="text-blue-600 text-[11px] hover:underline truncate max-w-[180px]">${escHtml(displayUrl)}</a></div>`;
+          class="text-blue-600 text-[10px] hover:underline truncate">${escHtml(displayUrl)}</a></div>`;
     }
 
-    const mainIcon    = CAT_ICONS[e.MainCategory] || '📁';
-    const entryId     = e.ID;
+    const mainIcon     = CAT_ICONS[e.MainCategory] || '📁';
+    const entryId      = e.ID;
     const alreadyRated = entryId !== '' && (entryId in userRatings);
     const userRating   = alreadyRated ? userRatings[entryId] : null;
 
-    const ratingSection = entryId
-      ? `<div class="mt-3 pt-3 border-t border-gray-100">
-           <div class="rating-widget">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>
-         </div>`
-      : '';
+    // تحقق هل يوجد تفاصيل إضافية تستحق زر التمديد
+    const hasDetails = !!(e.Phone || e.Notes || e.Social);
 
     const card = document.createElement('div');
-    card.className = `entry-card bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
+    card.className = `entry-card bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
     if (entryId) card.dataset.entryCard = entryId;
     card.innerHTML = `
-      <div class="p-5 flex flex-col flex-grow">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <span class="text-sm leading-none">${mainIcon}</span>
-            <span class="text-[11px] font-bold text-gray-500 truncate">${escHtml(e.MainCategory || 'قسم عام')}</span>
+      <div class="p-2.5 flex flex-col gap-1.5">
+
+        <!-- ── صف ١: أيقونة · قسم · تصنيف فرعي · رقم ── -->
+        <div class="flex items-center justify-between gap-1 min-w-0">
+          <div class="flex items-center gap-1 min-w-0 text-[10px] text-gray-400 truncate">
+            <span class="flex-shrink-0 leading-none">${mainIcon}</span>
+            <span class="truncate">${escHtml(e.MainCategory || 'قسم عام')}</span>
+            <span class="flex-shrink-0 opacity-50">·</span>
+            <span class="font-semibold text-gray-500 truncate">${escHtml(e.SubCategory || 'تصنيف عام')}</span>
           </div>
-          ${e.ID ? `<span class="text-gray-300 text-[10px] font-mono flex-shrink-0">#${escHtml(e.ID)}</span>` : ''}
+          ${e.ID ? `<span class="text-gray-300 text-[9px] font-mono flex-shrink-0">#${escHtml(e.ID)}</span>` : ''}
         </div>
-        <div class="mb-3">
-          <span class="inline-flex items-center text-[11px] font-bold px-2.5 py-1 rounded-lg ${cls.badge}">
-            ${escHtml(e.SubCategory || 'تصنيف عام')}
-          </span>
-        </div>
-        <h3 class="text-base font-bold text-gray-800 mb-4 leading-snug">${escHtml(e.Name)}</h3>
-        <div class="space-y-2 text-xs text-gray-600 flex-grow">
-          ${e.Address ? `<div class="flex items-start gap-2"><span class="mt-0.5">📍</span><span class="leading-relaxed">${escHtml(e.Address)}</span></div>` : ''}
-          ${e.Phone   ? `<div class="flex items-center gap-2"><span>📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : ''}
-          ${e.Notes   ? `<div class="flex items-start gap-2 bg-gray-50 rounded-lg p-2.5"><span class="mt-0.5">🕐</span><span class="text-gray-500 text-[11px]">${escHtml(e.Notes)}</span></div>` : ''}
-          ${socialHtml}
-        </div>
-        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <div class="flex items-center gap-1.5">
-            <span class="dot-pulse"></span>
-            <span class="text-[10px] text-gray-400">موثّق تشاركياً</span>
+
+        <!-- ── صف ٢: الاسم ── -->
+        <h3 class="text-sm font-bold text-gray-800 leading-snug">${escHtml(e.Name)}</h3>
+
+        <!-- ── صف ٣: العنوان ── -->
+        ${e.Address ? `<div class="flex items-start gap-1 text-[11px] text-gray-500 leading-snug">
+          <span class="flex-shrink-0">📍</span><span>${escHtml(e.Address)}</span>
+        </div>` : ''}
+
+        <!-- ── صف أسفل: تقييم + موقع + تفاصيل ── -->
+        <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-100 flex-wrap">
+          ${entryId
+            ? `<div class="rating-widget flex-1 min-w-0">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>`
+            : '<div class="flex-1"></div>'}
+          <div class="flex items-center gap-1 flex-shrink-0">
+            ${mapHtml}
+            ${hasDetails ? `<button class="card-toggle" onclick="toggleCardDetails(this)" aria-label="تفاصيل إضافية">···</button>` : ''}
           </div>
-          ${mapHtml}
         </div>
-        ${ratingSection}
-      </div>`;
+
+      </div>
+
+      <!-- ── قسم التفاصيل القابل للتمديد ── -->
+      ${hasDetails ? `<div class="card-details text-[11px] text-gray-500">
+        ${e.Phone  ? `<div class="flex items-center gap-1.5"><span class="flex-shrink-0">📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : ''}
+        ${e.Notes  ? `<div class="flex items-start gap-1.5"><span class="flex-shrink-0">🕐</span><span>${escHtml(e.Notes)}</span></div>` : ''}
+        ${socialHtml}
+      </div>` : ''}`;
     grid.appendChild(card);
   });
 }
