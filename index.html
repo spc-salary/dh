@@ -2,131 +2,68 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>دليل مدينة حمص الخدمي والتجاري</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLs=" crossorigin=""></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #f5f7fa;
-      --surface: #ffffff;
-      --surface2: #f0f4f8;
-      --border: #e2e8f0;
-      --text: #1a202c;
-      --text2: #4a5568;
-      --text3: #718096;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --danger: #ef4444;
-      --success: #10b981;
+      --bg: #f5f7fa; --surface: #ffffff; --surface2: #f0f4f8; --border: #e2e8f0;
+      --text: #1a202c; --text2: #4a5568; --text3: #718096;
+      --primary: #2563eb; --primary-hover: #1d4ed8;
+      --danger: #ef4444; --success: #10b981;
       --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
       --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
       --radius: 10px;
     }
     body.dark {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface2: #0f172a;
-      --border: #334155;
-      --text: #f1f5f9;
-      --text2: #cbd5e1;
-      --text3: #94a3b8;
+      --bg: #0f172a; --surface: #1e293b; --surface2: #0f172a; --border: #334155;
+      --text: #f1f5f9; --text2: #cbd5e1; --text3: #94a3b8;
       --shadow: 0 1px 3px rgba(0,0,0,.4);
       --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.4);
     }
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: background .2s, color .2s;
-    }
+    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; transition: background .2s, color .2s; }
 
     /* HEADER */
     .header {
       background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #312e81 100%);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; position: sticky; top: 0; z-index: 1000;
       box-shadow: 0 4px 12px rgba(0,0,0,.3);
     }
     .header-brand { display: flex; align-items: center; gap: 12px; }
-    .header-icon {
-      background: rgba(255,255,255,.15);
-      border-radius: 50%;
-      width: 48px; height: 48px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
+    .header-icon { background: rgba(255,255,255,.15); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
     .header-title { color: #fff; }
     .header-title h1 { font-size: 1.25rem; font-weight: 800; line-height: 1.3; }
     .header-title p { font-size: .78rem; color: rgba(255,255,255,.8); margin-top: 2px; }
     .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .badge-count {
-      background: rgba(255,255,255,.2);
-      color: #fff;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: .82rem;
-      font-weight: 600;
-    }
-    .btn-icon {
-      background: rgba(255,255,255,.15);
-      border: none;
-      color: #fff;
-      border-radius: 8px;
-      width: 36px; height: 36px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      transition: background .15s;
-    }
+    .badge-count { background: rgba(255,255,255,.2); color: #fff; border-radius: 20px; padding: 4px 12px; font-size: .82rem; font-weight: 600; }
+    .btn-icon { background: rgba(255,255,255,.15); border: none; color: #fff; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background .15s; }
     .btn-icon:hover { background: rgba(255,255,255,.3); }
-    .btn-login {
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.3);
-      color: #fff;
-      border-radius: 8px;
-      padding: 6px 14px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: background .15s;
-    }
+    .btn-login { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 8px; padding: 6px 14px; font-family: 'Cairo', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .15s; }
     .btn-login:hover { background: rgba(255,255,255,.25); }
 
-    /* MAIN CONTAINER */
+    /* LOADING */
+    .loading-bar { position: fixed; top: 0; right: 0; left: 0; height: 3px; background: linear-gradient(90deg, #2563eb, #7c3aed, #2563eb); background-size: 200% 100%; animation: loadbar 1.2s infinite; z-index: 9999; }
+    @keyframes loadbar { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .sync-indicator { font-size: .72rem; background: rgba(255,255,255,.15); color: rgba(255,255,255,.9); border-radius: 12px; padding: 3px 10px; display: flex; align-items: center; gap: 4px; }
+    .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
+    .sync-dot.loading { background: #f59e0b; animation: pulse .8s infinite; }
+    .sync-dot.error { background: #ef4444; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+    /* CONTAINER */
     .container { max-width: 1280px; margin: 0 auto; padding: 20px 16px; }
 
     /* ADD FORM */
-    .add-form-toggle {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 20px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    .add-form-header {
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      user-select: none;
-      gap: 8px;
-    }
+    .add-form-toggle { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; box-shadow: var(--shadow); }
+    .add-form-header { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; gap: 8px; }
     .add-form-header:hover { background: var(--surface2); }
     .add-form-header span { font-weight: 700; font-size: .95rem; color: var(--primary); }
     .add-form-header .chevron { transition: transform .2s; font-size: 12px; color: var(--text3); }
@@ -137,121 +74,67 @@
     .form-group { display: flex; flex-direction: column; gap: 5px; }
     .form-group label { font-size: .82rem; font-weight: 600; color: var(--text2); }
     .form-group input, .form-group select, .form-group textarea {
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 9px 12px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .9rem;
-      background: var(--surface);
-      color: var(--text);
-      outline: none;
-      transition: border-color .15s;
-      width: 100%;
+      border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px;
+      font-family: 'Cairo', sans-serif; font-size: .9rem; background: var(--surface);
+      color: var(--text); outline: none; transition: border-color .15s; width: 100%;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: var(--primary);
-    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
     .form-group textarea { resize: vertical; min-height: 72px; }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 22px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .92rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 14px;
-      transition: background .15s;
-    }
+    .btn-primary { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-family: 'Cairo', sans-serif; font-size: .92rem; font-weight: 700; cursor: pointer; margin-top: 14px; transition: background .15s; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
-    .not-logged-msg {
-      text-align: center;
-      padding: 20px;
-      color: var(--text3);
-      font-size: .9rem;
-    }
+    .not-logged-msg { text-align: center; padding: 20px; color: var(--text3); font-size: .9rem; }
     .not-logged-msg a { color: var(--primary); cursor: pointer; font-weight: 600; }
+    .form-section-title { font-size: .85rem; font-weight: 700; color: var(--primary); margin: 14px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); grid-column: 1 / -1; }
+
+    /* MAP PICKER */
+    .map-picker-wrap { grid-column: 1 / -1; }
+    .map-picker-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; background: var(--surface2); border-radius: 7px; margin-bottom: 0; font-size: .85rem; font-weight: 600; color: var(--text2); border: 1px solid var(--border); }
+    .map-picker-header:hover { background: var(--border); }
+    .map-picker-body { display: none; margin-top: 8px; }
+    .map-picker-body.open { display: block; }
+    .map-container { height: 260px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); position: relative; z-index: 1; }
+    .map-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .btn-locate { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 7px; padding: 7px 14px; font-family: 'Cairo', sans-serif; font-size: .82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .btn-locate:hover { background: #d1fae5; }
+    body.dark .btn-locate { background: rgba(16,185,129,.1); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
+    .coords-display { font-size: .78rem; color: var(--text3); padding: 5px 10px; background: var(--surface2); border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; gap: 5px; flex: 1; }
+
+    /* CARD MAP */
+    .card-map-section { border-top: 1px solid var(--border); }
+    .card-map-toggle { padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: .82rem; color: var(--text3); transition: background .1s; }
+    .card-map-toggle:hover { background: var(--surface2); }
+    .card-map-toggle .ch { font-size: 10px; transition: transform .2s; }
+    .card-map-toggle.open .ch { transform: rotate(180deg); }
+    .card-map-body { display: none; padding: 0 10px 10px; }
+    .card-map-body.open { display: block; }
+    .card-map-inner { height: 180px; border-radius: 7px; overflow: hidden; border: 1px solid var(--border); }
+    .card-map-actions { display: flex; gap: 6px; margin-top: 6px; }
+    .map-ext-btn { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 6px; padding: 4px 10px; font-family: 'Cairo', sans-serif; font-size: .75rem; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .map-ext-btn:hover { background: #d1fae5; }
+    body.dark .map-ext-btn { background: rgba(16,185,129,.1); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
 
     /* SEARCH */
-    .search-wrap {
-      position: relative;
-      margin-bottom: 16px;
-    }
-    .search-wrap input {
-      width: 100%;
-      padding: 12px 16px 12px 44px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .95rem;
-      background: var(--surface);
-      color: var(--text);
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
+    .search-wrap { position: relative; margin-bottom: 16px; }
+    .search-wrap input { width: 100%; padding: 12px 16px 12px 44px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: .95rem; background: var(--surface); color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
     .search-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
-    .search-icon {
-      position: absolute;
-      left: 14px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--text3);
-      font-size: 18px;
-      pointer-events: none;
-    }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 18px; pointer-events: none; }
     .search-count { font-size: .82rem; color: var(--text3); margin-bottom: 10px; }
 
     /* CATEGORIES */
     .cats-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-    .cat-btn {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text2);
-      border-radius: 20px;
-      padding: 6px 16px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .15s;
-    }
+    .cat-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text2); border-radius: 20px; padding: 6px 16px; font-family: 'Cairo', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; }
     .cat-btn:hover { background: var(--surface2); }
     .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     .subcats-wrap { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .subcat-btn {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text3);
-      border-radius: 6px;
-      padding: 4px 12px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .8rem;
-      cursor: pointer;
-      transition: all .15s;
-    }
+    .subcat-btn { border: 1px solid var(--border); background: transparent; color: var(--text3); border-radius: 6px; padding: 4px 12px; font-family: 'Cairo', sans-serif; font-size: .8rem; cursor: pointer; transition: all .15s; }
     .subcat-btn:hover { color: var(--text); }
     .subcat-btn.active { background: #dbeafe; color: var(--primary); border-color: #93c5fd; }
     body.dark .subcat-btn.active { background: rgba(37,99,235,.2); border-color: rgba(37,99,235,.4); }
 
     /* CARDS */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      border-top: 4px solid #6b7280;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transition: box-shadow .15s, transform .1s;
-      position: relative;
-    }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: var(--surface); border-radius: var(--radius); border-top: 4px solid #6b7280; box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; transition: box-shadow .15s, transform .1s; position: relative; }
     .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
     .card.cat-medical { border-top-color: #10b981; }
     .card.cat-legal { border-top-color: #8b5cf6; }
@@ -261,123 +144,43 @@
     .card.cat-edu { border-top-color: #06b6d4; }
     .card-body { padding: 14px 14px 10px; flex: 1; }
     .card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
-    .card-icon {
-      font-size: 26px;
-      background: var(--surface2);
-      border-radius: 10px;
-      width: 48px; height: 48px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
+    .card-icon { font-size: 26px; background: var(--surface2); border-radius: 10px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .card-meta { flex: 1; min-width: 0; }
-    .card-cats {
-      display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; align-items: center;
-    }
-    .cat-chip {
-      font-size: .72rem;
-      background: var(--surface2);
-      color: var(--text3);
-      border-radius: 4px;
-      padding: 1px 7px;
-    }
+    .card-cats { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; align-items: center; }
+    .cat-chip { font-size: .72rem; background: var(--surface2); color: var(--text3); border-radius: 4px; padding: 1px 7px; }
     .card-id { font-size: .72rem; color: var(--text3); font-family: monospace; }
     .card-name { font-weight: 700; font-size: 1rem; line-height: 1.35; }
-    .card-address {
-      display: flex; align-items: flex-start; gap: 5px;
-      font-size: .83rem; color: var(--text3); margin-top: 8px;
-    }
+    .card-address { display: flex; align-items: flex-start; gap: 5px; font-size: .83rem; color: var(--text3); margin-top: 8px; }
     .card-address svg { flex-shrink: 0; margin-top: 2px; }
+    .card-status-closed { font-size: .72rem; background: #fee2e2; color: #991b1b; border-radius: 4px; padding: 1px 6px; font-weight: 700; }
+    body.dark .card-status-closed { background: rgba(239,68,68,.15); color: #fca5a5; }
 
     /* EDIT BTN */
-    .edit-btn {
-      position: absolute;
-      top: 8px; left: 8px;
-      background: rgba(255,255,255,.85);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      width: 30px; height: 30px;
-      display: none;
-      align-items: center; justify-content: center;
-      cursor: pointer;
-      font-size: 13px;
-      color: var(--primary);
-      transition: background .1s;
-      z-index: 2;
-    }
+    .edit-btn { position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,.85); border: 1px solid var(--border); border-radius: 6px; width: 30px; height: 30px; display: none; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: var(--primary); transition: background .1s; z-index: 2; }
     body.dark .edit-btn { background: rgba(30,41,59,.9); }
     .card:hover .edit-btn.visible { display: flex; }
 
     /* RATINGS */
-    .rating-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 10px;
-    }
+    .rating-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
     .stars { display: flex; gap: 1px; direction: ltr; }
-    .star {
-      cursor: pointer;
-      color: #d1d5db;
-      transition: color .1s, transform .1s;
-      line-height: 1;
-    }
+    .star { cursor: pointer; color: #d1d5db; transition: color .1s, transform .1s; line-height: 1; }
     .star.filled { color: #f59e0b; }
     .star:hover { transform: scale(1.15); color: #f59e0b; }
-    .star-sm { font-size: 15px; }
-    .star-md { font-size: 18px; }
-    .star-lg { font-size: 20px; }
-    .rating-info {
-      font-size: .75rem;
-      background: #fef3c7;
-      color: #92400e;
-      border-radius: 12px;
-      padding: 2px 8px;
-      font-weight: 600;
-    }
+    .star-sm { font-size: 15px; } .star-md { font-size: 18px; } .star-lg { font-size: 20px; }
+    .rating-info { font-size: .75rem; background: #fef3c7; color: #92400e; border-radius: 12px; padding: 2px 8px; font-weight: 600; }
     body.dark .rating-info { background: rgba(245,158,11,.15); color: #fbbf24; }
 
     /* MAP BUTTON */
-    .map-btn {
-      background: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-      border-radius: 7px;
-      padding: 5px 12px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 4px;
-      margin-top: 8px;
-      transition: background .1s;
-      text-decoration: none;
-      width: fit-content;
-    }
+    .map-btn { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 7px; padding: 5px 12px; font-family: 'Cairo', sans-serif; font-size: .8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; margin-top: 8px; transition: background .1s; text-decoration: none; width: fit-content; }
     .map-btn:hover { background: #d1fae5; }
     body.dark .map-btn { background: rgba(16,185,129,.1); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
 
     /* DETAILS TOGGLE */
-    .details-toggle {
-      border-top: 1px solid var(--border);
-      padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      font-size: .83rem;
-      color: var(--text3);
-      transition: background .1s;
-    }
+    .details-toggle { border-top: 1px solid var(--border); padding: 9px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: .83rem; color: var(--text3); transition: background .1s; }
     .details-toggle:hover { background: var(--surface2); }
     .details-toggle .ch { font-size: 11px; transition: transform .2s; }
     .details-toggle.open .ch { transform: rotate(180deg); }
-    .details-body {
-      display: none;
-      padding: 10px 14px 14px;
-      border-top: 1px solid var(--border);
-      font-size: .83rem;
-      color: var(--text2);
-      gap: 8px;
-      flex-direction: column;
-    }
+    .details-body { display: none; padding: 10px 14px 14px; border-top: 1px solid var(--border); font-size: .83rem; color: var(--text2); gap: 8px; flex-direction: column; }
     .details-body.open { display: flex; }
     .detail-row { display: flex; align-items: center; gap: 6px; }
     .detail-row a { color: var(--primary); text-decoration: none; }
@@ -387,68 +190,23 @@
     .empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: .95rem; }
     .empty .icon { font-size: 48px; margin-bottom: 12px; }
 
-    /* MODAL OVERLAY */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.55);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--surface);
-      border-radius: 12px;
-      width: 100%;
-      max-width: 480px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow-lg);
-      padding: 24px;
-    }
+    .modal { background: var(--surface); border-radius: 12px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); padding: 24px; }
     .modal h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 18px; }
     .modal .form-group { margin-bottom: 12px; }
     .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
-    .btn-secondary {
-      background: var(--surface2);
-      color: var(--text2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 18px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .88rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-secondary { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 18px; font-family: 'Cairo', sans-serif; font-size: .88rem; font-weight: 600; cursor: pointer; }
     .btn-secondary:hover { background: var(--border); }
     .err-msg { color: #ef4444; font-size: .82rem; margin-top: 8px; }
 
     /* ADMIN PANEL */
-    .admin-panel {
-      display: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 20px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
+    .admin-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; padding: 18px; box-shadow: var(--shadow); }
     .admin-panel.open { display: block; }
     .admin-panel h2 { font-size: 1rem; font-weight: 800; margin-bottom: 14px; color: var(--primary); }
-    .admin-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
-    .admin-tab {
-      padding: 6px 14px;
-      border-radius: 7px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text2);
-    }
+    .admin-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+    .admin-tab { padding: 6px 14px; border-radius: 7px; font-family: 'Cairo', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); }
     .admin-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     .admin-content { display: none; }
     .admin-content.active { display: block; }
@@ -456,13 +214,7 @@
     table { width: 100%; border-collapse: collapse; font-size: .82rem; }
     th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; }
     th { font-weight: 700; color: var(--text2); background: var(--surface2); }
-    .action-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: .75rem;
-      font-weight: 600;
-    }
+    .action-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .75rem; font-weight: 600; }
     .action-create { background: #dcfce7; color: #166534; }
     .action-update { background: #dbeafe; color: #1e40af; }
     .action-delete { background: #fee2e2; color: #991b1b; }
@@ -470,25 +222,10 @@
     body.dark .action-update { background: rgba(37,99,235,.15); color: #93c5fd; }
     body.dark .action-delete { background: rgba(239,68,68,.15); color: #fca5a5; }
     .users-list { display: flex; flex-direction: column; gap: 10px; }
-    .user-row {
-      background: var(--surface2);
-      border-radius: 8px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .user-row { background: var(--surface2); border-radius: 8px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
     .user-info { font-size: .88rem; }
     .user-info strong { display: block; }
-    .role-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: .72rem;
-      font-weight: 700;
-    }
+    .role-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .72rem; font-weight: 700; }
     .role-admin { background: #fef9c3; color: #854d0e; }
     .role-editor { background: #dbeafe; color: #1e40af; }
     .role-viewer { background: #f3f4f6; color: #374151; }
@@ -497,100 +234,43 @@
     body.dark .role-viewer { background: rgba(107,114,128,.15); color: #9ca3af; }
     .blocked-badge { background: #fee2e2; color: #991b1b; padding: 1px 7px; border-radius: 8px; font-size: .72rem; font-weight: 700; }
     .user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-    .btn-sm {
-      padding: 5px 10px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .78rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text2);
-    }
+    .btn-sm { padding: 5px 10px; font-family: 'Cairo', sans-serif; font-size: .78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); }
     .btn-sm:hover { background: var(--surface2); }
     .btn-sm.danger { color: var(--danger); border-color: #fca5a5; }
     .btn-sm.danger:hover { background: #fee2e2; }
     .filter-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .filter-row input, .filter-row select {
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 6px 10px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .82rem;
-      background: var(--surface);
-      color: var(--text);
-      outline: none;
-    }
-    .btn-export {
-      margin-right: auto;
-      padding: 6px 14px;
-      font-family: 'Cairo', sans-serif;
-      font-size: .82rem;
-      font-weight: 600;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      cursor: pointer;
-      color: var(--text2);
-    }
+    .filter-row input, .filter-row select { border: 1px solid var(--border); border-radius: 7px; padding: 6px 10px; font-family: 'Cairo', sans-serif; font-size: .82rem; background: var(--surface); color: var(--text); outline: none; }
+    .btn-export { margin-right: auto; padding: 6px 14px; font-family: 'Cairo', sans-serif; font-size: .82rem; font-weight: 600; background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; cursor: pointer; color: var(--text2); }
     .btn-export:hover { background: var(--border); }
 
     /* TOP RATED */
-    .top-rated-wrap { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; }
-    .top-rated-chip {
-      background: linear-gradient(135deg, #fef3c7, #fde68a);
-      color: #92400e;
-      border: 1px solid #fcd34d;
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: .82rem;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 5px;
-      transition: transform .1s;
-      flex-shrink: 0;
-    }
+    .top-rated-wrap { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
+    .top-rated-chip { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 1px solid #fcd34d; border-radius: 20px; padding: 5px 14px; font-size: .82rem; font-weight: 700; white-space: nowrap; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: transform .1s; flex-shrink: 0; }
     .top-rated-chip:hover { transform: translateY(-2px); }
     body.dark .top-rated-chip { background: linear-gradient(135deg, rgba(245,158,11,.2), rgba(245,158,11,.1)); color: #fbbf24; border-color: rgba(245,158,11,.3); }
 
     /* TOAST */
-    .toast-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 9999;
-    }
-    .toast {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: .85rem;
-      font-weight: 600;
-      box-shadow: var(--shadow-lg);
-      animation: slideIn .2s ease;
-      max-width: 300px;
-      display: flex; align-items: center; gap: 8px;
-    }
+    .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 9999; }
+    .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: .85rem; font-weight: 600; box-shadow: var(--shadow-lg); animation: slideIn .2s ease; max-width: 300px; display: flex; align-items: center; gap: 8px; }
     .toast.success { border-right: 4px solid var(--success); }
     .toast.error { border-right: 4px solid var(--danger); }
     @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
     /* UTIL */
     .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .leaflet-container { font-family: 'Cairo', sans-serif !important; }
     @media (max-width: 500px) {
       .header-title h1 { font-size: 1rem; }
       .header-title p { display: none; }
       .cards-grid { grid-template-columns: 1fr; }
+      .modal { padding: 16px; }
     }
   </style>
 </head>
 <body>
+
+<!-- LOADING BAR -->
+<div class="loading-bar" id="loading-bar" style="display:none"></div>
 
 <!-- HEADER -->
 <header class="header">
@@ -603,7 +283,11 @@
   </div>
   <div class="header-actions">
     <span class="badge-count" id="total-badge">0 منشأة</span>
-    <button class="btn-icon" onclick="render()" title="تحديث">🔄</button>
+    <div class="sync-indicator" id="sync-indicator">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-label">متصل</span>
+    </div>
+    <button class="btn-icon" onclick="refreshData()" title="تحديث البيانات">🔄</button>
     <button class="btn-icon" onclick="toggleDark()" id="dark-btn" title="الوضع الليلي">🌙</button>
     <button class="btn-login" id="login-btn" onclick="openLoginModal()">
       <span>🔐</span><span id="login-label">تسجيل الدخول</span>
@@ -621,11 +305,10 @@
       <button class="admin-tab active" onclick="switchAdminTab('audit')">سجل العمليات</button>
       <button class="admin-tab" onclick="switchAdminTab('users')">إدارة المستخدمين</button>
     </div>
-
     <!-- AUDIT LOG -->
     <div class="admin-content active" id="admin-audit">
       <div class="filter-row">
-        <input type="text" id="f-user" placeholder="اسم المستخدم" oninput="renderAudit()" style="width:130px">
+        <input type="text" id="f-user" placeholder="اسم المستخدم" oninput="renderAudit()">
         <select id="f-action" onchange="renderAudit()">
           <option value="">كل العمليات</option>
           <option value="create">إضافة</option>
@@ -641,7 +324,6 @@
         </table>
       </div>
     </div>
-
     <!-- USERS -->
     <div class="admin-content" id="admin-users">
       <div class="users-list" id="users-list"></div>
@@ -675,7 +357,6 @@
 
   <!-- CARDS -->
   <div class="cards-grid" id="cards-grid"></div>
-
 </div>
 
 <!-- LOGIN MODAL -->
@@ -683,11 +364,19 @@
   <div class="modal">
     <h2 id="modal-title">تسجيل الدخول</h2>
     <div class="form-group">
-      <label>اسم المستخدم</label>
+      <label>اسم المستخدم *</label>
       <input type="text" id="m-username" placeholder="أدخل اسم المستخدم" autocomplete="username">
     </div>
+    <div class="form-group" id="m-email-wrap" style="display:none">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="m-email" placeholder="example@email.com" autocomplete="email">
+    </div>
+    <div class="form-group" id="m-phone-wrap" style="display:none">
+      <label>رقم الهاتف (اختياري)</label>
+      <input type="tel" id="m-phone-reg" placeholder="09xxxxxxxx" autocomplete="tel">
+    </div>
     <div class="form-group">
-      <label>كلمة المرور</label>
+      <label>كلمة المرور *</label>
       <input type="password" id="m-password" placeholder="أدخل كلمة المرور" autocomplete="current-password">
     </div>
     <div class="err-msg" id="m-err"></div>
@@ -711,8 +400,20 @@
     <div class="err-msg" id="edit-err"></div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeEditModal()">إلغاء</button>
-      <button class="btn-primary" onclick="saveEdit()">حفظ التعديلات</button>
+      <button class="btn-primary" onclick="saveEdit()">💾 حفظ التعديلات</button>
     </div>
+  </div>
+</div>
+
+<!-- MAP EXPAND MODAL -->
+<div class="modal-overlay" id="map-modal">
+  <div class="modal" style="max-width:700px;padding:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h2 style="margin:0" id="map-modal-title">الموقع على الخريطة</h2>
+      <button class="btn-secondary" onclick="closeMapModal()" style="margin:0;padding:6px 12px;">✕ إغلاق</button>
+    </div>
+    <div id="map-modal-inner" style="height:420px;border-radius:8px;overflow:hidden;border:1px solid var(--border);"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;" id="map-modal-actions"></div>
   </div>
 </div>
 
@@ -721,59 +422,84 @@
 
 <script>
 // ============================================================
-// DATA MODEL & STORAGE
+// CONFIG & API
 // ============================================================
-const STORAGE_KEYS = { entries: 'homs_entries', users: 'homs_users', audit: 'homs_audit', session: 'homs_session', ratings: 'homs_ratings', fp: 'homs_fp' };
+const API_BASE = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
+const API_SHEET1 = API_BASE;
+const API_SHEET2 = API_BASE + '/tabs/Sheet2';
+const API_LOG = API_BASE + '/tabs/Log';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 min
 
+const STORAGE_KEYS = {
+  entries: 'homs_entries', users: 'homs_users', audit: 'homs_audit',
+  session: 'homs_session', ratings: 'homs_ratings', fp: 'homs_fp',
+  cacheTime: 'homs_cache_time', usersCacheTime: 'homs_users_cache_time'
+};
+
+// ============================================================
+// DEVICE INFO
+// ============================================================
 function getFingerprint() {
   let fp = localStorage.getItem(STORAGE_KEYS.fp);
   if (!fp) { fp = 'fp_' + Math.random().toString(36).substr(2, 12); localStorage.setItem(STORAGE_KEYS.fp, fp); }
   return fp;
 }
 
+function getDeviceInfo() {
+  const ua = navigator.userAgent || '';
+  let browser = 'غير معروف', os = 'غير معروف', device = 'سطح مكتب';
+  if (/Chrome/i.test(ua) && !/Edge|OPR/i.test(ua)) browser = 'Chrome';
+  else if (/Firefox/i.test(ua)) browser = 'Firefox';
+  else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Safari';
+  else if (/Edge/i.test(ua)) browser = 'Edge';
+  else if (/OPR/i.test(ua)) browser = 'Opera';
+  if (/Android/i.test(ua)) { os = 'Android'; device = 'هاتف'; }
+  else if (/iPhone|iPad/i.test(ua)) { os = 'iOS'; device = /iPad/i.test(ua) ? 'تابلت' : 'هاتف'; }
+  else if (/Windows/i.test(ua)) os = 'Windows';
+  else if (/Mac/i.test(ua)) os = 'macOS';
+  else if (/Linux/i.test(ua)) os = 'Linux';
+  return { browser, os, device };
+}
+
+// ============================================================
+// STORAGE
+// ============================================================
 function loadJSON(key, def) {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
 }
-function saveJSON(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function saveJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.warn('Storage error:', e); } }
 
-// Seed default admin user if none
-function initUsers() {
-  let users = loadJSON(STORAGE_KEYS.users, null);
-  if (!users) {
-    users = [
-      { id: 1, username: 'admin', password: 'admin123', role: 'admin', isBlocked: false, dailyEditLimit: 999, createdAt: new Date().toISOString() }
-    ];
-    saveJSON(STORAGE_KEYS.users, users);
-  }
-  return users;
+// ============================================================
+// DEFAULT DATA
+// ============================================================
+function getDefaultEntries() {
+  const now = new Date().toISOString();
+  return [
+    { recordId:'entry_1', name:'مستشفى الباسل', mainCategory:'طبي / صحة', subCategory:'مستشفيات عامة', governorate:'حمص', district:'العدوي', address:'شارع العدوي - حمص', phone:'031-2220000', description:'مستشفى حكومي — يعمل 24 ساعة', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_2', name:'عيادة الدكتور خالد المصري', mainCategory:'طبي / صحة', subCategory:'عيادات خاصة', governorate:'حمص', district:'الميدان', address:'حي الميدان - شارع بغداد', phone:'031-2215540', description:'تخصص باطنية — مواعيد: 10ص-2م', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_3', name:'صيدلية النور', mainCategory:'طبي / صحة', subCategory:'صيدليات', governorate:'حمص', district:'الحمراء', address:'شارع الحمراء - حمص', phone:'031-2234567', description:'يعمل حتى منتصف الليل', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_4', name:'مركز حمص للأسنان', mainCategory:'طبي / صحة', subCategory:'عيادات أسنان', governorate:'حمص', district:'الضواهرة', address:'حي الضواهرة - شارع النيل', phone:'031-2201234', description:'زرع وتركيبات', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_5', name:'مختبر البيان الطبي', mainCategory:'طبي / صحة', subCategory:'مختبرات', governorate:'حمص', district:'القوتلي', address:'شارع القوتلي - بجانب جامع الروضة', phone:'031-2289000', description:'نتائج خلال 24 ساعة', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_6', name:'مكتب المحامي سامر القاسم', mainCategory:'قانوني', subCategory:'محامون', governorate:'حمص', district:'العدالة', address:'شارع العدالة - مقابل قصر العدل', phone:'0944123456', description:'قضايا مدنية وتجارية', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_7', name:'مكتب التوثيق الرسمي', mainCategory:'قانوني', subCategory:'كاتب عدل', governorate:'حمص', district:'المديرية', address:'شارع المديرية - حمص', phone:'031-2212233', description:'ساعات العمل: 8ص-3م', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_8', name:'سوبرماركت الأمل', mainCategory:'تسوق / محلات', subCategory:'بقالة وسوبرماركت', governorate:'حمص', district:'الزهراء', address:'حي الزهراء - الطريق الدائري', phone:'0933456789', description:'يعمل من 7ص حتى 11م', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_9', name:'محل الإلكترونيات والأجهزة', mainCategory:'تسوق / محلات', subCategory:'إلكترونيات', governorate:'حمص', district:'الكورنيش', address:'شارع الكورنيش - حمص', phone:'031-2267890', description:'بيع وصيانة جميع الأجهزة', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_10', name:'مطعم بيت الشام', mainCategory:'مطاعم / طعام', subCategory:'مطاعم شعبية', governorate:'حمص', district:'الزهراء', address:'حي الزهراء - شارع المتنبي', phone:'031-2245678', description:'مشاوي وكبة حمصية', website:'', lat:'34.7324', lng:'36.7137', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_11', name:'حلويات ابن البلد', mainCategory:'مطاعم / طعام', subCategory:'حلويات ومخبوزات', governorate:'حمص', district:'القوتلي', address:'شارع القوتلي - حمص', phone:'031-2256789', description:'بقلاوة ومعمول شامي', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_12', name:'فلافل الصفا', mainCategory:'مطاعم / طعام', subCategory:'وجبات سريعة', governorate:'حمص', district:'ساحة الحرية', address:'ساحة الحرية - حمص', phone:'', description:'أشهر فلافل في حمص — منذ 1980', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_13', name:'محطة بنزين الوفاء', mainCategory:'خدمات', subCategory:'محطات وقود', governorate:'حمص', district:'الطريق الشمالي', address:'الطريق الدائري الشمالي - حمص', phone:'031-2290000', description:'متاح 24 ساعة', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_14', name:'ورشة إصلاح السيارات', mainCategory:'خدمات', subCategory:'ميكانيك وسيارات', governorate:'حمص', district:'المنطقة الصناعية', address:'المنطقة الصناعية - حمص', phone:'031-2278900', description:'إصلاح شامل — سحب على الطريق', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_15', name:'مدرسة النور الخاصة', mainCategory:'تعليم', subCategory:'مدارس خاصة', governorate:'حمص', district:'الغوطة', address:'حي الغوطة - حمص', phone:'031-2201100', description:'منهج سوري — متوسطة وثانوية', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+    { recordId:'entry_16', name:'مركز اللغات الحديثة', mainCategory:'تعليم', subCategory:'تعليم لغات', governorate:'حمص', district:'القوتلي', address:'شارع القوتلي - الطابق الثاني', phone:'0944112233', description:'إنجليزي وفرنسي وتركي — دورات مكثفة', website:'', lat:'', lng:'', addedBy:'admin', addedAt:now, updatedAt:'', status:'نشط', ratingAvg:'', ratingCount:'0' },
+  ];
 }
 
-// Seed default entries if none
-function initEntries() {
-  let entries = loadJSON(STORAGE_KEYS.entries, null);
-  if (!entries) {
-    const now = new Date().toISOString();
-    entries = [
-      { id:1, name:'مستشفى الباسل', mainCategory:'طبي / صحة', subCategory:'مستشفيات عامة', address:'شارع العدوي - حمص', phone:'031-2220000', notes:'مستشفى حكومي — يعمل 24 ساعة', mapLink:'https://maps.google.com/?q=34.739,36.710', social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:2, name:'عيادة الدكتور خالد المصري', mainCategory:'طبي / صحة', subCategory:'عيادات خاصة', address:'حي الميدان - شارع بغداد', phone:'031-2215540', notes:'تخصص باطنية — مواعيد: 10ص-2م', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:3, name:'صيدلية النور', mainCategory:'طبي / صحة', subCategory:'صيدليات', address:'شارع الحمراء - حمص', phone:'031-2234567', notes:'يعمل حتى منتصف الليل', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:4, name:'مركز حمص للأسنان', mainCategory:'طبي / صحة', subCategory:'عيادات أسنان', address:'حي الضواهرة - شارع النيل', phone:'031-2201234', notes:'زرع وتركيبات', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:5, name:'مختبر البيان الطبي', mainCategory:'طبي / صحة', subCategory:'مختبرات', address:'شارع القوتلي - بجانب جامع الروضة', phone:'031-2289000', notes:'نتائج خلال 24 ساعة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:6, name:'مكتب المحامي سامر القاسم', mainCategory:'قانوني', subCategory:'محامون', address:'شارع العدالة - مقابل قصر العدل', phone:'0944123456', notes:'قضايا مدنية وتجارية', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:7, name:'مكتب التوثيق الرسمي', mainCategory:'قانوني', subCategory:'كاتب عدل', address:'شارع المديرية - حمص', phone:'031-2212233', notes:'ساعات العمل: 8ص-3م', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:8, name:'سوبرماركت الأمل', mainCategory:'تسوق / محلات', subCategory:'بقالة وسوبرماركت', address:'حي الزهراء - الطريق الدائري', phone:'0933456789', notes:'يعمل من 7ص حتى 11م', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:9, name:'محل الإلكترونيات والأجهزة', mainCategory:'تسوق / محلات', subCategory:'إلكترونيات', address:'شارع الكورنيش - حمص', phone:'031-2267890', notes:'بيع وصيانة جميع الأجهزة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:10, name:'مطعم بيت الشام', mainCategory:'مطاعم / طعام', subCategory:'مطاعم شعبية', address:'حي الزهراء - شارع المتنبي', phone:'031-2245678', notes:'مشاوي وكبة حمصية', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:11, name:'حلويات ابن البلد', mainCategory:'مطاعم / طعام', subCategory:'حلويات ومخبوزات', address:'شارع القوتلي - حمص', phone:'031-2256789', notes:'بقلاوة ومعمول شامي', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:12, name:'فلافل الصفا', mainCategory:'مطاعم / طعام', subCategory:'وجبات سريعة', address:'ساحة الحرية - حمص', phone:null, notes:'أشهر فلافل في حمص — منذ 1980', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:13, name:'محطة بنزين الوفاء', mainCategory:'خدمات', subCategory:'محطات وقود', address:'الطريق الدائري الشمالي - حمص', phone:'031-2290000', notes:'متاح 24 ساعة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:14, name:'ورشة إصلاح السيارات', mainCategory:'خدمات', subCategory:'ميكانيك وسيارات', address:'المنطقة الصناعية - حمص', phone:'031-2278900', notes:'إصلاح شامل — سحب على الطريق', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:15, name:'مدرسة النور الخاصة', mainCategory:'تعليم', subCategory:'مدارس خاصة', address:'حي الغوطة - حمص', phone:'031-2201100', notes:'منهج سوري — متوسطة وثانوية', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-      { id:16, name:'مركز اللغات الحديثة', mainCategory:'تعليم', subCategory:'تعليم لغات', address:'شارع القوتلي - الطابق الثاني', phone:'0944112233', notes:'إنجليزي وفرنسي وتركي — دورات مكثفة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
-    ];
-    saveJSON(STORAGE_KEYS.entries, entries);
-  }
-  return entries;
+function getDefaultUsers() {
+  return [{
+    userId: 'user_admin', username: 'admin', password: 'admin123', email: 'admin@homs.sy',
+    phone: '', role: 'admin', status: 'active', dailyEditLimit: '999',
+    registeredAt: new Date().toISOString(), lastLogin: '', accountType: 'admin'
+  }];
 }
 
 // ============================================================
@@ -782,30 +508,184 @@ function initEntries() {
 let entries = [];
 let users = [];
 let audit = [];
-let ratings = {};    // { entryId_fp: value }
-let session = null;  // { id, username, role, isBlocked, dailyEditLimit }
+let ratings = {};
+let session = null;
 let darkMode = false;
 let selectedCat = '';
 let selectedSubCat = '';
 let searchQ = '';
 let editingId = null;
-let authMode = 'login'; // or 'register'
+let authMode = 'login';
+let addPickerMap = null;
+let addPickerMarker = null;
+let addPickerOpen = false;
+let cardMaps = {};
+let modalMap = null;
+let apiOnline = true;
+let isLoading = false;
+
+// ============================================================
+// API HELPERS
+// ============================================================
+function showLoading() {
+  isLoading = true;
+  document.getElementById('loading-bar').style.display = 'block';
+  setSyncStatus('loading', 'جاري التزامن...');
+}
+function hideLoading() {
+  isLoading = false;
+  document.getElementById('loading-bar').style.display = 'none';
+  setSyncStatus(apiOnline ? 'ok' : 'error', apiOnline ? 'متصل' : 'غير متصل');
+}
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (!dot || !lbl) return;
+  dot.className = 'sync-dot' + (state === 'loading' ? ' loading' : state === 'error' ? ' error' : '');
+  lbl.textContent = label;
+}
+
+async function apiFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, {
+      headers: { 'Content-Type': 'application/json', ...options.headers },
+      ...options
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    apiOnline = true;
+    return await res.json();
+  } catch (err) {
+    apiOnline = false;
+    console.warn('API error:', err);
+    throw err;
+  }
+}
+
+// Map SheetBest row to internal entry format
+function rowToEntry(row) {
+  return {
+    recordId: row.recordId || '',
+    name: row.name || '',
+    mainCategory: row.mainCategory || '',
+    subCategory: row.subCategory || '',
+    governorate: row.governorate || 'حمص',
+    district: row.district || '',
+    address: row.address || '',
+    phone: row.phone || '',
+    description: row.description || row.notes || '',
+    website: row.website || row.social || '',
+    lat: row.lat || '',
+    lng: row.lng || '',
+    addedBy: row.addedBy || '',
+    addedAt: row.addedAt || row.createdAt || '',
+    updatedAt: row.updatedAt || '',
+    status: row.status || 'نشط',
+    ratingAvg: row.ratingAvg ? parseFloat(row.ratingAvg) || null : null,
+    ratingCount: parseInt(row.ratingCount) || 0,
+  };
+}
+
+function rowToUser(row) {
+  return {
+    userId: row.userId || '',
+    username: row.username || '',
+    password: row.password || '',
+    email: row.email || '',
+    phone: row.phone || '',
+    role: row.role || 'editor',
+    status: row.status || 'active',
+    dailyEditLimit: parseInt(row.dailyEditLimit) || 7,
+    registeredAt: row.registeredAt || '',
+    lastLogin: row.lastLogin || '',
+    accountType: row.accountType || 'user',
+  };
+}
 
 // ============================================================
 // INIT
 // ============================================================
-function init() {
-  entries = initEntries();
-  users = initUsers();
-  audit = loadJSON(STORAGE_KEYS.audit, []);
+async function init() {
   ratings = loadJSON(STORAGE_KEYS.ratings, {});
   session = loadJSON(STORAGE_KEYS.session, null);
   darkMode = localStorage.getItem('homs_dark') === '1';
   if (darkMode) document.body.classList.add('dark');
   document.getElementById('dark-btn').textContent = darkMode ? '☀️' : '🌙';
+
+  // Load from cache first (fast)
+  const cachedEntries = loadJSON(STORAGE_KEYS.entries, null);
+  const cachedUsers = loadJSON(STORAGE_KEYS.users, null);
+  entries = cachedEntries || getDefaultEntries();
+  users = cachedUsers || getDefaultUsers();
+  audit = loadJSON(STORAGE_KEYS.audit, []);
+
+  // Seed defaults to API if first run
+  if (!cachedEntries) {
+    saveJSON(STORAGE_KEYS.entries, entries);
+    seedDefaultsToAPI();
+  }
+  if (!cachedUsers) {
+    saveJSON(STORAGE_KEYS.users, users);
+    seedUsersToAPI();
+  }
+
   render();
+
+  // Fetch fresh data from API
+  await loadFromAPI();
 }
 
+async function seedDefaultsToAPI() {
+  try {
+    await apiFetch(API_SHEET1, { method: 'POST', body: JSON.stringify(entries) });
+  } catch (e) { console.warn('Seed entries failed:', e); }
+}
+
+async function seedUsersToAPI() {
+  try {
+    await apiFetch(API_SHEET2, { method: 'POST', body: JSON.stringify(users) });
+  } catch (e) { console.warn('Seed users failed:', e); }
+}
+
+async function loadFromAPI() {
+  showLoading();
+  try {
+    const [remoteEntries, remoteUsers] = await Promise.all([
+      apiFetch(API_SHEET1).catch(() => null),
+      apiFetch(API_SHEET2).catch(() => null),
+    ]);
+
+    if (remoteEntries && Array.isArray(remoteEntries) && remoteEntries.length > 0) {
+      entries = remoteEntries.map(rowToEntry).filter(e => e.recordId && e.name);
+      saveJSON(STORAGE_KEYS.entries, entries);
+      saveJSON(STORAGE_KEYS.cacheTime, Date.now());
+    }
+    if (remoteUsers && Array.isArray(remoteUsers) && remoteUsers.length > 0) {
+      users = remoteUsers.map(rowToUser).filter(u => u.username);
+      // Ensure admin always exists
+      if (!users.find(u => u.role === 'admin')) {
+        users.unshift(getDefaultUsers()[0]);
+      }
+      saveJSON(STORAGE_KEYS.users, users);
+      saveJSON(STORAGE_KEYS.usersCacheTime, Date.now());
+    }
+
+    render();
+    setSyncStatus('ok', 'متصل');
+  } catch (err) {
+    setSyncStatus('error', 'بدون إنترنت');
+  } finally {
+    hideLoading();
+  }
+}
+
+async function refreshData() {
+  toast('جاري تحديث البيانات...', 'success');
+  await loadFromAPI();
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
 function toggleDark() {
   darkMode = !darkMode;
   document.body.classList.toggle('dark', darkMode);
@@ -819,51 +699,100 @@ function toggleDark() {
 function openLoginModal() {
   if (session) { handleLogout(); return; }
   authMode = 'login';
-  document.getElementById('modal-title').textContent = 'تسجيل الدخول';
-  document.getElementById('m-submit').textContent = 'دخول';
-  document.getElementById('m-switch').textContent = 'إنشاء حساب';
+  updateAuthModalUI();
   document.getElementById('m-err').textContent = '';
   document.getElementById('m-username').value = '';
   document.getElementById('m-password').value = '';
+  document.getElementById('m-email').value = '';
+  document.getElementById('m-phone-reg').value = '';
   document.getElementById('login-modal').classList.add('open');
   setTimeout(() => document.getElementById('m-username').focus(), 100);
 }
 function closeLoginModal() { document.getElementById('login-modal').classList.remove('open'); }
 function switchAuthMode() {
   authMode = authMode === 'login' ? 'register' : 'login';
-  document.getElementById('modal-title').textContent = authMode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
-  document.getElementById('m-submit').textContent = authMode === 'login' ? 'دخول' : 'إنشاء الحساب';
-  document.getElementById('m-switch').textContent = authMode === 'login' ? 'إنشاء حساب' : 'لديّ حساب';
+  updateAuthModalUI();
   document.getElementById('m-err').textContent = '';
 }
+function updateAuthModalUI() {
+  const isReg = authMode === 'register';
+  document.getElementById('modal-title').textContent = isReg ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
+  document.getElementById('m-submit').textContent = isReg ? 'إنشاء الحساب' : 'دخول';
+  document.getElementById('m-switch').textContent = isReg ? 'لديّ حساب' : 'إنشاء حساب';
+  document.getElementById('m-email-wrap').style.display = isReg ? 'flex' : 'none';
+  document.getElementById('m-phone-wrap').style.display = isReg ? 'flex' : 'none';
+}
 
-function handleLogin() {
+async function handleLogin() {
   const username = document.getElementById('m-username').value.trim();
   const password = document.getElementById('m-password').value;
-  document.getElementById('m-err').textContent = '';
-  if (!username || !password) { document.getElementById('m-err').textContent = 'يرجى ملء جميع الحقول'; return; }
+  const errEl = document.getElementById('m-err');
+  errEl.textContent = '';
+  if (!username || !password) { errEl.textContent = 'يرجى ملء جميع الحقول'; return; }
+
+  const btn = document.getElementById('m-submit');
+  btn.disabled = true;
+
   if (authMode === 'login') {
-    const user = users.find(u => u.username === username && u.password === password);
-    if (!user) { document.getElementById('m-err').textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
-    if (user.isBlocked) { document.getElementById('m-err').textContent = 'تم إيقاف حسابك من قِبل المشرف'; return; }
-    session = { id: user.id, username: user.username, role: user.role, isBlocked: user.isBlocked, dailyEditLimit: user.dailyEditLimit };
+    // Check local first, then API
+    let user = users.find(u => u.username === username && u.password === password);
+    if (!user) {
+      // Try fetching fresh users from API
+      try {
+        const fresh = await apiFetch(API_SHEET2 + '/search?query[username]=' + encodeURIComponent(username));
+        if (fresh && fresh.length > 0) {
+          const apiUser = rowToUser(fresh[0]);
+          if (apiUser.password === password) user = apiUser;
+        }
+      } catch(e) {}
+    }
+    btn.disabled = false;
+    if (!user) { errEl.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
+    if (user.status === 'blocked') { errEl.textContent = 'تم إيقاف حسابك من قِبل المشرف'; return; }
+    session = { id: user.userId, username: user.username, role: user.role, isBlocked: user.status === 'blocked', dailyEditLimit: user.dailyEditLimit || 7 };
     saveJSON(STORAGE_KEYS.session, session);
+    // Update lastLogin in API
+    updateUserLastLogin(user.userId);
     closeLoginModal();
     toast('مرحباً، ' + user.username + ' 👋', 'success');
     render();
   } else {
-    if (username.length < 3) { document.getElementById('m-err').textContent = 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل'; return; }
-    if (password.length < 6) { document.getElementById('m-err').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; return; }
-    if (users.find(u => u.username === username)) { document.getElementById('m-err').textContent = 'اسم المستخدم موجود بالفعل'; return; }
-    const newUser = { id: Date.now(), username, password, role: 'editor', isBlocked: false, dailyEditLimit: 7, createdAt: new Date().toISOString() };
+    // Register
+    const email = document.getElementById('m-email').value.trim();
+    const phone = document.getElementById('m-phone-reg').value.trim();
+    if (username.length < 3) { btn.disabled = false; errEl.textContent = 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل'; return; }
+    if (password.length < 6) { btn.disabled = false; errEl.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; return; }
+    if (users.find(u => u.username === username)) { btn.disabled = false; errEl.textContent = 'اسم المستخدم موجود بالفعل'; return; }
+    const now = new Date().toISOString();
+    const newUser = {
+      userId: 'user_' + Date.now(),
+      username, password, email, phone,
+      role: 'editor', status: 'active',
+      dailyEditLimit: 7, registeredAt: now,
+      lastLogin: now, accountType: 'user'
+    };
     users.push(newUser);
     saveJSON(STORAGE_KEYS.users, users);
-    session = { id: newUser.id, username: newUser.username, role: newUser.role, isBlocked: false, dailyEditLimit: 7 };
+    // Sync to API
+    try { await apiFetch(API_SHEET2, { method: 'POST', body: JSON.stringify([newUser]) }); } catch(e) {}
+    btn.disabled = false;
+    session = { id: newUser.userId, username: newUser.username, role: 'editor', isBlocked: false, dailyEditLimit: 7 };
     saveJSON(STORAGE_KEYS.session, session);
+    // Log to audit
+    await logAuditAPI({ action: 'register', entryName: 'تسجيل مستخدم: ' + username, entryId: newUser.userId });
     closeLoginModal();
-    toast('تم إنشاء الحساب بنجاح! مرحباً، ' + username, 'success');
+    toast('تم إنشاء الحساب بنجاح! مرحباً، ' + username + ' 🎉', 'success');
     render();
   }
+}
+
+async function updateUserLastLogin(userId) {
+  try {
+    await apiFetch(API_SHEET2 + '/search?query[userId]=' + encodeURIComponent(userId), {
+      method: 'PATCH',
+      body: JSON.stringify({ lastLogin: new Date().toISOString() })
+    });
+  } catch(e) {}
 }
 
 function handleLogout() {
@@ -874,15 +803,15 @@ function handleLogout() {
 }
 
 // ============================================================
-// CATEGORIES & FILTERING
+// CATEGORIES
 // ============================================================
 const CAT_CONFIG = {
-  'طبي / صحة':   { cls: 'cat-medical', icon: '🏥' },
-  'قانوني':       { cls: 'cat-legal',   icon: '⚖️' },
-  'تسوق / محلات': { cls: 'cat-shop',    icon: '🛒' },
-  'مطاعم / طعام': { cls: 'cat-food',    icon: '🍽️' },
-  'خدمات':        { cls: 'cat-service', icon: '🔧' },
-  'تعليم':        { cls: 'cat-edu',     icon: '📚' },
+  'طبي / صحة': { cls: 'cat-medical', icon: '🏥' },
+  'قانوني': { cls: 'cat-legal', icon: '⚖️' },
+  'تسوق / محلات': { cls: 'cat-shop', icon: '🛒' },
+  'مطاعم / طعام': { cls: 'cat-food', icon: '🍽️' },
+  'خدمات': { cls: 'cat-service', icon: '🔧' },
+  'تعليم': { cls: 'cat-edu', icon: '📚' },
 };
 function getCatCls(cat) { return CAT_CONFIG[cat]?.cls || ''; }
 function getCatIcon(cat) { return CAT_CONFIG[cat]?.icon || '📋'; }
@@ -893,7 +822,7 @@ function getFilteredEntries() {
     if (selectedSubCat && e.subCategory !== selectedSubCat) return false;
     if (searchQ) {
       const q = searchQ.toLowerCase();
-      const hay = [e.name, e.address, e.mainCategory, e.subCategory, e.notes, e.phone].filter(Boolean).join(' ').toLowerCase();
+      const hay = [e.name, e.address, e.mainCategory, e.subCategory, e.description, e.phone, e.governorate, e.district].filter(Boolean).join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -912,22 +841,17 @@ function render() {
   renderCategories();
   renderCards();
   renderAdminPanel();
-  if (session?.role === 'admin') renderAudit(), renderUsers();
+  if (session?.role === 'admin') { renderAudit(); renderUsers(); }
 }
 
 function renderHeader() {
   document.getElementById('total-badge').textContent = entries.length + ' منشأة';
   const lbl = document.getElementById('login-label');
-  if (session) {
-    lbl.textContent = session.username + ' (خروج)';
-  } else {
-    lbl.textContent = 'تسجيل الدخول';
-  }
+  lbl.textContent = session ? session.username + ' (خروج)' : 'تسجيل الدخول';
 }
 
 function renderAdminPanel() {
-  const panel = document.getElementById('admin-panel');
-  panel.classList.toggle('open', !!(session && session.role === 'admin'));
+  document.getElementById('admin-panel').classList.toggle('open', !!(session && session.role === 'admin'));
 }
 
 function renderAddForm() {
@@ -936,10 +860,11 @@ function renderAddForm() {
     inner.innerHTML = `<div class="not-logged-msg">لإضافة منشأة جديدة، يرجى <a onclick="openLoginModal()">تسجيل الدخول أولاً</a>.</div>`;
     return;
   }
-  const cats = [...new Set(entries.map(e => e.mainCategory))];
-  const subcats = selectedCat ? [...new Set(entries.filter(e => e.mainCategory === selectedCat).map(e => e.subCategory))] : [];
+  const cats = [...new Set(entries.map(e => e.mainCategory).filter(Boolean))];
+  const governorates = ['حمص', 'حماه', 'دمشق', 'حلب', 'اللاذقية', 'طرطوس', 'دير الزور', 'الرقة', 'درعا', 'السويداء', 'القنيطرة', 'الحسكة', 'إدلب'];
   inner.innerHTML = `
     <div class="form-grid">
+      <div class="form-section-title">📋 المعلومات الأساسية</div>
       <div class="form-group" style="grid-column:span 2">
         <label>اسم المنشأة *</label>
         <input type="text" id="f-name" placeholder="مثال: مطعم النخيل أو دكتور سامر الأحمد">
@@ -948,42 +873,73 @@ function renderAddForm() {
         <label>التصنيف الرئيسي *</label>
         <select id="f-maincat" onchange="renderSubCatOptions()">
           <option value="">-- اختر --</option>
-          ${cats.map(c => `<option>${c}</option>`).join('')}
+          ${cats.map(c => `<option>${esc(c)}</option>`).join('')}
           <option value="__new">تصنيف جديد...</option>
         </select>
         <input type="text" id="f-maincat-new" placeholder="أدخل التصنيف الجديد" style="display:none;margin-top:6px">
       </div>
       <div class="form-group">
         <label>التصنيف الفرعي *</label>
-        <select id="f-subcat">
+        <select id="f-subcat" onchange="checkSubCatNew()">
           <option value="">-- اختر --</option>
-          ${subcats.map(s => `<option>${s}</option>`).join('')}
           <option value="__new">تصنيف جديد...</option>
         </select>
         <input type="text" id="f-subcat-new" placeholder="أدخل التصنيف الفرعي" style="display:none;margin-top:6px">
       </div>
-      <div class="form-group" style="grid-column:span 2">
-        <label>العنوان *</label>
-        <input type="text" id="f-address" placeholder="الحي، الشارع، المنطقة">
+      <div class="form-group">
+        <label>المحافظة *</label>
+        <select id="f-gov">
+          ${governorates.map(g => `<option ${g==='حمص'?'selected':''}>${g}</option>`).join('')}
+        </select>
       </div>
+      <div class="form-group">
+        <label>المنطقة / الحي</label>
+        <input type="text" id="f-district" placeholder="مثال: حي الزهراء">
+      </div>
+      <div class="form-group" style="grid-column:span 2">
+        <label>العنوان التفصيلي *</label>
+        <input type="text" id="f-address" placeholder="الشارع، رقم البناء، معالم قريبة">
+      </div>
+
+      <div class="form-section-title">📞 معلومات التواصل</div>
       <div class="form-group">
         <label>رقم الهاتف</label>
-        <input type="text" id="f-phone" placeholder="مثال: 031-2212345">
+        <input type="tel" id="f-phone" placeholder="مثال: 031-2212345">
       </div>
       <div class="form-group">
-        <label>رابط الموقع (خرائط Google)</label>
-        <input type="url" id="f-map" placeholder="https://maps.google.com/...">
+        <label>الموقع الإلكتروني</label>
+        <input type="url" id="f-website" placeholder="https://example.com">
       </div>
-      <div class="form-group">
-        <label>مواعيد / ملاحظات</label>
+      <div class="form-group" style="grid-column:span 2">
+        <label>ملاحظات / أوقات العمل</label>
         <textarea id="f-notes" placeholder="ساعات العمل، تخصصات، معلومات مفيدة..."></textarea>
       </div>
-      <div class="form-group">
-        <label>رابط التواصل الاجتماعي</label>
-        <input type="url" id="f-social" placeholder="https://facebook.com/...">
+
+      <div class="form-section-title">🗺️ الموقع الجغرافي</div>
+      <div class="map-picker-wrap">
+        <div class="map-picker-header" onclick="toggleAddPickerMap()">
+          📍 تحديد الموقع على الخريطة (اختياري) <span id="picker-chevron">▼</span>
+        </div>
+        <div class="map-picker-body" id="add-map-picker-body">
+          <div class="map-container" id="add-picker-map"></div>
+          <div class="map-actions">
+            <button class="btn-locate" type="button" onclick="locateMe()">📡 موقعي الحالي</button>
+            <div class="coords-display" id="coords-display">📌 انقر على الخريطة لتحديد الموقع</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <div class="form-group" style="flex:1">
+              <label>خط العرض (Latitude)</label>
+              <input type="text" id="f-lat" placeholder="مثال: 34.7324" oninput="updatePickerFromInputs()">
+            </div>
+            <div class="form-group" style="flex:1">
+              <label>خط الطول (Longitude)</label>
+              <input type="text" id="f-lng" placeholder="مثال: 36.7137" oninput="updatePickerFromInputs()">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <button class="btn-primary" onclick="addEntry()">💾 حفظ وإدراج في الدليل العام</button>
+    <button class="btn-primary" onclick="addEntry()" id="add-btn">💾 حفظ وإدراج في الدليل العام</button>
   `;
 }
 
@@ -995,14 +951,20 @@ function renderSubCatOptions() {
   const val = mainCatSel.value;
   mainCatNew.style.display = val === '__new' ? 'block' : 'none';
   const cat = val === '__new' ? '' : val;
-  const subcats = cat ? [...new Set(entries.filter(e => e.mainCategory === cat).map(e => e.subCategory))] : [];
-  subCatSel.innerHTML = `<option value="">-- اختر --</option>${subcats.map(s => `<option>${s}</option>`).join('')}<option value="__new">تصنيف جديد...</option>`;
+  const subcats = cat ? [...new Set(entries.filter(e => e.mainCategory === cat).map(e => e.subCategory).filter(Boolean))] : [];
+  subCatSel.innerHTML = `<option value="">-- اختر --</option>${subcats.map(s => `<option>${esc(s)}</option>`).join('')}<option value="__new">تصنيف جديد...</option>`;
   const subNew = document.getElementById('f-subcat-new');
   if (subNew) subNew.style.display = 'none';
 }
 
-function getAddFormVal(id, newId) {
-  const sel = document.getElementById(id);
+function checkSubCatNew() {
+  const sel = document.getElementById('f-subcat');
+  const newInp = document.getElementById('f-subcat-new');
+  if (sel && newInp) newInp.style.display = sel.value === '__new' ? 'block' : 'none';
+}
+
+function getFormVal(selId, newId) {
+  const sel = document.getElementById(selId);
   if (!sel) return '';
   if (sel.value === '__new') {
     const ni = document.getElementById(newId);
@@ -1011,60 +973,233 @@ function getAddFormVal(id, newId) {
   return sel.value.trim();
 }
 
-function addEntry() {
+// ============================================================
+// ADD ENTRY
+// ============================================================
+async function addEntry() {
   if (!session) { openLoginModal(); return; }
   const name = document.getElementById('f-name')?.value.trim();
-  const mainCategory = getAddFormVal('f-maincat', 'f-maincat-new');
-  const subCategory = getAddFormVal('f-subcat', 'f-subcat-new');
+  const mainCategory = getFormVal('f-maincat', 'f-maincat-new');
+  const subCategory = getFormVal('f-subcat', 'f-subcat-new');
+  const governorate = document.getElementById('f-gov')?.value || 'حمص';
+  const district = document.getElementById('f-district')?.value.trim() || '';
   const address = document.getElementById('f-address')?.value.trim();
-  const phone = document.getElementById('f-phone')?.value.trim() || null;
-  const mapLink = document.getElementById('f-map')?.value.trim() || null;
-  const notes = document.getElementById('f-notes')?.value.trim() || null;
-  const social = document.getElementById('f-social')?.value.trim() || null;
+  const phone = document.getElementById('f-phone')?.value.trim() || '';
+  const website = document.getElementById('f-website')?.value.trim() || '';
+  const description = document.getElementById('f-notes')?.value.trim() || '';
+  const lat = document.getElementById('f-lat')?.value.trim() || '';
+  const lng = document.getElementById('f-lng')?.value.trim() || '';
+
   if (!name) { toast('يرجى إدخال اسم المنشأة', 'error'); return; }
   if (!mainCategory) { toast('يرجى اختيار التصنيف الرئيسي', 'error'); return; }
   if (!subCategory) { toast('يرجى اختيار التصنيف الفرعي', 'error'); return; }
   if (!address) { toast('يرجى إدخال العنوان', 'error'); return; }
-  const id = entries.length > 0 ? Math.max(...entries.map(e => e.id)) + 1 : 1;
-  const entry = { id, name, mainCategory, subCategory, address, phone, mapLink, notes, social, status: 'نشط', ratingAvg: null, ratingCount: 0, createdAt: new Date().toISOString() };
+
+  const btn = document.getElementById('add-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...'; }
+
+  const recordId = 'entry_' + Date.now();
+  const now = new Date().toISOString();
+  const entry = {
+    recordId, name, mainCategory, subCategory, governorate, district,
+    address, phone, description, website, lat, lng,
+    addedBy: session.username, addedAt: now, updatedAt: '',
+    status: 'نشط', ratingAvg: '', ratingCount: 0
+  };
+
   entries.push(entry);
   saveJSON(STORAGE_KEYS.entries, entries);
-  logAudit({ action: 'create', entryId: id, entryName: name, oldValues: null, newValues: JSON.stringify(entry) });
-  toast('تمت إضافة المنشأة بنجاح ✅', 'success');
+
+  // Sync to API
+  try {
+    await apiFetch(API_SHEET1, { method: 'POST', body: JSON.stringify([entry]) });
+    toast('تمت إضافة المنشأة بنجاح ✅', 'success');
+  } catch(e) {
+    toast('تم الحفظ محلياً — سيتم التزامن لاحقاً', 'success');
+  }
+
+  await logAuditAPI({ action: 'create', entryId: recordId, entryName: name, oldValues: null, newValues: JSON.stringify(entry) });
+
+  if (btn) { btn.disabled = false; btn.textContent = '💾 حفظ وإدراج في الدليل العام'; }
   render();
 }
 
+// ============================================================
+// MAP PICKER (ADD FORM)
+// ============================================================
+function toggleAddPickerMap() {
+  addPickerOpen = !addPickerOpen;
+  const body = document.getElementById('add-map-picker-body');
+  const chevron = document.getElementById('picker-chevron');
+  if (!body) return;
+  body.classList.toggle('open', addPickerOpen);
+  if (chevron) chevron.textContent = addPickerOpen ? '▲' : '▼';
+  if (addPickerOpen) {
+    setTimeout(() => initAddPickerMap(), 100);
+  }
+}
+
+function initAddPickerMap() {
+  if (addPickerMap) { addPickerMap.invalidateSize(); return; }
+  const el = document.getElementById('add-picker-map');
+  if (!el) return;
+  // Default: Homs city center
+  const homsCenterLat = 34.7324, homsCenterLng = 36.7137;
+  addPickerMap = L.map('add-picker-map', { tap: true, zoomControl: true }).setView([homsCenterLat, homsCenterLng], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 19
+  }).addTo(addPickerMap);
+
+  addPickerMap.on('click', function(e) {
+    setPickerMarker(e.latlng.lat, e.latlng.lng);
+  });
+}
+
+function setPickerMarker(lat, lng) {
+  if (!addPickerMap) return;
+  const latR = Math.round(lat * 1000000) / 1000000;
+  const lngR = Math.round(lng * 1000000) / 1000000;
+  if (addPickerMarker) {
+    addPickerMarker.setLatLng([latR, lngR]);
+  } else {
+    addPickerMarker = L.marker([latR, lngR], { draggable: true }).addTo(addPickerMap);
+    addPickerMarker.on('dragend', function(e) {
+      const pos = e.target.getLatLng();
+      setPickerMarker(pos.lat, pos.lng);
+    });
+  }
+  addPickerMap.panTo([latR, lngR]);
+  const latEl = document.getElementById('f-lat');
+  const lngEl = document.getElementById('f-lng');
+  if (latEl) latEl.value = latR;
+  if (lngEl) lngEl.value = lngR;
+  const disp = document.getElementById('coords-display');
+  if (disp) disp.textContent = '📌 ' + latR + ', ' + lngR;
+}
+
+function updatePickerFromInputs() {
+  const lat = parseFloat(document.getElementById('f-lat')?.value);
+  const lng = parseFloat(document.getElementById('f-lng')?.value);
+  if (!isNaN(lat) && !isNaN(lng) && addPickerMap) {
+    setPickerMarker(lat, lng);
+  }
+}
+
+function locateMe() {
+  if (!navigator.geolocation) { toast('خدمة الموقع غير مدعومة في هذا الجهاز', 'error'); return; }
+  toast('جاري تحديد موقعك...', 'success');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      if (!addPickerMap) initAddPickerMap();
+      addPickerMap.setView([pos.coords.latitude, pos.coords.longitude], 16);
+      setPickerMarker(pos.coords.latitude, pos.coords.longitude);
+      toast('تم تحديد موقعك بنجاح 📍', 'success');
+    },
+    function(err) {
+      toast('تعذر تحديد الموقع: ' + (err.message || 'خطأ غير معروف'), 'error');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+// ============================================================
+// CARD MAP
+// ============================================================
+function toggleCardMap(entryId) {
+  const body = document.getElementById('card-map-body-' + entryId);
+  const toggle = document.getElementById('card-map-toggle-' + entryId);
+  if (!body || !toggle) return;
+  const isOpen = body.classList.toggle('open');
+  toggle.classList.toggle('open', isOpen);
+  if (isOpen && !cardMaps[entryId]) {
+    setTimeout(() => initCardMap(entryId), 100);
+  }
+}
+
+function initCardMap(entryId) {
+  const entry = entries.find(e => e.recordId === entryId);
+  if (!entry || !entry.lat || !entry.lng) return;
+  const el = document.getElementById('card-map-inner-' + entryId);
+  if (!el || cardMaps[entryId]) return;
+  const lat = parseFloat(entry.lat), lng = parseFloat(entry.lng);
+  if (isNaN(lat) || isNaN(lng)) return;
+  const m = L.map('card-map-inner-' + entryId, { zoomControl: false, dragging: true, tap: true, scrollWheelZoom: false })
+    .setView([lat, lng], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(m);
+  L.marker([lat, lng]).addTo(m).bindPopup(esc(entry.name)).openPopup();
+  cardMaps[entryId] = m;
+  setTimeout(() => m.invalidateSize(), 50);
+}
+
+function openMapModal(entryId) {
+  const entry = entries.find(e => e.recordId === entryId);
+  if (!entry || !entry.lat || !entry.lng) return;
+  const lat = parseFloat(entry.lat), lng = parseFloat(entry.lng);
+  if (isNaN(lat) || isNaN(lng)) return;
+
+  document.getElementById('map-modal-title').textContent = entry.name;
+  const actEl = document.getElementById('map-modal-actions');
+  actEl.innerHTML = `
+    <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" class="map-ext-btn">🗺️ فتح في Google Maps</a>
+    <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}&zoom=16" target="_blank" class="map-ext-btn">🌍 فتح في OpenStreetMap</a>
+  `;
+  document.getElementById('map-modal').classList.add('open');
+  setTimeout(() => {
+    const el = document.getElementById('map-modal-inner');
+    if (!el) return;
+    if (modalMap) { modalMap.remove(); modalMap = null; }
+    modalMap = L.map('map-modal-inner', { tap: true }).setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(modalMap);
+    L.marker([lat, lng]).addTo(modalMap).bindPopup(esc(entry.name)).openPopup();
+    setTimeout(() => modalMap.invalidateSize(), 100);
+  }, 50);
+}
+
+function closeMapModal() {
+  document.getElementById('map-modal').classList.remove('open');
+  if (modalMap) { modalMap.remove(); modalMap = null; }
+}
+
+// ============================================================
+// TOP RATED
+// ============================================================
 function renderTopRated() {
-  const sorted = [...entries].filter(e => e.ratingAvg).sort((a, b) => (b.ratingAvg||0) - (a.ratingAvg||0)).slice(0, 5);
+  const sorted = [...entries].filter(e => e.ratingAvg && e.ratingCount > 0)
+    .sort((a, b) => (parseFloat(b.ratingAvg)||0) - (parseFloat(a.ratingAvg)||0))
+    .slice(0, 5);
   const el = document.getElementById('top-rated-section');
   if (sorted.length === 0) { el.innerHTML = ''; return; }
   el.innerHTML = `
     <div style="font-size:.82rem;font-weight:700;color:var(--text3);margin-bottom:6px;">⭐ الأعلى تقييماً</div>
     <div class="top-rated-wrap">
       ${sorted.map(e => `
-        <div class="top-rated-chip" onclick="highlightCard(${e.id})">
-          ⭐ ${e.ratingAvg?.toFixed(1)} — ${e.name}
+        <div class="top-rated-chip" onclick="highlightCard('${esc(e.recordId)}')">
+          ⭐ ${parseFloat(e.ratingAvg).toFixed(1)} — ${esc(e.name)}
         </div>
       `).join('')}
     </div>
   `;
 }
 
+// ============================================================
+// CATEGORIES RENDER
+// ============================================================
 function renderCategories() {
-  const cats = ['الكل', ...new Set(entries.map(e => e.mainCategory))];
+  const cats = ['الكل', ...new Set(entries.map(e => e.mainCategory).filter(Boolean))];
   const wrap = document.getElementById('cats-wrap');
   wrap.innerHTML = cats.map(c => `
     <button class="cat-btn ${(c === 'الكل' ? !selectedCat : selectedCat === c) ? 'active' : ''}"
-      onclick="selectCat('${c === 'الكل' ? '' : c}')">
-      ${c === 'الكل' ? c : (getCatIcon(c) + ' ' + c)}
+      onclick="selectCat('${c === 'الكل' ? '' : esc(c)}')">
+      ${c === 'الكل' ? c : (getCatIcon(c) + ' ' + esc(c))}
     </button>
   `).join('');
   const subwrap = document.getElementById('subcats-wrap');
   if (selectedCat) {
-    const subcats = [...new Set(entries.filter(e => e.mainCategory === selectedCat).map(e => e.subCategory))];
+    const subcats = [...new Set(entries.filter(e => e.mainCategory === selectedCat).map(e => e.subCategory).filter(Boolean))];
     subwrap.innerHTML = subcats.map(s => `
-      <button class="subcat-btn ${selectedSubCat === s ? 'active' : ''}" onclick="selectSubCat('${s}')">
-        ${s}
+      <button class="subcat-btn ${selectedSubCat === s ? 'active' : ''}" onclick="selectSubCat('${esc(s)}')">
+        ${esc(s)}
       </button>
     `).join('');
   } else {
@@ -1080,6 +1215,9 @@ function highlightCard(id) {
   if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '3px solid #f59e0b'; setTimeout(() => el.style.outline = '', 1500); }
 }
 
+// ============================================================
+// CARDS RENDER
+// ============================================================
 function renderCards() {
   const filtered = getFilteredEntries();
   const grid = document.getElementById('cards-grid');
@@ -1094,41 +1232,63 @@ function renderCards() {
 
 function renderCard(e) {
   const fp = getFingerprint();
-  const rKey = e.id + '_' + fp;
+  const rKey = e.recordId + '_' + fp;
   const myRating = ratings[rKey] || 0;
+  const avgRating = parseFloat(e.ratingAvg) || 0;
   const stars = [1,2,3,4,5].map(s => {
     const sz = s <= 2 ? 'star-sm' : s === 3 ? 'star-md' : 'star-lg';
-    const filled = myRating > 0 ? s <= myRating : (e.ratingAvg && s <= Math.round(e.ratingAvg));
-    return `<span class="star ${sz} ${filled ? 'filled' : ''}" onclick="rateEntry(${e.id}, ${s})">★</span>`;
+    const filled = myRating > 0 ? s <= myRating : (avgRating && s <= Math.round(avgRating));
+    return `<span class="star ${sz} ${filled ? 'filled' : ''}" onclick="rateEntry('${esc(e.recordId)}', ${s})">★</span>`;
   }).join('');
+
   const canEdit = session && (session.role === 'admin' || session.role === 'editor') && !session.isBlocked;
-  const editBtn = canEdit ? `<button class="edit-btn visible" onclick="openEditModal(${e.id})" title="تعديل">✏️</button>` : '';
-  const mapBtn = e.mapLink ? `<a href="${e.mapLink}" target="_blank" class="map-btn">🗺️ موقع على الخريطة</a>` : '';
-  const ratingInfo = e.ratingCount > 0 ? `<span class="rating-info">⭐ ${e.ratingAvg?.toFixed(1)} (${e.ratingCount})</span>` : '';
+  const editBtn = canEdit ? `<button class="edit-btn visible" onclick="openEditModal('${esc(e.recordId)}')" title="تعديل">✏️</button>` : '';
+  const ratingInfo = e.ratingCount > 0 ? `<span class="rating-info">⭐ ${avgRating.toFixed(1)} (${e.ratingCount})</span>` : '';
+  const statusBadge = e.status === 'مغلق' ? `<span class="card-status-closed">مغلق</span>` : '';
+
+  const hasCoords = e.lat && e.lng && !isNaN(parseFloat(e.lat)) && !isNaN(parseFloat(e.lng));
+  const mapSection = hasCoords ? `
+    <div class="card-map-section">
+      <div class="card-map-toggle" id="card-map-toggle-${esc(e.recordId)}" onclick="toggleCardMap('${esc(e.recordId)}')">
+        <span>🗺️ عرض الموقع على الخريطة</span><span class="ch">▼</span>
+      </div>
+      <div class="card-map-body" id="card-map-body-${esc(e.recordId)}">
+        <div class="card-map-inner" id="card-map-inner-${esc(e.recordId)}"></div>
+        <div class="card-map-actions">
+          <button class="map-ext-btn" onclick="openMapModal('${esc(e.recordId)}')">🔍 تكبير الخريطة</button>
+          <a href="https://maps.google.com/?q=${e.lat},${e.lng}" target="_blank" class="map-ext-btn">🗺️ Google Maps</a>
+        </div>
+      </div>
+    </div>` : (e.website && e.website.includes('maps.google.com') ? `
+    <div style="padding:0 14px 10px">
+      <a href="${esc(e.website)}" target="_blank" class="map-btn">🗺️ موقع على الخريطة</a>
+    </div>` : '');
+
   const details = [];
-  if (e.phone) details.push(`<div class="detail-row">📞 <a href="tel:${e.phone}">${e.phone}</a></div>`);
-  if (e.notes) details.push(`<div class="detail-row">🕐 ${e.notes}</div>`);
-  if (e.social) details.push(`<div class="detail-row">🔗 <a href="${e.social}" target="_blank">صفحة التواصل</a></div>`);
+  if (e.phone) details.push(`<div class="detail-row">📞 <a href="tel:${esc(e.phone)}">${esc(e.phone)}</a></div>`);
+  if (e.description) details.push(`<div class="detail-row">🕐 ${esc(e.description)}</div>`);
+  if (e.website && !e.website.includes('maps.google.com')) details.push(`<div class="detail-row">🔗 <a href="${esc(e.website)}" target="_blank">الموقع الإلكتروني</a></div>`);
+  if (e.addedBy) details.push(`<div class="detail-row" style="color:var(--text3);font-size:.75rem">أضافه: ${esc(e.addedBy)}</div>`);
+
   return `
-    <div class="card ${getCatCls(e.mainCategory)}" id="card-${e.id}">
+    <div class="card ${getCatCls(e.mainCategory)}" id="card-${esc(e.recordId)}">
       ${editBtn}
       <div class="card-body">
         <div class="card-top">
           <div class="card-icon">${getCatIcon(e.mainCategory)}</div>
           <div class="card-meta">
             <div class="card-cats">
-              <span class="cat-chip">${e.mainCategory}</span>
-              <span class="cat-chip">${e.subCategory}</span>
-              <span class="card-id">#${e.id}</span>
+              <span class="cat-chip">${esc(e.mainCategory)}</span>
+              <span class="cat-chip">${esc(e.subCategory)}</span>
+              ${statusBadge}
             </div>
-            <div class="card-name">${e.name}</div>
+            <div class="card-name">${esc(e.name)}</div>
           </div>
         </div>
         <div class="card-address">
           <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0C3.24 0 1 2.19 1 4.88c0 3.65 5 9.12 5 9.12s5-5.47 5-9.12C11 2.19 8.76 0 6 0Zm0 6.63a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Z" fill="currentColor"/></svg>
-          ${e.address}
+          ${esc(e.address)}${e.district ? ' — ' + esc(e.district) : ''}${e.governorate && e.governorate !== 'حمص' ? ' — ' + esc(e.governorate) : ''}
         </div>
-        ${mapBtn}
         <div class="rating-row">
           <div class="stars">${stars}</div>
           ${ratingInfo}
@@ -1136,11 +1296,12 @@ function renderCard(e) {
       </div>
       ${details.length > 0 ? `
       <div class="details-toggle" onclick="toggleDetails(this)">
-        <span>التفاصيل للتواصل</span><span class="ch">▼</span>
+        <span>التفاصيل والتواصل</span><span class="ch">▼</span>
       </div>
       <div class="details-body">
         ${details.join('')}
       </div>` : ''}
+      ${mapSection}
     </div>
   `;
 }
@@ -1153,18 +1314,25 @@ function toggleDetails(el) {
 // ============================================================
 // RATINGS
 // ============================================================
-function rateEntry(entryId, value) {
+async function rateEntry(entryId, value) {
   const fp = getFingerprint();
   const rKey = entryId + '_' + fp;
   if (ratings[rKey]) { toast('لقد قيّمت هذه المنشأة مسبقاً', 'error'); return; }
   ratings[rKey] = value;
   saveJSON(STORAGE_KEYS.ratings, ratings);
-  const entry = entries.find(e => e.id === entryId);
+  const entry = entries.find(e => e.recordId === entryId);
   if (entry) {
     const allRatings = Object.entries(ratings).filter(([k]) => k.startsWith(entryId + '_')).map(([,v]) => v);
     entry.ratingAvg = allRatings.reduce((a, b) => a + b, 0) / allRatings.length;
     entry.ratingCount = allRatings.length;
     saveJSON(STORAGE_KEYS.entries, entries);
+    // Sync rating to API
+    try {
+      await apiFetch(API_SHEET1 + '/search?query[recordId]=' + encodeURIComponent(entryId), {
+        method: 'PATCH',
+        body: JSON.stringify({ ratingAvg: entry.ratingAvg.toFixed(2), ratingCount: entry.ratingCount })
+      });
+    } catch(e) {}
   }
   toast('شكراً على تقييمك ⭐', 'success');
   renderCards();
@@ -1176,29 +1344,38 @@ function rateEntry(entryId, value) {
 // ============================================================
 function openEditModal(id) {
   editingId = id;
-  const e = entries.find(x => x.id === id);
+  const e = entries.find(x => x.recordId === id);
   if (!e) return;
+  const cats = [...new Set(entries.map(e => e.mainCategory).filter(Boolean))];
+  const subcats = [...new Set(entries.filter(x => x.mainCategory === e.mainCategory).map(x => x.subCategory).filter(Boolean))];
+  const governorates = ['حمص', 'حماه', 'دمشق', 'حلب', 'اللاذقية', 'طرطوس', 'دير الزور', 'الرقة', 'درعا', 'السويداء', 'القنيطرة', 'الحسكة', 'إدلب'];
   const inner = document.getElementById('edit-form-inner');
-  const cats = [...new Set(entries.map(e => e.mainCategory))];
-  const subcats = [...new Set(entries.filter(x => x.mainCategory === e.mainCategory).map(x => x.subCategory))];
   inner.innerHTML = `
     <div class="form-group"><label>الاسم *</label><input type="text" id="e-name" value="${esc(e.name)}"></div>
     <div class="form-group">
       <label>التصنيف الرئيسي *</label>
-      <select id="e-maincat">${cats.map(c => `<option ${c===e.mainCategory?'selected':''}>${c}</option>`).join('')}</select>
+      <select id="e-maincat">${cats.map(c => `<option ${c===e.mainCategory?'selected':''}>${esc(c)}</option>`).join('')}</select>
     </div>
     <div class="form-group">
       <label>التصنيف الفرعي *</label>
-      <select id="e-subcat">${subcats.map(s => `<option ${s===e.subCategory?'selected':''}>${s}</option>`).join('')}</select>
+      <select id="e-subcat">${subcats.map(s => `<option ${s===e.subCategory?'selected':''}>${esc(s)}</option>`).join('')}</select>
     </div>
+    <div class="form-group">
+      <label>المحافظة</label>
+      <select id="e-gov">${governorates.map(g => `<option ${g===(e.governorate||'حمص')?'selected':''}>${g}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label>المنطقة / الحي</label><input type="text" id="e-district" value="${esc(e.district||'')}"></div>
     <div class="form-group"><label>العنوان *</label><input type="text" id="e-address" value="${esc(e.address)}"></div>
-    <div class="form-group"><label>الهاتف</label><input type="text" id="e-phone" value="${esc(e.phone||'')}"></div>
-    <div class="form-group"><label>رابط الخريطة</label><input type="url" id="e-map" value="${esc(e.mapLink||'')}"></div>
-    <div class="form-group"><label>ملاحظات</label><textarea id="e-notes">${esc(e.notes||'')}</textarea></div>
-    <div class="form-group"><label>رابط التواصل</label><input type="url" id="e-social" value="${esc(e.social||'')}"></div>
+    <div class="form-group"><label>الهاتف</label><input type="tel" id="e-phone" value="${esc(e.phone||'')}"></div>
+    <div class="form-group"><label>الموقع الإلكتروني</label><input type="url" id="e-website" value="${esc(e.website||'')}"></div>
+    <div class="form-group"><label>الملاحظات</label><textarea id="e-notes">${esc(e.description||'')}</textarea></div>
+    <div style="display:flex;gap:8px;">
+      <div class="form-group" style="flex:1"><label>خط العرض</label><input type="text" id="e-lat" value="${esc(e.lat||'')}" placeholder="34.7324"></div>
+      <div class="form-group" style="flex:1"><label>خط الطول</label><input type="text" id="e-lng" value="${esc(e.lng||'')}" placeholder="36.7137"></div>
+    </div>
     ${session?.role === 'admin' ? `
     <div class="form-group"><label>الحالة</label>
-      <select id="e-status"><option ${e.status==='نشط'?'selected':''}>نشط</option><option ${e.status==='مغلق'?'selected':''}>مغلق</option></select>
+      <select id="e-status"><option ${(e.status||'نشط')==='نشط'?'selected':''}>نشط</option><option ${e.status==='مغلق'?'selected':''}>مغلق</option></select>
     </div>` : ''}
   `;
   document.getElementById('edit-err').textContent = '';
@@ -1207,46 +1384,67 @@ function openEditModal(id) {
 
 function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); editingId = null; }
 
-function saveEdit() {
+async function saveEdit() {
   if (!editingId) return;
   if (!session) { toast('يجب تسجيل الدخول', 'error'); return; }
 
-  // Daily edit limit check (non-admin)
+  // Daily edit limit check
   if (session.role !== 'admin') {
     const today = new Date().toDateString();
-    const todayEdits = audit.filter(a => a.userId === session.id && a.action === 'update' && new Date(a.createdAt).toDateString() === today).length;
-    if (todayEdits >= session.dailyEditLimit) {
+    const todayEdits = audit.filter(a => a.userId === session.id && a.action === 'update' && new Date(a.date || a.createdAt).toDateString() === today).length;
+    if (todayEdits >= (session.dailyEditLimit || 7)) {
       document.getElementById('edit-err').textContent = `تجاوزت الحد اليومي (${session.dailyEditLimit} تعديلات). يُعاد التعيين غداً.`;
       return;
     }
   }
 
-  const e = entries.find(x => x.id === editingId);
+  const e = entries.find(x => x.recordId === editingId);
   if (!e) return;
   const oldValues = JSON.stringify(e);
 
   const name = document.getElementById('e-name')?.value.trim();
-  const mainCategory = document.getElementById('e-maincat')?.value.trim();
-  const subCategory = document.getElementById('e-subcat')?.value.trim();
+  const mainCategory = document.getElementById('e-maincat')?.value;
+  const subCategory = document.getElementById('e-subcat')?.value;
   const address = document.getElementById('e-address')?.value.trim();
   if (!name || !mainCategory || !subCategory || !address) {
     document.getElementById('edit-err').textContent = 'يرجى ملء جميع الحقول المطلوبة'; return;
   }
 
+  const btn = document.querySelector('#edit-modal .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...'; }
+
   e.name = name;
   e.mainCategory = mainCategory;
   e.subCategory = subCategory;
+  e.governorate = document.getElementById('e-gov')?.value || e.governorate;
+  e.district = document.getElementById('e-district')?.value.trim() || '';
   e.address = address;
-  e.phone = document.getElementById('e-phone')?.value.trim() || null;
-  e.mapLink = document.getElementById('e-map')?.value.trim() || null;
-  e.notes = document.getElementById('e-notes')?.value.trim() || null;
-  e.social = document.getElementById('e-social')?.value.trim() || null;
+  e.phone = document.getElementById('e-phone')?.value.trim() || '';
+  e.website = document.getElementById('e-website')?.value.trim() || '';
+  e.description = document.getElementById('e-notes')?.value.trim() || '';
+  e.lat = document.getElementById('e-lat')?.value.trim() || '';
+  e.lng = document.getElementById('e-lng')?.value.trim() || '';
   if (session.role === 'admin') e.status = document.getElementById('e-status')?.value || e.status;
   e.updatedAt = new Date().toISOString();
 
   saveJSON(STORAGE_KEYS.entries, entries);
-  logAudit({ action: 'update', entryId: e.id, entryName: e.name, oldValues, newValues: JSON.stringify(e) });
-  toast('تم حفظ التعديلات بنجاح ✅', 'success');
+
+  // Sync to API
+  try {
+    await apiFetch(API_SHEET1 + '/search?query[recordId]=' + encodeURIComponent(editingId), {
+      method: 'PATCH',
+      body: JSON.stringify(e)
+    });
+    toast('تم حفظ التعديلات بنجاح ✅', 'success');
+  } catch(err) {
+    toast('تم الحفظ محلياً — سيتم التزامن لاحقاً', 'success');
+  }
+
+  await logAuditAPI({ action: 'update', entryId: e.recordId, entryName: e.name, oldValues, newValues: JSON.stringify(e) });
+
+  if (btn) { btn.disabled = false; btn.textContent = '💾 حفظ التعديلات'; }
+  // Destroy card map if it was initialized
+  if (cardMaps[editingId]) { cardMaps[editingId].remove(); delete cardMaps[editingId]; }
   closeEditModal();
   render();
 }
@@ -1259,54 +1457,77 @@ function toggleAddForm() {
   const hdr = document.querySelector('.add-form-header');
   body.classList.toggle('open');
   hdr.classList.toggle('open');
+  // Reset picker state when closing
+  if (!body.classList.contains('open')) {
+    addPickerOpen = false;
+    addPickerMap = null;
+    addPickerMarker = null;
+  }
 }
 
 // ============================================================
 // AUDIT LOG
 // ============================================================
-function logAudit(data) {
+async function logAuditAPI(data) {
   const fp = getFingerprint();
-  audit.push({
-    id: Date.now(),
-    userId: session?.id || null,
+  const { browser, os, device } = getDeviceInfo();
+  const now = new Date();
+  const logEntry = {
+    logId: 'log_' + Date.now(),
     username: session?.username || 'غير معروف',
-    action: data.action,
-    entryId: data.entryId,
-    entryName: data.entryName,
-    oldValues: data.oldValues,
-    newValues: data.newValues,
-    deviceFingerprint: fp,
-    createdAt: new Date().toISOString(),
-  });
+    userId: session?.id || '',
+    operationType: data.action,
+    recordName: data.entryName || '',
+    recordId: data.entryId || '',
+    oldData: data.oldValues || '',
+    newData: data.newValues || '',
+    date: now.toLocaleDateString('ar-SY'),
+    time: now.toLocaleTimeString('ar-SY'),
+    ip: '',
+    device, browser, os,
+    fingerprint: fp,
+    createdAt: now.toISOString(),
+  };
+
+  // Store locally
+  audit.push({ ...logEntry, action: data.action, entryName: data.entryName });
   saveJSON(STORAGE_KEYS.audit, audit);
+
+  // Push to API
+  try {
+    await apiFetch(API_LOG, { method: 'POST', body: JSON.stringify([logEntry]) });
+  } catch(e) {}
 }
 
 function renderAudit() {
   const fUser = document.getElementById('f-user')?.value.toLowerCase() || '';
   const fAction = document.getElementById('f-action')?.value || '';
   const filtered = audit.filter(a => {
-    if (fUser && !a.username.toLowerCase().includes(fUser)) return false;
-    if (fAction && a.action !== fAction) return false;
+    if (fUser && !(a.username||'').toLowerCase().includes(fUser)) return false;
+    if (fAction && a.action !== fAction && a.operationType !== fAction) return false;
     return true;
   }).slice().reverse().slice(0, 100);
   const tbody = document.getElementById('audit-tbody');
   if (!tbody) return;
   if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3)">لا توجد سجلات</td></tr>'; return; }
-  const LABELS = { create: 'إضافة', update: 'تعديل', delete: 'حذف' };
+  const LABELS = { create: 'إضافة', update: 'تعديل', delete: 'حذف', register: 'تسجيل' };
   tbody.innerHTML = filtered.map(a => `
     <tr>
-      <td><strong>${a.username}</strong></td>
-      <td><span class="action-badge action-${a.action}">${LABELS[a.action] || a.action}</span></td>
-      <td>${a.entryName}</td>
-      <td>${new Date(a.createdAt).toLocaleString('ar-SY')}</td>
+      <td><strong>${esc(a.username||'')}</strong></td>
+      <td><span class="action-badge action-${a.action||a.operationType}">${LABELS[a.action||a.operationType] || a.action}</span></td>
+      <td>${esc(a.entryName||a.recordName||'')}</td>
+      <td style="white-space:nowrap">${a.date||new Date(a.createdAt).toLocaleString('ar-SY')}</td>
     </tr>
   `).join('');
 }
 
 function exportCSV() {
-  const rows = [['المستخدم', 'العملية', 'المنشأة', 'التاريخ', 'البصمة']];
-  audit.forEach(a => rows.push([a.username, a.action, a.entryName, a.createdAt, a.deviceFingerprint || '']));
-  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const rows = [['المستخدم', 'العملية', 'المنشأة', 'التاريخ', 'الجهاز', 'المتصفح', 'البصمة']];
+  audit.forEach(a => rows.push([
+    a.username, a.action||a.operationType, a.entryName||a.recordName,
+    a.date||a.createdAt, a.device||'', a.browser||'', a.fingerprint||''
+  ]));
+  const csv = rows.map(r => r.map(c => '"' + String(c||'').replace(/"/g, '""') + '"').join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
@@ -1323,53 +1544,69 @@ function renderUsers() {
   list.innerHTML = users.map(u => `
     <div class="user-row">
       <div class="user-info">
-        <strong>${u.username}</strong>
+        <strong>${esc(u.username)}</strong>
+        <div style="font-size:.75rem;color:var(--text3);margin-top:1px">${esc(u.email||'')}${u.phone?' — '+esc(u.phone):''}</div>
         <div style="display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap">
           <span class="role-badge role-${u.role}">${u.role === 'admin' ? '🛡️ مشرف' : u.role === 'editor' ? '✏️ محرر' : '👁️ قارئ'}</span>
-          ${u.isBlocked ? '<span class="blocked-badge">🚫 موقوف</span>' : ''}
-          <span style="font-size:.72rem;color:var(--text3)">حد يومي: ${u.dailyEditLimit}</span>
+          ${u.status === 'blocked' ? '<span class="blocked-badge">🚫 موقوف</span>' : ''}
+          <span style="font-size:.72rem;color:var(--text3)">حد يومي: ${u.dailyEditLimit||7}</span>
         </div>
       </div>
       <div class="user-actions">
         ${u.role !== 'admin' ? `
-          <button class="btn-sm" onclick="toggleBlock(${u.id})">${u.isBlocked ? '✅ فتح الحساب' : '🚫 إيقاف'}</button>
-          <button class="btn-sm" onclick="changeLimit(${u.id})">تعديل الحد</button>
-          <button class="btn-sm" onclick="changeRole(${u.id})">تغيير الدور</button>
+          <button class="btn-sm" onclick="toggleBlock('${esc(u.userId)}')">${u.status === 'blocked' ? '✅ فتح الحساب' : '🚫 إيقاف'}</button>
+          <button class="btn-sm" onclick="changeLimit('${esc(u.userId)}')">تعديل الحد</button>
+          <button class="btn-sm" onclick="changeRole('${esc(u.userId)}')">تغيير الدور</button>
         ` : '<span style="font-size:.75rem;color:var(--text3)">الحساب الرئيسي</span>'}
       </div>
     </div>
   `).join('');
 }
 
-function toggleBlock(userId) {
-  const u = users.find(x => x.id === userId);
+async function toggleBlock(userId) {
+  const u = users.find(x => x.userId === userId);
   if (!u) return;
-  u.isBlocked = !u.isBlocked;
+  u.status = u.status === 'blocked' ? 'active' : 'blocked';
   saveJSON(STORAGE_KEYS.users, users);
-  toast(u.isBlocked ? `تم إيقاف ${u.username}` : `تم فتح حساب ${u.username}`, 'success');
+  try {
+    await apiFetch(API_SHEET2 + '/search?query[userId]=' + encodeURIComponent(userId), {
+      method: 'PATCH', body: JSON.stringify({ status: u.status })
+    });
+  } catch(e) {}
+  toast(u.status === 'blocked' ? `تم إيقاف ${u.username}` : `تم فتح حساب ${u.username}`, 'success');
   renderUsers();
 }
 
-function changeLimit(userId) {
-  const u = users.find(x => x.id === userId);
+async function changeLimit(userId) {
+  const u = users.find(x => x.userId === userId);
   if (!u) return;
-  const val = prompt(`الحد اليومي الحالي لـ "${u.username}": ${u.dailyEditLimit}\nأدخل الحد الجديد:`, u.dailyEditLimit);
+  const val = prompt(`الحد اليومي الحالي لـ "${u.username}": ${u.dailyEditLimit||7}\nأدخل الحد الجديد:`, u.dailyEditLimit||7);
   if (val === null) return;
   const n = parseInt(val);
   if (isNaN(n) || n < 0) { toast('قيمة غير صحيحة', 'error'); return; }
   u.dailyEditLimit = n;
   saveJSON(STORAGE_KEYS.users, users);
+  try {
+    await apiFetch(API_SHEET2 + '/search?query[userId]=' + encodeURIComponent(userId), {
+      method: 'PATCH', body: JSON.stringify({ dailyEditLimit: n })
+    });
+  } catch(e) {}
   toast(`تم تحديث حد ${u.username} إلى ${n} تعديل/يوم`, 'success');
   renderUsers();
 }
 
-function changeRole(userId) {
-  const u = users.find(x => x.id === userId);
+async function changeRole(userId) {
+  const u = users.find(x => x.userId === userId);
   if (!u) return;
   const ROLES = ['editor', 'viewer'];
   const next = ROLES[(ROLES.indexOf(u.role) + 1) % ROLES.length];
   u.role = next;
   saveJSON(STORAGE_KEYS.users, users);
+  try {
+    await apiFetch(API_SHEET2 + '/search?query[userId]=' + encodeURIComponent(userId), {
+      method: 'PATCH', body: JSON.stringify({ role: next })
+    });
+  } catch(e) {}
   toast(`تم تغيير دور ${u.username} إلى ${next}`, 'success');
   renderUsers();
 }
@@ -1394,31 +1631,44 @@ function toast(msg, type = 'success') {
   t.className = 'toast ' + type;
   t.textContent = msg;
   c.appendChild(t);
-  setTimeout(() => t.remove(), 3200);
+  setTimeout(() => { if (t.parentNode) t.remove(); }, 3500);
 }
 
 // ============================================================
 // UTIL
 // ============================================================
-function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
-// Keyboard shortcuts
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeLoginModal(); closeEditModal(); }
+  if (e.key === 'Escape') { closeLoginModal(); closeEditModal(); closeMapModal(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); document.getElementById('search-input').focus(); }
 });
 
 // Close modals on overlay click
 document.getElementById('login-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLoginModal(); });
 document.getElementById('edit-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeEditModal(); });
+document.getElementById('map-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeMapModal(); });
 
 // Enter key in login form
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('login-modal').classList.contains('open')) handleLogin();
 });
 
+// ============================================================
 // START
-init();
+// ============================================================
+init().catch(err => {
+  console.error('Init error:', err);
+  // Ensure UI still shows even if API fails
+  render();
+  setSyncStatus('error', 'بدون إنترنت');
+  hideLoading();
+});
 </script>
 </body>
 </html>
