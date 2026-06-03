@@ -95,8 +95,11 @@
     .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
     .card-details            { display:none; flex-direction:column; gap:3px; padding:6px 10px 8px; border-top:1px solid #f3f4f6; }
     .card-details.open       { display:flex; }
-    .card-toggle             { font-size:10px; font-weight:600; color:#3b82f6; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; cursor:pointer; padding:2px 7px; line-height:1.4; flex-shrink:0; white-space:nowrap; }
-    .card-toggle:hover       { background:#dbeafe; border-color:#93c5fd; }
+    .card-toggle-bar         { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:6px 10px; background:#f8fafc; border:none; border-top:1px solid #e5e7eb; cursor:pointer; font-size:11px; font-weight:600; color:#3b82f6; transition:background .15s; }
+    .card-toggle-bar:hover   { background:#eff6ff; }
+    .card-toggle-bar:active  { background:#dbeafe; }
+    .card-toggle-arrow       { font-size:9px; transition:transform .2s; display:inline-block; }
+    .card-toggle-bar[aria-expanded="true"] .card-toggle-arrow { transform:rotate(180deg); }
 
     /* ═══ Star Rating ═══ */
     /* النجوم تتراص من الأسفل حتى تبدو متصاعدة الحجم */
@@ -283,7 +286,7 @@
       <div class="border-t border-gray-100 p-5">
         <div class="bg-blue-50 border-r-4 border-blue-500 rounded-l-xl p-3 mb-5">
           <p class="text-xs text-blue-800 leading-relaxed">
-            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة
+            💡 إذا لم تجد ا �قسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة
             وسيظهر تبويبه تلقائياً بعد الحفظ.
           </p>
         </div>
@@ -545,7 +548,7 @@ const CAT_CLS = {
   'القطاع الطبي':           { card:'card-medical',  badge:'badge-medical'  },
   'المهن الحرة والاستشارات':{ card:'card-legal',    badge:'badge-legal'    },
   'التسوق والتجارة':         { card:'card-shopping', badge:'badge-shopping' },
-  'مطاعم ومقاهي':            { card:'card-food',     badge:'badge-food'     },
+  'مطاعم ومقاهي':    �       { card:'card-food',     badge:'badge-food'     },
   'خدمات عامة وحرفية':       { card:'card-services', badge:'badge-services' },
 };
 
@@ -1026,7 +1029,9 @@ function onSearch() {
 function toggleCardDetails(btn) {
   const panel = btn.closest('.entry-card').querySelector('.card-details');
   const open  = panel.classList.toggle('open');
-  btn.textContent = open ? '▲ إغلاق' : '▼ عرض المزيد';
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  const lbl = btn.querySelector('.card-toggle-label');
+  if (lbl) lbl.textContent = open ? 'إخفاء التفاصيل' : 'التفاصيل';
 }
 
 function renderGrid() {
@@ -1093,12 +1098,17 @@ function renderGrid() {
     const alreadyRated = entryId !== '' && (entryId in userRatings);
     const userRating   = alreadyRated ? userRatings[entryId] : null;
 
-    // تحقق هل يوجد تفاصيل إضافية تستحق زر التمديد
-    const hasDetails = !!(e.Phone || e.Notes || e.Social);
-
     const card = document.createElement('div');
     card.className = `entry-card bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
     if (entryId) card.dataset.entryCard = entryId;
+
+    // محتوى التفاصيل المخفية
+    const detailsContent = [
+      e.Phone  ? `<div class="flex items-center gap-1.5"><span class="flex-shrink-0">📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : '',
+      e.Notes  ? `<div class="flex items-start gap-1.5"><span class="flex-shrink-0">🕐</span><span>${escHtml(e.Notes)}</span></div>` : '',
+      socialHtml,
+    ].join('') || `<div class="text-gray-400 text-[10px]">لا توجد معلومات إضافية</div>`;
+
     card.innerHTML = `
       <div class="p-2.5 flex flex-col gap-1.5">
 
@@ -1121,25 +1131,24 @@ function renderGrid() {
           <span class="flex-shrink-0">📍</span><span>${escHtml(e.Address)}</span>
         </div>` : ''}
 
-        <!-- ── صف أسفل: تقييم + موقع + تفاصيل ── -->
+        <!-- ── صف ٤: تقييم + زر الموقع ── -->
         <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-100 flex-wrap">
           ${entryId
             ? `<div class="rating-widget flex-1 min-w-0">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>`
             : '<div class="flex-1"></div>'}
-          <div class="flex items-center gap-1 flex-shrink-0">
-            ${mapHtml}
-            ${hasDetails ? `<button class="card-toggle" onclick="toggleCardDetails(this)" aria-label="عرض المزيد">▼ عرض المزيد</button>` : ''}
-          </div>
+          ${mapHtml}
         </div>
 
       </div>
 
-      <!-- ── قسم التفاصيل القابل للتمديد ── -->
-      ${hasDetails ? `<div class="card-details text-[11px] text-gray-500">
-        ${e.Phone  ? `<div class="flex items-center gap-1.5"><span class="flex-shrink-0">📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : ''}
-        ${e.Notes  ? `<div class="flex items-start gap-1.5"><span class="flex-shrink-0">🕐</span><span>${escHtml(e.Notes)}</span></div>` : ''}
-        ${socialHtml}
-      </div>` : ''}`;
+      <!-- ── زر التفاصيل (دائماً ظاهر) ── -->
+      <button class="card-toggle-bar" onclick="toggleCardDetails(this)" aria-expanded="false">
+        <span class="card-toggle-label">التفاصيل</span>
+        <span class="card-toggle-arrow">▼</span>
+      </button>
+
+      <!-- ── قسم التفاصيل المخفية ── -->
+      <div class="card-details text-[11px] text-gray-500">${detailsContent}</div>`;
     grid.appendChild(card);
   });
 }
