@@ -1,1493 +1,1424 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>دليل مدينة حمص الخدمي والتجاري</title>
-  <meta name="description" content="منصة تشاركية مفتوحة لتسجيل الأطباء، المحامين، الصيدليات، والمحلات في حمص" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: { extend: { fontFamily: { sans: ['Cairo', 'sans-serif'] } } }
-    }
-  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Cairo', sans-serif; box-sizing: border-box; }
-    body { background: #e2e8f0 !important; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: rgba(148,163,184,.4); border-radius: 99px; }
-    .tab-active    { background:#1d4ed8!important; color:#fff!important; border-color:#1d4ed8!important; box-shadow:0 4px 12px rgba(29,78,216,.25); }
-    .subtab-active { background:#1e293b!important; color:#fff!important; }
-    .card-medical  { border-top:3px solid #10b981; }
-    .card-legal    { border-top:3px solid #8b5cf6; }
-    .card-shopping { border-top:3px solid #f59e0b; }
-    .card-food     { border-top:3px solid #f43f5e; }
-    .card-services { border-top:3px solid #3b82f6; }
-    .card-default  { border-top:3px solid #6b7280; }
-    .badge-medical  { background:#d1fae5; color:#065f46; }
-    .badge-legal    { background:#ede9fe; color:#4c1d95; }
-    .badge-shopping { background:#fef3c7; color:#78350f; }
-    .badge-food     { background:#ffe4e6; color:#9f1239; }
-    .badge-services { background:#dbeafe; color:#1e3a8a; }
-    .badge-default  { background:#f3f4f6; color:#374151; }
-    #toast {
-      position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%);
-      padding:.75rem 1.5rem; border-radius:1rem; font-weight:600; font-size:.875rem;
-      color:#fff; z-index:9999; display:none; white-space:nowrap;
-      box-shadow:0 10px 25px rgba(0,0,0,.2); animation:slideUp .25s ease;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --surface2: #f0f4f8;
+      --border: #e2e8f0;
+      --text: #1a202c;
+      --text2: #4a5568;
+      --text3: #718096;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #ef4444;
+      --success: #10b981;
+      --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+      --radius: 10px;
     }
-    @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(12px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-    .skeleton { animation:pulse 1.5s ease-in-out infinite; background:#e5e7eb; border-radius:.5rem; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-    #form-body  { display:none; }
-    #form-body.open { display:block; }
-    #map-section { display:none; }
-    #map-section.open { display:block; }
-    #leaflet-map {
-      height:260px; width:100%; border-radius:12px; overflow:hidden;
-      border:1px solid #e5e7eb; background:#e5e7eb; position:relative; z-index:1;
+    body.dark {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #0f172a;
+      --border: #334155;
+      --text: #f1f5f9;
+      --text2: #cbd5e1;
+      --text3: #94a3b8;
+      --shadow: 0 1px 3px rgba(0,0,0,.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.4);
     }
-    .leaflet-pane { z-index:1!important; }
-    .leaflet-top, .leaflet-bottom { z-index:2!important; }
-    #view-map-panel {
-      display:none; background:#fff; border-radius:16px;
-      border:1px solid #e2e8f0; box-shadow:0 4px 24px rgba(0,0,0,.10);
-      overflow:hidden; margin-bottom:8px;
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background .2s, color .2s;
     }
-    #view-map-panel.open { display:block; }
-    #view-map-panel-header {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 16px; border-bottom:1px solid #f1f5f9; background:#f8fafc;
-    }
-    #view-map-title {
-      font-size:14px; font-weight:700; color:#1e293b; flex:1;
-      text-align:right; overflow:hidden; text-overflow:ellipsis;
-      white-space:nowrap; margin-left:8px;
-    }
-    #close-view-map-btn {
-      display:flex; align-items:center; gap:4px; padding:5px 12px;
-      border-radius:8px; background:#fee2e2; border:1px solid #fca5a5;
-      color:#dc2626; font-size:12px; font-weight:700; cursor:pointer;
-      flex-shrink:0; transition:background .15s;
-    }
-    #close-view-map-btn:hover { background:#fecaca; }
-    #view-leaflet-map { display:block; width:100%; height:340px; background:#e5e7eb; }
-    #view-map-status {
-      padding:6px 16px; font-size:11px; color:#94a3b8; text-align:center;
-      font-family:monospace; background:#f8fafc; border-top:1px solid #f1f5f9;
-    }
-    .dark-mode #view-map-panel  { background:#1e293b; border-color:#334155; }
-    .dark-mode #view-map-panel-header { background:#0f172a; border-color:#334155; }
-    .dark-mode #view-map-title  { color:#f1f5f9; }
-    .dark-mode #view-map-status { background:#0f172a; border-color:#334155; }
-    .dot-pulse {
-      display:inline-block; width:.5rem; height:.5rem; background:#10b981;
-      border-radius:50%; animation:dotPulse 2s ease-in-out infinite;
-    }
-    @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
-    .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
-    .card-details            { display:none; flex-direction:column; gap:3px; padding:6px 10px 8px; border-top:1px solid #f3f4f6; }
-    .card-details.open       { display:flex; }
-    .card-toggle-bar         { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:6px 10px; background:#f8fafc; border:none; border-top:1px solid #e5e7eb; cursor:pointer; font-size:11px; font-weight:600; color:#3b82f6; transition:background .15s; }
-    .card-toggle-bar:hover   { background:#eff6ff; }
-    .card-toggle-bar:active  { background:#dbeafe; }
-    .card-toggle-arrow       { font-size:9px; transition:transform .2s; display:inline-block; }
-    .card-toggle-bar[aria-expanded="true"] .card-toggle-arrow { transform:rotate(180deg); }
 
-    /* ═══ Star Rating ═══ */
-    /* النجوم تتراص من الأسفل حتى تبدو متصاعدة الحجم */
-    .star-row { display:flex; align-items:flex-end; gap:2px; direction:ltr; }
-    .star-btn {
-      background:none; border:none; padding:2px 1px; cursor:pointer;
-      line-height:1; color:#d1d5db;
-      transition:color .12s ease, transform .12s ease, text-shadow .12s ease, opacity .12s ease;
-      -webkit-tap-highlight-color:transparent;
-      touch-action:manipulation;
-      will-change:transform;
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #312e81 100%);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
     }
-    .star-btn:disabled { cursor:default; }
-    /* أحجام تدريجية — 1=أصغر، 5=أكبر */
-    .star-btn[data-star="1"] { font-size:14px; }
-    .star-btn[data-star="2"] { font-size:17px; }
-    .star-btn[data-star="3"] { font-size:20px; }
-    .star-btn[data-star="4"] { font-size:23px; }
-    .star-btn[data-star="5"] { font-size:27px; }
-    /* نجمة محددة نهائياً (بعد التصويت أو متوسط المجتمع) */
-    .star-btn.filled  { color:#f59e0b; }
-    /* تأثير hover/touch — كل نجمة في نطاق الاختيار */
-    .star-btn.hover-fill {
-      color:#f59e0b !important;
-      text-shadow:0 0 10px rgba(245,158,11,.8), 0 0 4px rgba(245,158,11,.5);
+    .header-brand { display: flex; align-items: center; gap: 12px; }
+    .header-icon {
+      background: rgba(255,255,255,.15);
+      border-radius: 50%;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
     }
-    /* تكبير خفيف موحّد — الأحجام الأساسية تختلف أصلاً */
-    .star-btn.hover-fill[data-star="1"] { transform:scale(1.2); }
-    .star-btn.hover-fill[data-star="2"] { transform:scale(1.18); }
-    .star-btn.hover-fill[data-star="3"] { transform:scale(1.15); }
-    .star-btn.hover-fill[data-star="4"] { transform:scale(1.12); }
-    .star-btn.hover-fill[data-star="5"] { transform:scale(1.1); }
-    /* تعتيم النجوم خارج النطاق لإبراز الاختيار */
-    .star-btn.hover-dim {
-      color:#d1d5db !important;
-      opacity:.4;
-      transform:scale(0.9);
-      text-shadow:none;
+    .header-title { color: #fff; }
+    .header-title h1 { font-size: 1.25rem; font-weight: 800; line-height: 1.3; }
+    .header-title p { font-size: .78rem; color: rgba(255,255,255,.8); margin-top: 2px; }
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge-count {
+      background: rgba(255,255,255,.2);
+      color: #fff;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: .82rem;
+      font-weight: 600;
     }
-    .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
-    @keyframes starPulse { from{opacity:.6} to{opacity:1} }
-    /* متوسط التقييم */
-    .rating-avg-badge {
-      font-size:12px; font-weight:700; color:#d97706; line-height:1;
+    .btn-icon {
+      background: rgba(255,255,255,.15);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      width: 36px; height: 36px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: background .15s;
     }
-    .rating-avg-sep { font-size:9px; color:#9ca3af; font-weight:400; }
-    .rating-cnt-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
-    /* نص توجيهي قبل التصويت */
-    .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
-    /* شارة بعد التصويت */
-    .rated-badge {
-      display:inline-flex; align-items:center; gap:3px; font-size:10px;
-      font-weight:700; color:#059669; background:#d1fae5; border-radius:6px;
-      padding:2px 6px;
+    .btn-icon:hover { background: rgba(255,255,255,.3); }
+    .btn-login {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: background .15s;
     }
-    .dark-mode .star-btn            { color:#4b5563; }
-    .dark-mode .star-btn.filled     { color:#f59e0b; }
-    .dark-mode .star-btn.hover-dim  { color:#374151 !important; }
-    .dark-mode .rating-avg-badge    { color:#f59e0b; }
-    .dark-mode .rating-avg-sep,
-    .dark-mode .rating-cnt-label,
-    .dark-mode .rating-label        { color:#64748b; }
-    .dark-mode .rated-badge         { background:#064e3b; color:#6ee7b7; }
+    .btn-login:hover { background: rgba(255,255,255,.25); }
 
-    /* ═══ قسم الأعلى تقييماً ═══ */
+    /* MAIN CONTAINER */
+    .container { max-width: 1280px; margin: 0 auto; padding: 20px 16px; }
+
+    /* ADD FORM */
+    .add-form-toggle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .add-form-header {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      gap: 8px;
+    }
+    .add-form-header:hover { background: var(--surface2); }
+    .add-form-header span { font-weight: 700; font-size: .95rem; color: var(--primary); }
+    .add-form-header .chevron { transition: transform .2s; font-size: 12px; color: var(--text3); }
+    .add-form-header.open .chevron { transform: rotate(180deg); }
+    .add-form-body { display: none; padding: 18px; border-top: 1px solid var(--border); }
+    .add-form-body.open { display: block; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: .82rem; font-weight: 600; color: var(--text2); }
+    .form-group input, .form-group select, .form-group textarea {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .9rem;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s;
+      width: 100%;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+    }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+    .not-logged-msg {
+      text-align: center;
+      padding: 20px;
+      color: var(--text3);
+      font-size: .9rem;
+    }
+    .not-logged-msg a { color: var(--primary); cursor: pointer; font-weight: 600; }
+
+    /* SEARCH */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .95rem;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .search-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      font-size: 18px;
+      pointer-events: none;
+    }
+    .search-count { font-size: .82rem; color: var(--text3); margin-bottom: 10px; }
+
+    /* CATEGORIES */
+    .cats-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .cat-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text2);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .cat-btn:hover { background: var(--surface2); }
+    .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .subcats-wrap { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .subcat-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text3);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .subcat-btn:hover { color: var(--text); }
+    .subcat-btn.active { background: #dbeafe; color: var(--primary); border-color: #93c5fd; }
+    body.dark .subcat-btn.active { background: rgba(37,99,235,.2); border-color: rgba(37,99,235,.4); }
+
+    /* CARDS */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border-top: 4px solid #6b7280;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: box-shadow .15s, transform .1s;
+      position: relative;
+    }
+    .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+    .card.cat-medical { border-top-color: #10b981; }
+    .card.cat-legal { border-top-color: #8b5cf6; }
+    .card.cat-shop { border-top-color: #f59e0b; }
+    .card.cat-food { border-top-color: #f43f5e; }
+    .card.cat-service { border-top-color: #3b82f6; }
+    .card.cat-edu { border-top-color: #06b6d4; }
+    .card-body { padding: 14px 14px 10px; flex: 1; }
+    .card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .card-icon {
+      font-size: 26px;
+      background: var(--surface2);
+      border-radius: 10px;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-meta { flex: 1; min-width: 0; }
+    .card-cats {
+      display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; align-items: center;
+    }
+    .cat-chip {
+      font-size: .72rem;
+      background: var(--surface2);
+      color: var(--text3);
+      border-radius: 4px;
+      padding: 1px 7px;
+    }
+    .card-id { font-size: .72rem; color: var(--text3); font-family: monospace; }
+    .card-name { font-weight: 700; font-size: 1rem; line-height: 1.35; }
+    .card-address {
+      display: flex; align-items: flex-start; gap: 5px;
+      font-size: .83rem; color: var(--text3); margin-top: 8px;
+    }
+    .card-address svg { flex-shrink: 0; margin-top: 2px; }
+
+    /* EDIT BTN */
+    .edit-btn {
+      position: absolute;
+      top: 8px; left: 8px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 30px; height: 30px;
+      display: none;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--primary);
+      transition: background .1s;
+      z-index: 2;
+    }
+    body.dark .edit-btn { background: rgba(30,41,59,.9); }
+    .card:hover .edit-btn.visible { display: flex; }
+
+    /* RATINGS */
+    .rating-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 10px;
+    }
+    .stars { display: flex; gap: 1px; direction: ltr; }
+    .star {
+      cursor: pointer;
+      color: #d1d5db;
+      transition: color .1s, transform .1s;
+      line-height: 1;
+    }
+    .star.filled { color: #f59e0b; }
+    .star:hover { transform: scale(1.15); color: #f59e0b; }
+    .star-sm { font-size: 15px; }
+    .star-md { font-size: 18px; }
+    .star-lg { font-size: 20px; }
+    .rating-info {
+      font-size: .75rem;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+    body.dark .rating-info { background: rgba(245,158,11,.15); color: #fbbf24; }
+
+    /* MAP BUTTON */
+    .map-btn {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      border-radius: 7px;
+      padding: 5px 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      margin-top: 8px;
+      transition: background .1s;
+      text-decoration: none;
+      width: fit-content;
+    }
+    .map-btn:hover { background: #d1fae5; }
+    body.dark .map-btn { background: rgba(16,185,129,.1); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
+
+    /* DETAILS TOGGLE */
+    .details-toggle {
+      border-top: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: .83rem;
+      color: var(--text3);
+      transition: background .1s;
+    }
+    .details-toggle:hover { background: var(--surface2); }
+    .details-toggle .ch { font-size: 11px; transition: transform .2s; }
+    .details-toggle.open .ch { transform: rotate(180deg); }
+    .details-body {
+      display: none;
+      padding: 10px 14px 14px;
+      border-top: 1px solid var(--border);
+      font-size: .83rem;
+      color: var(--text2);
+      gap: 8px;
+      flex-direction: column;
+    }
+    .details-body.open { display: flex; }
+    .detail-row { display: flex; align-items: center; gap: 6px; }
+    .detail-row a { color: var(--primary); text-decoration: none; }
+    .detail-row a:hover { text-decoration: underline; }
+
+    /* EMPTY STATE */
+    .empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: .95rem; }
+    .empty .icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      padding: 24px;
+    }
+    .modal h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 18px; }
+    .modal .form-group { margin-bottom: 12px; }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 18px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { background: var(--border); }
+    .err-msg { color: #ef4444; font-size: .82rem; margin-top: 8px; }
+
+    /* ADMIN PANEL */
+    .admin-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .admin-panel.open { display: block; }
+    .admin-panel h2 { font-size: 1rem; font-weight: 800; margin-bottom: 14px; color: var(--primary); }
+    .admin-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+    .admin-tab {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text2);
+    }
+    .admin-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .admin-content { display: none; }
+    .admin-content.active { display: block; }
+    .audit-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; }
+    th { font-weight: 700; color: var(--text2); background: var(--surface2); }
+    .action-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .action-create { background: #dcfce7; color: #166534; }
+    .action-update { background: #dbeafe; color: #1e40af; }
+    .action-delete { background: #fee2e2; color: #991b1b; }
+    body.dark .action-create { background: rgba(16,185,129,.15); color: #6ee7b7; }
+    body.dark .action-update { background: rgba(37,99,235,.15); color: #93c5fd; }
+    body.dark .action-delete { background: rgba(239,68,68,.15); color: #fca5a5; }
+    .users-list { display: flex; flex-direction: column; gap: 10px; }
+    .user-row {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .user-info { font-size: .88rem; }
+    .user-info strong { display: block; }
+    .role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+    .role-admin { background: #fef9c3; color: #854d0e; }
+    .role-editor { background: #dbeafe; color: #1e40af; }
+    .role-viewer { background: #f3f4f6; color: #374151; }
+    body.dark .role-admin { background: rgba(234,179,8,.15); color: #fde047; }
+    body.dark .role-editor { background: rgba(37,99,235,.15); color: #93c5fd; }
+    body.dark .role-viewer { background: rgba(107,114,128,.15); color: #9ca3af; }
+    .blocked-badge { background: #fee2e2; color: #991b1b; padding: 1px 7px; border-radius: 8px; font-size: .72rem; font-weight: 700; }
+    .user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .btn-sm {
+      padding: 5px 10px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text2);
+    }
+    .btn-sm:hover { background: var(--surface2); }
+    .btn-sm.danger { color: var(--danger); border-color: #fca5a5; }
+    .btn-sm.danger:hover { background: #fee2e2; }
+    .filter-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .filter-row input, .filter-row select {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .82rem;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+    }
+    .btn-export {
+      margin-right: auto;
+      padding: 6px 14px;
+      font-family: 'Cairo', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--text2);
+    }
+    .btn-export:hover { background: var(--border); }
+
+    /* TOP RATED */
+    .top-rated-wrap { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; }
     .top-rated-chip {
-      min-width:110px; max-width:140px; cursor:pointer;
-      text-align:right;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: .82rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: transform .1s;
+      flex-shrink: 0;
     }
-    .scrollbar-hide::-webkit-scrollbar { display:none; }
-    .scrollbar-hide { -ms-overflow-style:none; scrollbar-width:none; }
-    .top-rated-highlight { animation:highlightPulse 1.5s ease-out; }
-    @keyframes highlightPulse {
-      0%  { box-shadow:0 0 0 3px rgba(245,158,11,.6); }
-      100%{ box-shadow:0 0 0 0 rgba(245,158,11,0); }
-    }
-    .dark-mode .top-rated-chip { background:#1e293b!important; border-color:#334155!important; }
+    .top-rated-chip:hover { transform: translateY(-2px); }
+    body.dark .top-rated-chip { background: linear-gradient(135deg, rgba(245,158,11,.2), rgba(245,158,11,.1)); color: #fbbf24; border-color: rgba(245,158,11,.3); }
 
-    /* ═══ DARK MODE ═══ */
-    .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
-    .dark-mode .bg-white        { background:#1e293b!important; }
-    .dark-mode .bg-gray-50      { background:#0f172a!important; }
-    .dark-mode .bg-blue-50      { background:rgba(29,78,216,.15)!important; }
-    .dark-mode .bg-amber-50     { background:rgba(180,83,9,.15)!important; }
-    .dark-mode .text-gray-800   { color:#f1f5f9!important; }
-    .dark-mode .text-gray-700   { color:#e2e8f0!important; }
-    .dark-mode .text-gray-600   { color:#cbd5e1!important; }
-    .dark-mode .text-gray-500   { color:#94a3b8!important; }
-    .dark-mode .text-gray-400   { color:#64748b!important; }
-    .dark-mode .border-gray-100 { border-color:#334155!important; }
-    .dark-mode .border-gray-200 { border-color:#334155!important; }
-    .dark-mode input, .dark-mode select { background:#0f172a!important; border-color:#334155!important; color:#f1f5f9!important; }
-    .dark-mode input::placeholder { color:#475569!important; }
-    .dark-mode .bg-gray-100     { background:#334155!important; }
-    .dark-mode .text-blue-800   { color:#93c5fd!important; }
-    .dark-mode .badge-medical   { background:#064e3b!important; color:#6ee7b7!important; }
-    .dark-mode .badge-legal     { background:#2e1065!important; color:#c4b5fd!important; }
-    .dark-mode .badge-shopping  { background:#451a03!important; color:#fde68a!important; }
-    .dark-mode .badge-food      { background:#4c0519!important; color:#fda4af!important; }
-    .dark-mode .badge-services  { background:#1e3a8a!important; color:#93c5fd!important; }
-    .dark-mode .badge-default   { background:#1f2937!important; color:#9ca3af!important; }
-    .dark-mode .subtab-active   { background:#3b82f6!important; }
-    .dark-mode .skeleton        { background:#374151!important; }
-    .dark-mode .entry-card:hover { box-shadow:0 12px 24px rgba(0,0,0,.4); }
-    input[type="search"]::-webkit-search-cancel-button { display:none; }
+    /* TOAST */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+    }
+    .toast {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: .85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      animation: slideIn .2s ease;
+      max-width: 300px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .toast.success { border-right: 4px solid var(--success); }
+    .toast.error { border-right: 4px solid var(--danger); }
+    @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* UTIL */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    @media (max-width: 500px) {
+      .header-title h1 { font-size: 1rem; }
+      .header-title p { display: none; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
+<body>
 
-<body id="body" class="min-h-screen flex flex-col text-gray-800" style="background:#f8fafc">
-
-<!-- ══════════════ HEADER ══════════════ -->
-<header class="relative overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-l from-blue-900 via-blue-800 to-indigo-900"></div>
-  <div class="relative max-w-7xl mx-auto px-4 py-5 sm:py-7">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="text-center sm:text-right">
-        <div class="flex items-center justify-center sm:justify-start gap-3 mb-1">
-          <div class="bg-white/20 rounded-xl p-2">
-            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-bold text-white">دليل مدينة حمص الخدمي والتجاري</h1>
-        </div>
-        <p class="text-blue-200 text-sm">منصة تشاركية مفتوحة — أضف طبيبك، محلّك، وخدمتك وشاركها فوراً</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <div class="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-center hidden sm:block">
-          <p class="text-emerald-300 text-xs font-bold">🔒 وضع الحماية</p>
-          <p id="hdr-count" class="text-white/70 text-[10px] mt-0.5">جاري التحميل...</p>
-        </div>
-        <button onclick="fetchData()" title="تحديث"
-          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
-          <svg id="refresh-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-        </button>
-        <button onclick="toggleDark()" title="تبديل المظهر"
-          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
-          <svg id="dark-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-          </svg>
-        </button>
-      </div>
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-icon">📍</div>
+    <div class="header-title">
+      <h1>دليل مدينة حمص الخدمي والتجاري</h1>
+      <p>منصة تشاركية مفتوحة — أضف طبيبك، محلّك، وخدمتك وشاركها فوراً</p>
     </div>
+  </div>
+  <div class="header-actions">
+    <span class="badge-count" id="total-badge">0 منشأة</span>
+    <button class="btn-icon" onclick="render()" title="تحديث">🔄</button>
+    <button class="btn-icon" onclick="toggleDark()" id="dark-btn" title="الوضع الليلي">🌙</button>
+    <button class="btn-login" id="login-btn" onclick="openLoginModal()">
+      <span>🔐</span><span id="login-label">تسجيل الدخول</span>
+    </button>
   </div>
 </header>
 
-<!-- ══════════════ MAIN ══════════════ -->
-<main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
+<!-- MAIN -->
+<div class="container">
 
-  <div id="error-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2">
-    ⚠️ <span id="error-msg"></span>
-  </div>
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="admin-panel">
+    <h2>🛡️ لوحة الإدارة</h2>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('audit')">سجل العمليات</button>
+      <button class="admin-tab" onclick="switchAdminTab('users')">إدارة المستخدمين</button>
+    </div>
 
-  <!-- ══ نموذج الإضافة ══ -->
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <button type="button" onclick="toggleForm()"
-      class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-all">
-      <div class="flex items-center gap-3">
-        <div class="bg-blue-100 text-blue-700 rounded-xl p-2">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </div>
-        <div class="text-right">
-          <p class="font-bold text-gray-800 text-sm">إضافة منشأة / طبيب / مكتب / محل</p>
-          <p class="text-xs text-gray-400 mt-0.5">انقر لفتح نموذج الإضافة</p>
-        </div>
+    <!-- AUDIT LOG -->
+    <div class="admin-content active" id="admin-audit">
+      <div class="filter-row">
+        <input type="text" id="f-user" placeholder="اسم المستخدم" oninput="renderAudit()" style="width:130px">
+        <select id="f-action" onchange="renderAudit()">
+          <option value="">كل العمليات</option>
+          <option value="create">إضافة</option>
+          <option value="update">تعديل</option>
+          <option value="delete">حذف</option>
+        </select>
+        <button class="btn-export" onclick="exportCSV()">📥 تصدير CSV</button>
       </div>
-      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s"
-        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-      </svg>
-    </button>
-
-    <div id="form-body">
-      <div class="border-t border-gray-100 p-5">
-        <div class="bg-blue-50 border-r-4 border-blue-500 rounded-l-xl p-3 mb-5">
-          <p class="text-xs text-blue-800 leading-relaxed">
-            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة
-            وسيظهر تبويبه تلقائياً بعد الحفظ.
-          </p>
-        </div>
-
-        <form id="dir-form" onsubmit="handleSubmit(event)"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري / اسم المهني *</label>
-            <input id="f-name" type="text" required placeholder="مثال: د. أحمد فلان — عيادة الأطفال"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
-            <select id="f-main" onchange="onMainChange()" required
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-              <option value="">— اختر القسم الرئيسي —</option>
-            </select>
-            <input id="f-new-main" type="text" placeholder="اكتب اسم القسم الرئيسي الجديد" style="display:none"
-              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">التصنيف الفرعي / التخصص *</label>
-            <select id="f-sub" onchange="onSubChange()" required
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-              <option value="">— اختر التصنيف الفرعي —</option>
-            </select>
-            <input id="f-new-sub" type="text" placeholder="اكتب اسم التخصص الجديد" style="display:none"
-              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص *</label>
-            <input id="f-address" type="text" required placeholder="مثال: الإنشاءات — شارع البرازيل"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
-            <input id="f-phone" type="text" dir="ltr" placeholder="09xxxxxxxx"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام / ملاحظات</label>
-            <input id="f-notes" type="text" placeholder="مثال: السبت–الأربعاء (4–8 مساءً)"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
-            <input id="f-social" type="url" dir="ltr" placeholder="https://facebook.com/..."
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
-          </div>
-
-          <div class="md:col-span-2 lg:col-span-2">
-            <label class="block text-xs font-bold text-gray-600 mb-1">الموقع الجغرافي (اختياري)</label>
-            <div class="flex flex-wrap gap-2">
-              <button type="button" onclick="toggleMap()"
-                class="flex items-center gap-2 text-xs text-blue-700 border border-blue-200 bg-blue-50 px-3 py-2 rounded-xl hover:bg-blue-100 transition-all">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                </svg>
-                <span id="map-toggle-txt">تحديد الموقع على الخريطة</span>
-              </button>
-              <button type="button" onclick="toggleManualCoords()"
-                class="flex items-center gap-2 text-xs text-gray-600 border border-gray-200 bg-gray-50 px-3 py-2 rounded-xl hover:bg-gray-100 transition-all">
-                ✏️ <span id="manual-coords-txt">إدخال إحداثيات يدوياً</span>
-              </button>
-            </div>
-          </div>
-
-          <div id="manual-coords-section" class="col-span-1 md:col-span-2 lg:col-span-3 hidden">
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
-              <p class="text-xs font-bold text-amber-800">📌 إدخال الإحداثيات يدوياً</p>
-              <p class="text-[11px] text-amber-700">افتح Google Maps وابحث عن الموقع، ثم اضغط عليه مطولاً لتظهر الإحداثيات في الأعلى. انسخها والصقها هنا.</p>
-              <div class="flex gap-3">
-                <div class="flex-1">
-                  <label class="block text-[11px] font-bold text-gray-600 mb-1">خط العرض (Latitude)</label>
-                  <input id="f-lat" type="number" step="any" dir="ltr" placeholder="مثال: 34.732400"
-                    class="w-full border border-amber-300 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-amber-400 outline-none"
-                    oninput="onManualCoordsChange()" />
-                </div>
-                <div class="flex-1">
-                  <label class="block text-[11px] font-bold text-gray-600 mb-1">خط الطول (Longitude)</label>
-                  <input id="f-lng" type="number" step="any" dir="ltr" placeholder="مثال: 36.713700"
-                    class="w-full border border-amber-300 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-amber-400 outline-none"
-                    oninput="onManualCoordsChange()" />
-                </div>
-              </div>
-              <p id="manual-coords-display" class="text-[11px] text-emerald-700 font-mono hidden"></p>
-            </div>
-          </div>
-
-          <div id="map-section" class="col-span-1 md:col-span-2 lg:col-span-3 space-y-2">
-            <div class="flex items-center justify-between">
-              <p class="text-xs font-semibold text-gray-600">انقر على الخريطة لتحديد الموقع</p>
-              <div class="flex gap-2">
-                <button type="button" id="geolocate-btn" onclick="geoLocate()"
-                  class="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all">
-                  📍 موقعي الحالي
-                </button>
-                <button type="button" onclick="clearMap()"
-                  class="text-xs text-gray-500 border border-gray-200 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-all">
-                  ✕ إلغاء
-                </button>
-              </div>
-            </div>
-            <div id="map-loading" class="flex items-center justify-center gap-2 py-3 text-xs text-gray-500">
-              <svg class="w-4 h-4 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-              </svg>
-              جاري تحميل الخريطة...
-            </div>
-            <div id="leaflet-map"></div>
-            <div id="map-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-xs text-red-700 text-center space-y-2">
-              <p>⚠️ تعذّر تحميل الخريطة. تأكد من الاتصال بالإنترنت.</p>
-              <button type="button" onclick="retryMap()" class="text-blue-700 underline text-xs">إعادة المحاولة</button>
-              <span class="mx-2 text-gray-400">|</span>
-              <button type="button" onclick="toggleManualCoords()" class="text-blue-700 underline text-xs">إدخال الإحداثيات يدوياً</button>
-            </div>
-            <p id="coords-display" class="text-[11px] text-gray-400 text-center font-mono hidden"></p>
-          </div>
-
-          <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end pt-1">
-            <button type="submit" id="submit-btn"
-              class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-xl shadow-md text-sm transition-all disabled:opacity-60">
-              <span id="submit-icon">🚀</span>
-              <span id="submit-txt">حفظ وإدراج في الدليل العام</span>
-            </button>
-          </div>
-
-        </form>
+      <div class="audit-table-wrap">
+        <table>
+          <thead><tr><th>المستخدم</th><th>العملية</th><th>المنشأة</th><th>التاريخ</th></tr></thead>
+          <tbody id="audit-tbody"></tbody>
+        </table>
       </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="admin-content" id="admin-users">
+      <div class="users-list" id="users-list"></div>
     </div>
   </div>
 
-  <!-- ══ تصفح الدليل ══ -->
-  <section class="space-y-4">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-200">
-      <div>
-        <h2 class="text-xl font-bold text-gray-800">تصفح أقسام الدليل</h2>
-        <p id="entries-count" class="text-xs text-gray-400 mt-0.5">جاري تحميل البيانات...</p>
-      </div>
-      <div class="w-full sm:w-72 relative">
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <input type="search" id="search-input" oninput="onSearch()"
-          placeholder="ابحث بالاسم، العنوان، التخصص..."
-          class="w-full border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm" />
-      </div>
+  <!-- ADD FORM -->
+  <div class="add-form-toggle" id="add-form-wrap">
+    <div class="add-form-header" onclick="toggleAddForm()">
+      <span>➕ إضافة منشأة / طبيب / مكتب / محل</span>
+      <span class="chevron">▼</span>
     </div>
-    <div id="main-tabs" class="flex flex-wrap gap-2"></div>
-    <div id="sub-tabs" class="flex flex-wrap gap-1.5 pt-1 border-t border-gray-100" style="display:none"></div>
-  </section>
-
-  <!-- ══ لوحة عرض الخريطة المضمّنة ══ -->
-  <div id="view-map-panel">
-    <div id="view-map-panel-header">
-      <button id="close-view-map-btn" onclick="hideInlineMap()">✕ إغلاق الخريطة</button>
-      <span id="view-map-title">موقع المنشأة</span>
-      <svg style="width:18px;height:18px;color:#3b82f6;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
-    </div>
-    <div id="view-leaflet-map"></div>
-    <div id="view-map-status">جاري تحميل الخريطة...</div>
-  </div>
-
-  <!-- ══ الشبكة ══ -->
-  <!-- ══ قسم الأعلى تقييماً ══ -->
-  <div id="top-rated-section" style="display:none"></div>
-
-  <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-      <div class="h-2 skeleton w-1/3 mb-4"></div><div class="h-4 skeleton w-3/4 mb-3"></div>
-      <div class="h-3 skeleton w-2/3 mb-2"></div><div class="h-3 skeleton w-1/2"></div>
-    </div>
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-      <div class="h-2 skeleton w-1/4 mb-4"></div><div class="h-4 skeleton w-4/5 mb-3"></div>
-      <div class="h-3 skeleton w-3/5 mb-2"></div><div class="h-3 skeleton w-2/5"></div>
-    </div>
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-      <div class="h-2 skeleton w-2/5 mb-4"></div><div class="h-4 skeleton w-2/3 mb-3"></div>
-      <div class="h-3 skeleton w-3/4 mb-2"></div><div class="h-3 skeleton w-1/3"></div>
+    <div class="add-form-body" id="add-form-body">
+      <div id="add-form-inner"></div>
     </div>
   </div>
 
-</main>
+  <!-- TOP RATED -->
+  <div id="top-rated-section"></div>
 
-<!-- ══════════════ FOOTER ══════════════ -->
-<footer class="bg-white border-t border-gray-200 py-4 px-6 text-center text-xs text-gray-400 mt-auto">
-  دليل مدينة حمص المفتوح والتشاركي © 2026 · wm.hn
-</footer>
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="ابحث عن دكتور، مطعم، صيدلية، اسم أو عنوان..." oninput="onSearch()">
+  </div>
+  <div class="search-count" id="search-count"></div>
 
-<div id="toast"></div>
+  <!-- CATEGORIES -->
+  <div class="cats-wrap" id="cats-wrap"></div>
+  <div class="subcats-wrap" id="subcats-wrap"></div>
 
-<!-- ══════════════ SCRIPT ══════════════ -->
+  <!-- CARDS -->
+  <div class="cards-grid" id="cards-grid"></div>
+
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <h2 id="modal-title">تسجيل الدخول</h2>
+    <div class="form-group">
+      <label>اسم المستخدم</label>
+      <input type="text" id="m-username" placeholder="أدخل اسم المستخدم" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>كلمة المرور</label>
+      <input type="password" id="m-password" placeholder="أدخل كلمة المرور" autocomplete="current-password">
+    </div>
+    <div class="err-msg" id="m-err"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeLoginModal()">إلغاء</button>
+      <button class="btn-primary" id="m-submit" onclick="handleLogin()">دخول</button>
+      <button class="btn-secondary" id="m-switch" onclick="switchAuthMode()">إنشاء حساب</button>
+    </div>
+    <hr class="divider">
+    <p style="font-size:.78rem;color:var(--text3);text-align:center;">
+      الإدارة: <strong>admin</strong> / <strong>admin123</strong>
+    </p>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h2>تعديل البطاقة</h2>
+    <div id="edit-form-inner"></div>
+    <div class="err-msg" id="edit-err"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeEditModal()">إلغاء</button>
+      <button class="btn-primary" onclick="saveEdit()">حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
 <script>
-'use strict';
+// ============================================================
+// DATA MODEL & STORAGE
+// ============================================================
+const STORAGE_KEYS = { entries: 'homs_entries', users: 'homs_users', audit: 'homs_audit', session: 'homs_session', ratings: 'homs_ratings', fp: 'homs_fp' };
 
-// ═══════════════════════════════════════════════════════════════
-//  API URLs
-//  SHEET_API  : مصدر بيانات Google Sheet (للقراءة والكتابة)
-//  RATINGS_API: نقطة مزامنة التقييمات مع الخادم (اختيارية)
-//              التقييمات تُحفظ أولاً في localStorage دائماً
-// ═══════════════════════════════════════════════════════════════
-const SHEET_API   = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
-const RATINGS_API = (function() {
-  try {
-    const origin = window.location.origin;
-    // إذا كان الملف مفتوحاً محلياً (file://) لا نحاول الاتصال بخادم
-    if (!origin || origin === 'null' || origin.startsWith('file')) return null;
-    return origin + '/api/ratings';
-  } catch { return null; }
-})();
-
-// ═══════════════════════════════════════════════════════════════
-//  بيانات Google Sheet
-// ═══════════════════════════════════════════════════════════════
-const COL = {
-  id:      'معرف  id',
-  name:    'اسم المكان',
-  main:    'القسم',
-  sub:     'الوصف',
-  address: 'العنوان بالتفصيل',
-  map:     'الخريطة',
-  phone:   'الهاتف / الجوال',
-  notes:   'اوقات الدوام ',
-  social:  'رابط الفيسبوك / انستغرام',
-  rating:  'التقييم',
-  status:  'الحالة',
-};
-
-const DEFAULT_CATS = {
-  'القطاع الطبي':           ['طبيب أطفال','طبيب عظمية','صيدلية','مخبر تحاليل','طبيب عام'],
-  'المهن الحرة والاستشارات':['مكتب محاماة','مكتب هندسي','ترجمة محلفة','محاسب قانوني'],
-  'التسوق والتجارة':         ['سوبرماركت','مول تجاري','محلات ألبسة','إلكترونيات'],
-  'مطاعم ومقاهي':            ['مطعم وجبات سريعة','كافيه ومقهى','مطعم عائلي'],
-  'خدمات عامة وحرفية':       ['صيانة سيارات','صيانة منزلية','مكتب شحن ونقل','نجارة وديكور'],
-};
-const CAT_ICONS = {
-  'القطاع الطبي':'🏥',
-  'المهن الحرة والاستشارات':'⚖️',
-  'التسوق والتجارة':'🛍️',
-  'مطاعم ومقاهي':'🍽️',
-  'خدمات عامة وحرفية':'🔧',
-};
-const CAT_CLS = {
-  'القطاع الطبي':           { card:'card-medical',  badge:'badge-medical'  },
-  'المهن الحرة والاستشارات':{ card:'card-legal',    badge:'badge-legal'    },
-  'التسوق والتجارة':         { card:'card-shopping', badge:'badge-shopping' },
-  'مطاعم ومقاهي':            { card:'card-food',     badge:'badge-food'     },
-  'خدمات عامة وحرفية':       { card:'card-services', badge:'badge-services' },
-};
-
-// ─── الحالة العامة ────────────────────────────────────────────
-let allEntries     = [];
-let categoryMap    = {};
-let ratingsMap     = {};          // { entryId: { avg, count } }
-let pendingRatings = new Set();   // يمنع إرسال نفس التقييم مرتين
-let activeMain     = 'الكل';
-let activeSub      = 'الكل';
-let searchQ        = '';
-let isDark         = false;
-let leafMap        = null;
-let leafMarker     = null;
-let pickedLat      = null;
-let pickedLng      = null;
-let formOpen       = false;
-let mapOpen        = false;
-let manualOpen     = false;
-let mapInitialized = false;
-
-// ═══════════════════════════════════════════════════════════════
-//  localStorage — آمن ضد الاستثناءات (WebView + Private Mode)
-// ═══════════════════════════════════════════════════════════════
-const store = {
-  get(key, fallback = {}) {
-    try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
-    } catch { return fallback; }
-  },
-  set(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* نتجاهل */ }
-  },
-};
-
-function getUserRatings()         { return store.get('homs_ratings', {}); }
-function saveUserRating(id, val)  { const r = getUserRatings(); r[id] = val; store.set('homs_ratings', r); }
-
-// ═══════════════════════════════════════════════════════════════
-//  fetch مع مهلة زمنية
-// ═══════════════════════════════════════════════════════════════
-function fetchWithTimeout(url, opts = {}, ms = 12000) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, { ...opts, signal: ctrl.signal })
-    .finally(() => clearTimeout(timer));
+function getFingerprint() {
+  let fp = localStorage.getItem(STORAGE_KEYS.fp);
+  if (!fp) { fp = 'fp_' + Math.random().toString(36).substr(2, 12); localStorage.setItem(STORAGE_KEYS.fp, fp); }
+  return fp;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  تهيئة
-// ═══════════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
-  applyDark();
-  document.getElementById('map-loading').style.display = 'none';
-  // بناء ratingsMap من localStorage لعرض تقييمات المستخدم السابقة فوراً
-  loadLocalRatingsMap();
-  Promise.all([fetchData(), fetchServerRatings()]);
-});
-
-// ─── تحميل التقييمات من localStorage إلى ratingsMap ──────────
-function loadLocalRatingsMap() {
-  const saved = getUserRatings();
-  Object.entries(saved).forEach(([id, val]) => {
-    if (!ratingsMap[id]) {
-      ratingsMap[id] = { avg: val, count: 1 };
-    }
-  });
+function loadJSON(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
 }
+function saveJSON(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
-// ─── Dark Mode ────────────────────────────────────────────────
-function toggleDark() { isDark = !isDark; applyDark(); }
-function applyDark() {
-  const body = document.getElementById('body');
-  const icon = document.getElementById('dark-icon');
-  body.classList.toggle('dark-mode', isDark);
-  body.style.background = isDark ? '#0f172a' : '#f8fafc';
-  icon.innerHTML = isDark
-    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>'
-    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  جلب البيانات من Google Sheet
-// ═══════════════════════════════════════════════════════════════
-async function fetchData() {
-  const icon = document.getElementById('refresh-icon');
-  icon.style.animation = 'spin 1s linear infinite';
-  document.getElementById('error-banner').classList.add('hidden');
-  try {
-    const res = await fetchWithTimeout(SHEET_API);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const raw = await res.json();
-    allEntries = (Array.isArray(raw) ? raw : []).map(r => ({
-      ID:           String(r[COL.id]      || '').trim(),
-      Name:         r[COL.name]    || '',
-      MainCategory: r[COL.main]    || '',
-      SubCategory:  r[COL.sub]     || '',
-      Address:      r[COL.address] || '',
-      MapLink:      r[COL.map]     || '',
-      Phone:        r[COL.phone]   || '',
-      Notes:        r[COL.notes]   || '',
-      Social:       r[COL.social]  || '',
-    })).filter(e => e.Name.trim() !== '');
-  } catch (err) {
-    allEntries = [];
-    document.getElementById('error-msg').textContent = 'تعذّر الاتصال: ' + err.message;
-    document.getElementById('error-banner').classList.remove('hidden');
+// Seed default admin user if none
+function initUsers() {
+  let users = loadJSON(STORAGE_KEYS.users, null);
+  if (!users) {
+    users = [
+      { id: 1, username: 'admin', password: 'admin123', role: 'admin', isBlocked: false, dailyEditLimit: 999, createdAt: new Date().toISOString() }
+    ];
+    saveJSON(STORAGE_KEYS.users, users);
   }
-  buildCategoryMap();
-  renderTabs();
-  populateFormDropdowns();
-  renderGrid();
-  document.getElementById('hdr-count').textContent = allEntries.length + ' جهة مسجّلة';
-  icon.style.animation = '';
+  return users;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  جلب ملخص التقييمات من الخادم (اختياري — فشل صامت)
-// ═══════════════════════════════════════════════════════════════
-async function fetchServerRatings() {
-  if (!RATINGS_API) return; // لا خادم متاح (file:// أو WebView مستقل)
-  try {
-    const res = await fetchWithTimeout(RATINGS_API + '/summary', {}, 8000);
-    if (!res.ok) return;
-    const serverMap = await res.json();
-    // دمج تقييمات الخادم مع التقييمات المحلية (الأولوية للخادم)
-    Object.assign(ratingsMap, serverMap);
-    // تطبيق تقييمات المستخدم المحلية فوق تقييمات الخادم
-    const saved = getUserRatings();
-    Object.entries(saved).forEach(([id, val]) => {
-      if (!ratingsMap[id]) ratingsMap[id] = { avg: val, count: 1 };
-    });
-    renderGrid();
-    renderTopRated();
-  } catch {
-    // فشل صامت — التقييمات المحلية تعمل بشكل مستقل
+// Seed default entries if none
+function initEntries() {
+  let entries = loadJSON(STORAGE_KEYS.entries, null);
+  if (!entries) {
+    const now = new Date().toISOString();
+    entries = [
+      { id:1, name:'مستشفى الباسل', mainCategory:'طبي / صحة', subCategory:'مستشفيات عامة', address:'شارع العدوي - حمص', phone:'031-2220000', notes:'مستشفى حكومي — يعمل 24 ساعة', mapLink:'https://maps.google.com/?q=34.739,36.710', social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:2, name:'عيادة الدكتور خالد المصري', mainCategory:'طبي / صحة', subCategory:'عيادات خاصة', address:'حي الميدان - شارع بغداد', phone:'031-2215540', notes:'تخصص باطنية — مواعيد: 10ص-2م', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:3, name:'صيدلية النور', mainCategory:'طبي / صحة', subCategory:'صيدليات', address:'شارع الحمراء - حمص', phone:'031-2234567', notes:'يعمل حتى منتصف الليل', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:4, name:'مركز حمص للأسنان', mainCategory:'طبي / صحة', subCategory:'عيادات أسنان', address:'حي الضواهرة - شارع النيل', phone:'031-2201234', notes:'زرع وتركيبات', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:5, name:'مختبر البيان الطبي', mainCategory:'طبي / صحة', subCategory:'مختبرات', address:'شارع القوتلي - بجانب جامع الروضة', phone:'031-2289000', notes:'نتائج خلال 24 ساعة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:6, name:'مكتب المحامي سامر القاسم', mainCategory:'قانوني', subCategory:'محامون', address:'شارع العدالة - مقابل قصر العدل', phone:'0944123456', notes:'قضايا مدنية وتجارية', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:7, name:'مكتب التوثيق الرسمي', mainCategory:'قانوني', subCategory:'كاتب عدل', address:'شارع المديرية - حمص', phone:'031-2212233', notes:'ساعات العمل: 8ص-3م', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:8, name:'سوبرماركت الأمل', mainCategory:'تسوق / محلات', subCategory:'بقالة وسوبرماركت', address:'حي الزهراء - الطريق الدائري', phone:'0933456789', notes:'يعمل من 7ص حتى 11م', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:9, name:'محل الإلكترونيات والأجهزة', mainCategory:'تسوق / محلات', subCategory:'إلكترونيات', address:'شارع الكورنيش - حمص', phone:'031-2267890', notes:'بيع وصيانة جميع الأجهزة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:10, name:'مطعم بيت الشام', mainCategory:'مطاعم / طعام', subCategory:'مطاعم شعبية', address:'حي الزهراء - شارع المتنبي', phone:'031-2245678', notes:'مشاوي وكبة حمصية', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:11, name:'حلويات ابن البلد', mainCategory:'مطاعم / طعام', subCategory:'حلويات ومخبوزات', address:'شارع القوتلي - حمص', phone:'031-2256789', notes:'بقلاوة ومعمول شامي', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:12, name:'فلافل الصفا', mainCategory:'مطاعم / طعام', subCategory:'وجبات سريعة', address:'ساحة الحرية - حمص', phone:null, notes:'أشهر فلافل في حمص — منذ 1980', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:13, name:'محطة بنزين الوفاء', mainCategory:'خدمات', subCategory:'محطات وقود', address:'الطريق الدائري الشمالي - حمص', phone:'031-2290000', notes:'متاح 24 ساعة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:14, name:'ورشة إصلاح السيارات', mainCategory:'خدمات', subCategory:'ميكانيك وسيارات', address:'المنطقة الصناعية - حمص', phone:'031-2278900', notes:'إصلاح شامل — سحب على الطريق', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:15, name:'مدرسة النور الخاصة', mainCategory:'تعليم', subCategory:'مدارس خاصة', address:'حي الغوطة - حمص', phone:'031-2201100', notes:'منهج سوري — متوسطة وثانوية', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+      { id:16, name:'مركز اللغات الحديثة', mainCategory:'تعليم', subCategory:'تعليم لغات', address:'شارع القوتلي - الطابق الثاني', phone:'0944112233', notes:'إنجليزي وفرنسي وتركي — دورات مكثفة', mapLink:null, social:null, status:'نشط', ratingAvg:null, ratingCount:0, createdAt:now },
+    ];
+    saveJSON(STORAGE_KEYS.entries, entries);
   }
+  return entries;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  إرسال التقييم — localStorage أولاً، ثم مزامنة خلفية مع الخادم
-//
-//  المنطق:
-//  ① حفظ فوري في localStorage (يعمل دائماً بلا إنترنت أو خادم)
-//  ② تحديث ratingsMap محلياً وعرض النجاح فوراً
-//  ③ محاولة مزامنة مع الخادم في الخلفية (صامتة — لا تؤثر على النتيجة)
-// ═══════════════════════════════════════════════════════════════
-async function submitRating(entryId, rating, widgetEl) {
-  if (!entryId || pendingRatings.has(entryId)) return;
-  pendingRatings.add(entryId);
+// ============================================================
+// STATE
+// ============================================================
+let entries = [];
+let users = [];
+let audit = [];
+let ratings = {};    // { entryId_fp: value }
+let session = null;  // { id, username, role, isBlocked, dailyEditLimit }
+let darkMode = false;
+let selectedCat = '';
+let selectedSubCat = '';
+let searchQ = '';
+let editingId = null;
+let authMode = 'login'; // or 'register'
 
-  // حالة الانتظار: تعطيل النجوم مؤقتاً
-  const stars = widgetEl.querySelectorAll('.star-btn');
-  stars.forEach((s, i) => {
-    s.disabled = true;
-    s.className = 'star-btn' + (i < rating ? ' pending' : '');
-  });
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  entries = initEntries();
+  users = initUsers();
+  audit = loadJSON(STORAGE_KEYS.audit, []);
+  ratings = loadJSON(STORAGE_KEYS.ratings, {});
+  session = loadJSON(STORAGE_KEYS.session, null);
+  darkMode = localStorage.getItem('homs_dark') === '1';
+  if (darkMode) document.body.classList.add('dark');
+  document.getElementById('dark-btn').textContent = darkMode ? '☀️' : '🌙';
+  render();
+}
 
-  // ① حفظ التقييم فوراً في localStorage — يعمل في كل البيئات
-  saveUserRating(entryId, rating);
+function toggleDark() {
+  darkMode = !darkMode;
+  document.body.classList.toggle('dark', darkMode);
+  document.getElementById('dark-btn').textContent = darkMode ? '☀️' : '🌙';
+  localStorage.setItem('homs_dark', darkMode ? '1' : '0');
+}
 
-  // ② تحديث ratingsMap محلياً
-  const prev = ratingsMap[entryId];
-  if (prev) {
-    const newCount = prev.count + 1;
-    ratingsMap[entryId] = {
-      avg:   parseFloat(((prev.avg * prev.count + rating) / newCount).toFixed(1)),
-      count: newCount,
-    };
+// ============================================================
+// AUTH
+// ============================================================
+function openLoginModal() {
+  if (session) { handleLogout(); return; }
+  authMode = 'login';
+  document.getElementById('modal-title').textContent = 'تسجيل الدخول';
+  document.getElementById('m-submit').textContent = 'دخول';
+  document.getElementById('m-switch').textContent = 'إنشاء حساب';
+  document.getElementById('m-err').textContent = '';
+  document.getElementById('m-username').value = '';
+  document.getElementById('m-password').value = '';
+  document.getElementById('login-modal').classList.add('open');
+  setTimeout(() => document.getElementById('m-username').focus(), 100);
+}
+function closeLoginModal() { document.getElementById('login-modal').classList.remove('open'); }
+function switchAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  document.getElementById('modal-title').textContent = authMode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
+  document.getElementById('m-submit').textContent = authMode === 'login' ? 'دخول' : 'إنشاء الحساب';
+  document.getElementById('m-switch').textContent = authMode === 'login' ? 'إنشاء حساب' : 'لديّ حساب';
+  document.getElementById('m-err').textContent = '';
+}
+
+function handleLogin() {
+  const username = document.getElementById('m-username').value.trim();
+  const password = document.getElementById('m-password').value;
+  document.getElementById('m-err').textContent = '';
+  if (!username || !password) { document.getElementById('m-err').textContent = 'يرجى ملء جميع الحقول'; return; }
+  if (authMode === 'login') {
+    const user = users.find(u => u.username === username && u.password === password);
+    if (!user) { document.getElementById('m-err').textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
+    if (user.isBlocked) { document.getElementById('m-err').textContent = 'تم إيقاف حسابك من قِبل المشرف'; return; }
+    session = { id: user.id, username: user.username, role: user.role, isBlocked: user.isBlocked, dailyEditLimit: user.dailyEditLimit };
+    saveJSON(STORAGE_KEYS.session, session);
+    closeLoginModal();
+    toast('مرحباً، ' + user.username + ' 👋', 'success');
+    render();
   } else {
-    ratingsMap[entryId] = { avg: rating, count: 1 };
+    if (username.length < 3) { document.getElementById('m-err').textContent = 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل'; return; }
+    if (password.length < 6) { document.getElementById('m-err').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; return; }
+    if (users.find(u => u.username === username)) { document.getElementById('m-err').textContent = 'اسم المستخدم موجود بالفعل'; return; }
+    const newUser = { id: Date.now(), username, password, role: 'editor', isBlocked: false, dailyEditLimit: 7, createdAt: new Date().toISOString() };
+    users.push(newUser);
+    saveJSON(STORAGE_KEYS.users, users);
+    session = { id: newUser.id, username: newUser.username, role: newUser.role, isBlocked: false, dailyEditLimit: 7 };
+    saveJSON(STORAGE_KEYS.session, session);
+    closeLoginModal();
+    toast('تم إنشاء الحساب بنجاح! مرحباً، ' + username, 'success');
+    render();
   }
+}
 
-  pendingRatings.delete(entryId);
+function handleLogout() {
+  session = null;
+  localStorage.removeItem(STORAGE_KEYS.session);
+  toast('تم تسجيل الخروج', 'success');
+  render();
+}
 
-  // ② عرض النجاح فوراً — لا ننتظر الخادم
-  widgetEl.innerHTML = buildRatingHTML(entryId, true, rating);
-  showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
+// ============================================================
+// CATEGORIES & FILTERING
+// ============================================================
+const CAT_CONFIG = {
+  'طبي / صحة':   { cls: 'cat-medical', icon: '🏥' },
+  'قانوني':       { cls: 'cat-legal',   icon: '⚖️' },
+  'تسوق / محلات': { cls: 'cat-shop',    icon: '🛒' },
+  'مطاعم / طعام': { cls: 'cat-food',    icon: '🍽️' },
+  'خدمات':        { cls: 'cat-service', icon: '🔧' },
+  'تعليم':        { cls: 'cat-edu',     icon: '📚' },
+};
+function getCatCls(cat) { return CAT_CONFIG[cat]?.cls || ''; }
+function getCatIcon(cat) { return CAT_CONFIG[cat]?.icon || '📋'; }
+
+function getFilteredEntries() {
+  return entries.filter(e => {
+    if (selectedCat && e.mainCategory !== selectedCat) return false;
+    if (selectedSubCat && e.subCategory !== selectedSubCat) return false;
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      const hay = [e.name, e.address, e.mainCategory, e.subCategory, e.notes, e.phone].filter(Boolean).join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function onSearch() { searchQ = document.getElementById('search-input').value.trim(); renderCards(); }
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  renderHeader();
+  renderAddForm();
   renderTopRated();
-
-  // ③ مزامنة مع الخادم في الخلفية — إذا نجحت نستخدم المتوسط الحقيقي من قاعدة البيانات
-  if (RATINGS_API) {
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 8000);
-      const res = await fetch(RATINGS_API, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
-        signal:  ctrl.signal,
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const data = await res.json();
-        // تحديث ratingsMap بالمتوسط الحقيقي المحسوب من قاعدة البيانات
-        if (data.avg !== undefined && data.count !== undefined) {
-          ratingsMap[entryId] = { avg: data.avg, count: data.count };
-          // تحديث الواجهة بالبيانات الحقيقية من الخادم
-          const widget = document.querySelector(`.rating-widget[data-entry="${escHtml(entryId)}"]`);
-          if (widget) {
-            widget.innerHTML = buildRatingHTML(entryId, true, rating);
-          }
-          renderTopRated();
-        }
-      }
-    } catch {
-      // فشل صامت — localStorage هو المصدر الأساسي للتقييمات
-    }
-  }
+  renderCategories();
+  renderCards();
+  renderAdminPanel();
+  if (session?.role === 'admin') renderAudit(), renderUsers();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  بناء HTML ودجت النجوم
-// ═══════════════════════════════════════════════════════════════
-function buildRatingHTML(entryId, alreadyRated, userRating) {
-  const info  = ratingsMap[entryId];
-  const avg   = info ? info.avg   : 0;
-  const cnt   = info ? info.count : 0;
-  const round = Math.round(avg);
-
-  // ── بناء النجوم (من 5 إلى 1 من اليسار — نظام RTL) ──────────
-  let starsHtml = '';
-  for (let i = 5; i >= 1; i--) {
-    if (alreadyRated) {
-      const cls = i <= (userRating || 0) ? 'filled' : '';
-      starsHtml += `<button class="star-btn ${cls}" data-star="${i}" disabled aria-label="${i} نجوم">★</button>`;
-    } else {
-      const cls = i <= round ? 'filled' : '';
-      starsHtml += `<button class="star-btn ${cls}"
-        data-entry-id="${escHtml(entryId)}" data-star="${i}"
-        aria-label="أعطِ ${i} من 5 نجوم">★</button>`;
-    }
-  }
-
-  // ── إحصائيات المجتمع (متوسط + عدد) ──────────────────────────
-  let communityHtml = '';
-  if (cnt > 0) {
-    const avgFmt  = Number(avg).toFixed(1);
-    const cntFmt  = cnt >= 1000 ? `${(cnt / 1000).toFixed(1)}k` : cnt;
-    const cntWord = cnt === 1 ? 'تقييم' : 'تقييمات';
-    communityHtml = `<span class="rating-avg-badge">${avgFmt}<span class="rating-avg-sep">/5</span></span>`
-                  + `<span class="rating-cnt-label">· ${cntFmt} ${cntWord}</span>`;
-  }
-
-  // ── تجميع الهيكل ─────────────────────────────────────────────
-  if (!alreadyRated) {
-    const rightSide = communityHtml
-      ? `<div class="flex items-center gap-1">${communityHtml}</div>`
-      : `<span class="rating-label">قيّم هذه المنشأة</span>`;
-    return `<div class="flex items-center justify-between gap-2 flex-wrap">
-      <div class="star-row">${starsHtml}</div>
-      ${rightSide}</div>`;
+function renderHeader() {
+  document.getElementById('total-badge').textContent = entries.length + ' منشأة';
+  const lbl = document.getElementById('login-label');
+  if (session) {
+    lbl.textContent = session.username + ' (خروج)';
   } else {
-    // بعد التصويت: شارة اختيار المستخدم + متوسط المجتمع
-    const userBadge = `<span class="rated-badge">✓ ${userRating}★</span>`;
-    const right     = communityHtml
-      ? `<div class="flex items-center gap-1">${communityHtml}</div>`
-      : '';
-    return `<div class="flex items-center justify-between gap-2 flex-wrap">
-      <div class="flex items-center gap-2"><div class="star-row">${starsHtml}</div>${userBadge}</div>
-      ${right}</div>`;
+    lbl.textContent = 'تسجيل الدخول';
   }
 }
 
-// ─── تفويض حدث النقر على النجوم عبر الشبكة (event delegation) ─
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('.star-btn[data-entry-id]');
-  if (!btn || btn.disabled) return;
-  const entryId = btn.dataset.entryId;
-  const rating  = parseInt(btn.dataset.star, 10);
-  if (!entryId || !rating) return;
-
-  const widgetEl = btn.closest('.rating-widget');
-  if (!widgetEl) return;
-
-  const userRatings = getUserRatings();
-  if (entryId in userRatings) return;
-
-  submitRating(entryId, rating, widgetEl);
-});
-
-// ─── مساعد: تطبيق حالة hover/touch على صف النجوم ────────────────
-function applyStarHover(row, activeStar) {
-  row.querySelectorAll('.star-btn').forEach(s => {
-    const n = parseInt(s.dataset.star, 10);
-    s.classList.toggle('hover-fill', n <= activeStar);
-    s.classList.toggle('hover-dim',  n >  activeStar);
-  });
-}
-function clearStarHover(row) {
-  row.querySelectorAll('.star-btn').forEach(s => {
-    s.classList.remove('hover-fill', 'hover-dim');
-  });
+function renderAdminPanel() {
+  const panel = document.getElementById('admin-panel');
+  panel.classList.toggle('open', !!(session && session.role === 'admin'));
 }
 
-// ─── Desktop: mouseover / mouseout ───────────────────────────────
-document.addEventListener('mouseover', function(e) {
-  const btn = e.target.closest('.star-btn[data-entry-id]');
-  if (!btn || btn.disabled) return;
-  const row = btn.parentElement;
-  if (!row) return;
-  applyStarHover(row, parseInt(btn.dataset.star, 10));
-});
-document.addEventListener('mouseout', function(e) {
-  const btn = e.target.closest('.star-btn[data-entry-id]');
-  if (!btn || btn.disabled) return;
-  const row = btn.parentElement;
-  if (!row) return;
-  clearStarHover(row);
-});
+function renderAddForm() {
+  const inner = document.getElementById('add-form-inner');
+  if (!session) {
+    inner.innerHTML = `<div class="not-logged-msg">لإضافة منشأة جديدة، يرجى <a onclick="openLoginModal()">تسجيل الدخول أولاً</a>.</div>`;
+    return;
+  }
+  const cats = [...new Set(entries.map(e => e.mainCategory))];
+  const subcats = selectedCat ? [...new Set(entries.filter(e => e.mainCategory === selectedCat).map(e => e.subCategory))] : [];
+  inner.innerHTML = `
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:span 2">
+        <label>اسم المنشأة *</label>
+        <input type="text" id="f-name" placeholder="مثال: مطعم النخيل أو دكتور سامر الأحمد">
+      </div>
+      <div class="form-group">
+        <label>التصنيف الرئيسي *</label>
+        <select id="f-maincat" onchange="renderSubCatOptions()">
+          <option value="">-- اختر --</option>
+          ${cats.map(c => `<option>${c}</option>`).join('')}
+          <option value="__new">تصنيف جديد...</option>
+        </select>
+        <input type="text" id="f-maincat-new" placeholder="أدخل التصنيف الجديد" style="display:none;margin-top:6px">
+      </div>
+      <div class="form-group">
+        <label>التصنيف الفرعي *</label>
+        <select id="f-subcat">
+          <option value="">-- اختر --</option>
+          ${subcats.map(s => `<option>${s}</option>`).join('')}
+          <option value="__new">تصنيف جديد...</option>
+        </select>
+        <input type="text" id="f-subcat-new" placeholder="أدخل التصنيف الفرعي" style="display:none;margin-top:6px">
+      </div>
+      <div class="form-group" style="grid-column:span 2">
+        <label>العنوان *</label>
+        <input type="text" id="f-address" placeholder="الحي، الشارع، المنطقة">
+      </div>
+      <div class="form-group">
+        <label>رقم الهاتف</label>
+        <input type="text" id="f-phone" placeholder="مثال: 031-2212345">
+      </div>
+      <div class="form-group">
+        <label>رابط الموقع (خرائط Google)</label>
+        <input type="url" id="f-map" placeholder="https://maps.google.com/...">
+      </div>
+      <div class="form-group">
+        <label>مواعيد / ملاحظات</label>
+        <textarea id="f-notes" placeholder="ساعات العمل، تخصصات، معلومات مفيدة..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>رابط التواصل الاجتماعي</label>
+        <input type="url" id="f-social" placeholder="https://facebook.com/...">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="addEntry()">💾 حفظ وإدراج في الدليل العام</button>
+  `;
+}
 
-// ─── Mobile: touchstart / touchend ───────────────────────────────
-document.addEventListener('touchstart', function(e) {
-  const btn = e.target.closest('.star-btn[data-entry-id]');
-  if (!btn || btn.disabled) return;
-  const row = btn.parentElement;
-  if (!row) return;
-  applyStarHover(row, parseInt(btn.dataset.star, 10));
-}, { passive: true });
-document.addEventListener('touchend', function(e) {
-  const btn = e.target.closest('.star-btn[data-entry-id]');
-  if (!btn || btn.disabled) return;
-  const row = btn.parentElement;
-  if (!row) return;
-  // تأخير قصير بعد اللمس حتى يرى المستخدم الاختيار قبل إرسال التقييم
-  setTimeout(() => clearStarHover(row), 350);
-}, { passive: true });
-document.addEventListener('touchcancel', function(e) {
-  const btn = e.target.closest('.star-btn[data-entry-id]');
-  if (!btn) return;
-  const row = btn.parentElement;
-  if (row) clearStarHover(row);
-}, { passive: true });
+function renderSubCatOptions() {
+  const mainCatSel = document.getElementById('f-maincat');
+  const mainCatNew = document.getElementById('f-maincat-new');
+  const subCatSel = document.getElementById('f-subcat');
+  if (!mainCatSel || !subCatSel) return;
+  const val = mainCatSel.value;
+  mainCatNew.style.display = val === '__new' ? 'block' : 'none';
+  const cat = val === '__new' ? '' : val;
+  const subcats = cat ? [...new Set(entries.filter(e => e.mainCategory === cat).map(e => e.subCategory))] : [];
+  subCatSel.innerHTML = `<option value="">-- اختر --</option>${subcats.map(s => `<option>${s}</option>`).join('')}<option value="__new">تصنيف جديد...</option>`;
+  const subNew = document.getElementById('f-subcat-new');
+  if (subNew) subNew.style.display = 'none';
+}
 
-// ═══════════════════════════════════════════════════════════════
-//  قسم الأعلى تقييماً
-// ═══════════════════════════════════════════════════════════════
+function getAddFormVal(id, newId) {
+  const sel = document.getElementById(id);
+  if (!sel) return '';
+  if (sel.value === '__new') {
+    const ni = document.getElementById(newId);
+    return ni ? ni.value.trim() : '';
+  }
+  return sel.value.trim();
+}
+
+function addEntry() {
+  if (!session) { openLoginModal(); return; }
+  const name = document.getElementById('f-name')?.value.trim();
+  const mainCategory = getAddFormVal('f-maincat', 'f-maincat-new');
+  const subCategory = getAddFormVal('f-subcat', 'f-subcat-new');
+  const address = document.getElementById('f-address')?.value.trim();
+  const phone = document.getElementById('f-phone')?.value.trim() || null;
+  const mapLink = document.getElementById('f-map')?.value.trim() || null;
+  const notes = document.getElementById('f-notes')?.value.trim() || null;
+  const social = document.getElementById('f-social')?.value.trim() || null;
+  if (!name) { toast('يرجى إدخال اسم المنشأة', 'error'); return; }
+  if (!mainCategory) { toast('يرجى اختيار التصنيف الرئيسي', 'error'); return; }
+  if (!subCategory) { toast('يرجى اختيار التصنيف الفرعي', 'error'); return; }
+  if (!address) { toast('يرجى إدخال العنوان', 'error'); return; }
+  const id = entries.length > 0 ? Math.max(...entries.map(e => e.id)) + 1 : 1;
+  const entry = { id, name, mainCategory, subCategory, address, phone, mapLink, notes, social, status: 'نشط', ratingAvg: null, ratingCount: 0, createdAt: new Date().toISOString() };
+  entries.push(entry);
+  saveJSON(STORAGE_KEYS.entries, entries);
+  logAudit({ action: 'create', entryId: id, entryName: name, oldValues: null, newValues: JSON.stringify(entry) });
+  toast('تمت إضافة المنشأة بنجاح ✅', 'success');
+  render();
+}
+
 function renderTopRated() {
-  const section = document.getElementById('top-rated-section');
-  if (!section) return;
-
-  // منشآت مرتّبة: متوسط تنازلياً، ثم عدد تنازلياً — حد أدنى تقييمان
-  const rated = Object.entries(ratingsMap)
-    .filter(([, r]) => r.count >= 2)
-    .sort((a, b) => b[1].avg - a[1].avg || b[1].count - a[1].count)
-    .slice(0, 10);
-
-  if (rated.length === 0) { section.style.display = 'none'; return; }
-  section.style.display = '';
-
-  const entryMap = {};
-  allEntries.forEach(e => { if (e.ID) entryMap[e.ID] = e; });
-
-  const chips = rated.map(([id, r]) => {
-    const entry = entryMap[id];
-    if (!entry) return '';
-    const icon  = CAT_ICONS[entry.MainCategory] || '📁';
-    const avg   = Number(r.avg).toFixed(1);
-    const cnt   = r.count >= 1000 ? `${(r.count / 1000).toFixed(1)}k` : r.count;
-    return `<button type="button" onclick="scrollToEntry('${escHtml(id)}')"
-      class="top-rated-chip flex-shrink-0 flex flex-col items-start gap-1 bg-white border border-gray-200 rounded-xl px-3 py-2.5 shadow-sm hover:shadow-md hover:border-amber-300 transition-all active:scale-95">
-      <div class="flex items-center gap-1.5 w-full min-w-0">
-        <span class="text-base flex-shrink-0">${icon}</span>
-        <span class="text-xs font-bold text-gray-800 truncate">${escHtml(entry.Name)}</span>
-      </div>
-      <div class="flex items-center gap-1">
-        <span class="text-amber-500 text-xs font-bold leading-none">★ ${avg}</span>
-        <span class="text-gray-400 text-[10px] leading-none">· ${cnt}</span>
-      </div>
-    </button>`;
-  }).join('');
-
-  section.innerHTML = `
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-lg leading-none">🏆</span>
-        <h2 class="text-sm font-bold text-gray-800">الأعلى تقييماً</h2>
-        <span class="text-[11px] text-gray-400">· حسب تقييمات المجتمع</span>
-      </div>
-      <div class="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">${chips}</div>
-    </div>`;
-}
-
-function scrollToEntry(entryId) {
-  const card = document.querySelector(`[data-entry-card="${CSS.escape(entryId)}"]`);
-  if (!card) return;
-  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  card.classList.remove('top-rated-highlight');
-  void card.offsetWidth; // reflow لإعادة تشغيل الأنيميشن
-  card.classList.add('top-rated-highlight');
-  setTimeout(() => card.classList.remove('top-rated-highlight'), 1600);
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  مساعد لتهريب HTML (يمنع XSS في data-*)
-// ═══════════════════════════════════════════════════════════════
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  بناء خريطة الأقسام
-// ═══════════════════════════════════════════════════════════════
-function buildCategoryMap() {
-  categoryMap = {};
-  Object.entries(DEFAULT_CATS).forEach(([m, subs]) => { categoryMap[m] = new Set(subs); });
-  allEntries.forEach(e => {
-    const m = e.MainCategory.trim(), s = e.SubCategory.trim();
-    if (!m) return;
-    if (!categoryMap[m]) categoryMap[m] = new Set();
-    if (s) categoryMap[m].add(s);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  التبويبات
-// ═══════════════════════════════════════════════════════════════
-function renderTabs() {
-  const cont = document.getElementById('main-tabs');
-  cont.innerHTML = '';
-  const mk = (label, active, fn) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.textContent = label;
-    b.className = ['px-3.5 py-1.5 rounded-xl font-semibold border transition-all text-xs',
-      active ? 'tab-active' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'].join(' ');
-    b.onclick = fn;
-    return b;
-  };
-  cont.appendChild(mk('📂 عرض الكل', activeMain === 'الكل', () => selectMain('الكل')));
-  Object.keys(categoryMap).forEach(cat => {
-    const icon = CAT_ICONS[cat] || '📁';
-    cont.appendChild(mk(`${icon} ${cat}`, activeMain === cat, () => selectMain(cat)));
-  });
-  renderSubTabs();
-}
-
-function renderSubTabs() {
-  const cont = document.getElementById('sub-tabs');
-  cont.innerHTML = '';
-  if (activeMain === 'الكل') { cont.style.display = 'none'; return; }
-  cont.style.cssText = 'display:flex;flex-wrap:wrap;gap:.375rem;padding-top:.25rem;border-top:1px solid #f3f4f6';
-  const subs = categoryMap[activeMain] ? Array.from(categoryMap[activeMain]) : [];
-  const mkS = (label, active) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.textContent = label;
-    b.className = `px-3 py-1 rounded-lg text-[11px] font-semibold transition-all border ${
-      active ? 'subtab-active border-transparent' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'}`;
-    b.onclick = () => { activeSub = label; renderSubTabs(); renderGrid(); };
-    return b;
-  };
-  const allB = mkS('الكل', activeSub === 'الكل');
-  allB.onclick = () => { activeSub = 'الكل'; renderSubTabs(); renderGrid(); };
-  cont.appendChild(allB);
-  subs.forEach(s => cont.appendChild(mkS(s, activeSub === s)));
-}
-
-function selectMain(cat) {
-  activeMain = cat; activeSub = 'الكل'; searchQ = '';
-  document.getElementById('search-input').value = '';
-  renderTabs(); renderGrid();
-}
-
-// ─── البحث ───────────────────────────────────────────────────
-function onSearch() {
-  searchQ = document.getElementById('search-input').value.trim();
-  renderGrid();
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  عرض البطاقات
-// ═══════════════════════════════════════════════════════════════
-function toggleCardDetails(btn) {
-  const panel = btn.closest('.entry-card').querySelector('.card-details');
-  const open  = panel.classList.toggle('open');
-  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  const lbl = btn.querySelector('.card-toggle-label');
-  if (lbl) lbl.textContent = open ? 'إخفاء التفاصيل' : 'التفاصيل';
-}
-
-function renderGrid() {
-  let list = allEntries;
-  if (activeMain !== 'الكل') {
-    list = list.filter(e => e.MainCategory === activeMain);
-    if (activeSub !== 'الكل') list = list.filter(e => e.SubCategory === activeSub);
-  }
-  if (searchQ) {
-    const q = searchQ.toLowerCase();
-    list = list.filter(e =>
-      [e.Name, e.Address, e.SubCategory, e.MainCategory, e.Notes, e.Phone, e.Social]
-        .some(v => v && v.toLowerCase().includes(q))
-    );
-  }
-
-  document.getElementById('entries-count').textContent =
-    searchQ ? `${list.length} نتيجة من أصل ${allEntries.length}` : `${list.length} جهة مسجّلة`;
-
-  const grid = document.getElementById('directory-grid');
-  grid.innerHTML = '';
-
-  if (list.length === 0) {
-    grid.innerHTML = `
-      <div class="col-span-3 flex flex-col items-center py-20 text-center">
-        <div class="text-4xl mb-4">${searchQ ? '🔍' : '➕'}</div>
-        <h3 class="text-lg font-bold text-gray-700 mb-2">${searchQ ? 'لا توجد نتائج' : 'لا توجد جهات مسجّلة هنا بعد'}</h3>
-        <p class="text-sm text-gray-400 max-w-xs">${searchQ
-          ? `لم نجد نتيجة لـ "${escHtml(searchQ)}"`
-          : 'كن أول من يُضيف بيانات هنا!'}</p>
-        ${!searchQ ? '<button onclick="toggleForm()" class="mt-4 bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-800">إضافة الآن</button>' : ''}
-      </div>`;
-    return;
-  }
-
-  const userRatings = getUserRatings();
-
-  list.forEach(e => {
-    const cls = CAT_CLS[e.MainCategory] || { card:'card-default', badge:'badge-default' };
-
-    let mapHtml = '';
-    if (e.MapLink) {
-      const coords = parseMapCoords(e.MapLink);
-      if (coords) {
-        const safeName = escHtml(e.Name);
-        mapHtml = `<button type="button"
-          onclick="showInlineMap(${coords.lat}, ${coords.lng}, '${safeName.replace(/'/g,"&#39;")}')"
-          class="flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-1 rounded-md hover:bg-blue-100 transition-all active:scale-95 flex-shrink-0">
-          📍 موقع
-        </button>`;
-      }
-    }
-
-    let socialHtml = '';
-    if (e.Social) {
-      const displayUrl = e.Social.replace(/^https?:\/\/(www\.)?/, '');
-      socialHtml = `<div class="flex items-center gap-1.5"><span class="text-gray-400 text-[10px]">🔗</span>
-        <a href="${escHtml(e.Social)}" target="_blank" rel="noopener"
-          class="text-blue-600 text-[10px] hover:underline truncate">${escHtml(displayUrl)}</a></div>`;
-    }
-
-    const mainIcon     = CAT_ICONS[e.MainCategory] || '📁';
-    const entryId      = e.ID;
-    const alreadyRated = entryId !== '' && (entryId in userRatings);
-    const userRating   = alreadyRated ? userRatings[entryId] : null;
-
-    const card = document.createElement('div');
-    card.className = `entry-card bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
-    if (entryId) card.dataset.entryCard = entryId;
-
-    // محتوى التفاصيل المخفية
-    const detailsContent = [
-      e.Phone  ? `<div class="flex items-center gap-1.5"><span class="flex-shrink-0">📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : '',
-      e.Notes  ? `<div class="flex items-start gap-1.5"><span class="flex-shrink-0">🕐</span><span>${escHtml(e.Notes)}</span></div>` : '',
-      socialHtml,
-    ].join('') || `<div class="text-gray-400 text-[10px]">لا توجد معلومات إضافية</div>`;
-
-    card.innerHTML = `
-      <div class="p-2.5 flex flex-col gap-1.5">
-
-        <!-- ── صف ١: أيقونة · قسم · تصنيف فرعي · رقم ── -->
-        <div class="flex items-center justify-between gap-1 min-w-0">
-          <div class="flex items-center gap-1 min-w-0 text-[10px] text-gray-400 truncate">
-            <span class="flex-shrink-0 leading-none">${mainIcon}</span>
-            <span class="truncate">${escHtml(e.MainCategory || 'قسم عام')}</span>
-            <span class="flex-shrink-0 opacity-50">·</span>
-            <span class="font-semibold text-gray-500 truncate">${escHtml(e.SubCategory || 'تصنيف عام')}</span>
-          </div>
-          ${e.ID ? `<span class="text-gray-300 text-[9px] font-mono flex-shrink-0">#${escHtml(e.ID)}</span>` : ''}
+  const sorted = [...entries].filter(e => e.ratingAvg).sort((a, b) => (b.ratingAvg||0) - (a.ratingAvg||0)).slice(0, 5);
+  const el = document.getElementById('top-rated-section');
+  if (sorted.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div style="font-size:.82rem;font-weight:700;color:var(--text3);margin-bottom:6px;">⭐ الأعلى تقييماً</div>
+    <div class="top-rated-wrap">
+      ${sorted.map(e => `
+        <div class="top-rated-chip" onclick="highlightCard(${e.id})">
+          ⭐ ${e.ratingAvg?.toFixed(1)} — ${e.name}
         </div>
+      `).join('')}
+    </div>
+  `;
+}
 
-        <!-- ── صف ٢: الاسم ── -->
-        <h3 class="text-sm font-bold text-gray-800 leading-snug">${escHtml(e.Name)}</h3>
-
-        <!-- ── صف ٣: العنوان ── -->
-        ${e.Address ? `<div class="flex items-start gap-1 text-[11px] text-gray-500 leading-snug">
-          <span class="flex-shrink-0">📍</span><span>${escHtml(e.Address)}</span>
-        </div>` : ''}
-
-        <!-- ── صف ٤: تقييم + زر الموقع ── -->
-        <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-100 flex-wrap">
-          ${entryId
-            ? `<div class="rating-widget flex-1 min-w-0">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>`
-            : '<div class="flex-1"></div>'}
-          ${mapHtml}
-        </div>
-
-      </div>
-
-      <!-- ── زر التفاصيل (دائماً ظاهر) ── -->
-      <button class="card-toggle-bar" onclick="toggleCardDetails(this)" aria-expanded="false">
-        <span class="card-toggle-label">التفاصيل</span>
-        <span class="card-toggle-arrow">▼</span>
+function renderCategories() {
+  const cats = ['الكل', ...new Set(entries.map(e => e.mainCategory))];
+  const wrap = document.getElementById('cats-wrap');
+  wrap.innerHTML = cats.map(c => `
+    <button class="cat-btn ${(c === 'الكل' ? !selectedCat : selectedCat === c) ? 'active' : ''}"
+      onclick="selectCat('${c === 'الكل' ? '' : c}')">
+      ${c === 'الكل' ? c : (getCatIcon(c) + ' ' + c)}
+    </button>
+  `).join('');
+  const subwrap = document.getElementById('subcats-wrap');
+  if (selectedCat) {
+    const subcats = [...new Set(entries.filter(e => e.mainCategory === selectedCat).map(e => e.subCategory))];
+    subwrap.innerHTML = subcats.map(s => `
+      <button class="subcat-btn ${selectedSubCat === s ? 'active' : ''}" onclick="selectSubCat('${s}')">
+        ${s}
       </button>
-
-      <!-- ── قسم التفاصيل المخفية ── -->
-      <div class="card-details text-[11px] text-gray-500">${detailsContent}</div>`;
-    grid.appendChild(card);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  قوائم النموذج
-// ═══════════════════════════════════════════════════════════════
-function populateFormDropdowns() {
-  const sel = document.getElementById('f-main');
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
-  Object.keys(categoryMap).forEach(c => {
-    sel.innerHTML += `<option value="${escHtml(c)}">${escHtml(c)}</option>`;
-  });
-  sel.innerHTML += '<option value="__NEW__">➕ إضافة قسم رئيسي جديد...</option>';
-  if (prev) sel.value = prev;
-  refreshSubDropdown();
-}
-
-function refreshSubDropdown() {
-  const main = document.getElementById('f-main').value;
-  const sub  = document.getElementById('f-sub');
-  sub.innerHTML = '<option value="">— اختر التصنيف الفرعي —</option>';
-  if (main && main !== '__NEW__' && categoryMap[main]) {
-    Array.from(categoryMap[main]).forEach(s => {
-      sub.innerHTML += `<option value="${escHtml(s)}">${escHtml(s)}</option>`;
-    });
-  }
-  sub.innerHTML += '<option value="__NEW__">➕ إضافة تخصص جديد...</option>';
-}
-
-function onMainChange() {
-  const val = document.getElementById('f-main').value;
-  const ni  = document.getElementById('f-new-main');
-  if (val === '__NEW__') {
-    ni.style.display = 'block'; ni.required = true;
-    document.getElementById('f-sub').value = '__NEW__'; onSubChange();
+    `).join('');
   } else {
-    ni.style.display = 'none'; ni.required = false; ni.value = '';
-    refreshSubDropdown();
+    subwrap.innerHTML = '';
   }
 }
 
-function onSubChange() {
-  const val = document.getElementById('f-sub').value;
-  const ni  = document.getElementById('f-new-sub');
-  if (val === '__NEW__') {
-    ni.style.display = 'block'; ni.required = true;
-  } else {
-    ni.style.display = 'none'; ni.required = false; ni.value = '';
-  }
+function selectCat(cat) { selectedCat = cat; selectedSubCat = ''; renderCategories(); renderCards(); }
+function selectSubCat(sub) { selectedSubCat = selectedSubCat === sub ? '' : sub; renderCategories(); renderCards(); }
+
+function highlightCard(id) {
+  const el = document.getElementById('card-' + id);
+  if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '3px solid #f59e0b'; setTimeout(() => el.style.outline = '', 1500); }
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  إرسال النموذج
-// ═══════════════════════════════════════════════════════════════
-async function handleSubmit(event) {
-  event.preventDefault();
-  let mainCat = document.getElementById('f-main').value;
-  let subCat  = document.getElementById('f-sub').value;
-
-  if (mainCat === '__NEW__') {
-    mainCat = document.getElementById('f-new-main').value.trim();
-    if (!mainCat) { showToast('error', 'يرجى كتابة اسم القسم الرئيسي الجديد'); return; }
-  }
-  if (subCat === '__NEW__') {
-    subCat = document.getElementById('f-new-sub').value.trim();
-    if (!subCat) { showToast('error', 'يرجى كتابة اسم التخصص الجديد'); return; }
-  }
-  if (!mainCat || !subCat) {
-    showToast('error', 'يرجى اختيار أو كتابة القسم والتخصص أولاً');
+function renderCards() {
+  const filtered = getFilteredEntries();
+  const grid = document.getElementById('cards-grid');
+  const sc = document.getElementById('search-count');
+  sc.textContent = searchQ ? `${filtered.length} نتيجة للبحث عن "${searchQ}"` : '';
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="icon">🔍</div><p>لا توجد نتائج مطابقة للبحث</p></div>`;
     return;
   }
-  let mapValue = '';
-  if (pickedLat !== null && pickedLng !== null) {
-    mapValue = `https://www.google.com/maps?q=${pickedLat.toFixed(6)},${pickedLng.toFixed(6)}`;
+  grid.innerHTML = filtered.map(e => renderCard(e)).join('');
+}
+
+function renderCard(e) {
+  const fp = getFingerprint();
+  const rKey = e.id + '_' + fp;
+  const myRating = ratings[rKey] || 0;
+  const stars = [1,2,3,4,5].map(s => {
+    const sz = s <= 2 ? 'star-sm' : s === 3 ? 'star-md' : 'star-lg';
+    const filled = myRating > 0 ? s <= myRating : (e.ratingAvg && s <= Math.round(e.ratingAvg));
+    return `<span class="star ${sz} ${filled ? 'filled' : ''}" onclick="rateEntry(${e.id}, ${s})">★</span>`;
+  }).join('');
+  const canEdit = session && (session.role === 'admin' || session.role === 'editor') && !session.isBlocked;
+  const editBtn = canEdit ? `<button class="edit-btn visible" onclick="openEditModal(${e.id})" title="تعديل">✏️</button>` : '';
+  const mapBtn = e.mapLink ? `<a href="${e.mapLink}" target="_blank" class="map-btn">🗺️ موقع على الخريطة</a>` : '';
+  const ratingInfo = e.ratingCount > 0 ? `<span class="rating-info">⭐ ${e.ratingAvg?.toFixed(1)} (${e.ratingCount})</span>` : '';
+  const details = [];
+  if (e.phone) details.push(`<div class="detail-row">📞 <a href="tel:${e.phone}">${e.phone}</a></div>`);
+  if (e.notes) details.push(`<div class="detail-row">🕐 ${e.notes}</div>`);
+  if (e.social) details.push(`<div class="detail-row">🔗 <a href="${e.social}" target="_blank">صفحة التواصل</a></div>`);
+  return `
+    <div class="card ${getCatCls(e.mainCategory)}" id="card-${e.id}">
+      ${editBtn}
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon">${getCatIcon(e.mainCategory)}</div>
+          <div class="card-meta">
+            <div class="card-cats">
+              <span class="cat-chip">${e.mainCategory}</span>
+              <span class="cat-chip">${e.subCategory}</span>
+              <span class="card-id">#${e.id}</span>
+            </div>
+            <div class="card-name">${e.name}</div>
+          </div>
+        </div>
+        <div class="card-address">
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0C3.24 0 1 2.19 1 4.88c0 3.65 5 9.12 5 9.12s5-5.47 5-9.12C11 2.19 8.76 0 6 0Zm0 6.63a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Z" fill="currentColor"/></svg>
+          ${e.address}
+        </div>
+        ${mapBtn}
+        <div class="rating-row">
+          <div class="stars">${stars}</div>
+          ${ratingInfo}
+        </div>
+      </div>
+      ${details.length > 0 ? `
+      <div class="details-toggle" onclick="toggleDetails(this)">
+        <span>التفاصيل للتواصل</span><span class="ch">▼</span>
+      </div>
+      <div class="details-body">
+        ${details.join('')}
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function toggleDetails(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+
+// ============================================================
+// RATINGS
+// ============================================================
+function rateEntry(entryId, value) {
+  const fp = getFingerprint();
+  const rKey = entryId + '_' + fp;
+  if (ratings[rKey]) { toast('لقد قيّمت هذه المنشأة مسبقاً', 'error'); return; }
+  ratings[rKey] = value;
+  saveJSON(STORAGE_KEYS.ratings, ratings);
+  const entry = entries.find(e => e.id === entryId);
+  if (entry) {
+    const allRatings = Object.entries(ratings).filter(([k]) => k.startsWith(entryId + '_')).map(([,v]) => v);
+    entry.ratingAvg = allRatings.reduce((a, b) => a + b, 0) / allRatings.length;
+    entry.ratingCount = allRatings.length;
+    saveJSON(STORAGE_KEYS.entries, entries);
   }
-  const payload = {
-    [COL.id]:      allEntries.length + 1,
-    [COL.name]:    document.getElementById('f-name').value.trim(),
-    [COL.main]:    mainCat,
-    [COL.sub]:     subCat,
-    [COL.address]: document.getElementById('f-address').value.trim(),
-    [COL.phone]:   document.getElementById('f-phone').value.trim(),
-    [COL.notes]:   document.getElementById('f-notes').value.trim(),
-    [COL.map]:     mapValue,
-    [COL.social]:  document.getElementById('f-social').value.trim(),
-    [COL.rating]:  '',
-    [COL.status]:  'نشط',
-  };
-  setSubmitting(true);
-  try {
-    const res = await fetchWithTimeout(SHEET_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([payload]),
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    showToast('success', `✅ تم إدراج "${payload[COL.name]}" بنجاح في الدليل!`);
-    document.getElementById('dir-form').reset();
-    document.getElementById('f-new-main').style.display = 'none';
-    document.getElementById('f-new-sub').style.display  = 'none';
-    clearMap();
-    if (mapOpen)    toggleMap();
-    if (manualOpen) toggleManualCoords();
-    toggleForm();
-    await fetchData();
-  } catch (err) {
-    showToast('error', 'فشل الحفظ: ' + err.message);
-  }
-  setSubmitting(false);
+  toast('شكراً على تقييمك ⭐', 'success');
+  renderCards();
+  renderTopRated();
 }
 
-function setSubmitting(v) {
-  document.getElementById('submit-btn').disabled = v;
-  document.getElementById('submit-icon').textContent = v ? '⏳' : '🚀';
-  document.getElementById('submit-txt').textContent  = v ? 'جاري الحفظ...' : 'حفظ وإدراج في الدليل العام';
+// ============================================================
+// EDIT MODAL
+// ============================================================
+function openEditModal(id) {
+  editingId = id;
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  const inner = document.getElementById('edit-form-inner');
+  const cats = [...new Set(entries.map(e => e.mainCategory))];
+  const subcats = [...new Set(entries.filter(x => x.mainCategory === e.mainCategory).map(x => x.subCategory))];
+  inner.innerHTML = `
+    <div class="form-group"><label>الاسم *</label><input type="text" id="e-name" value="${esc(e.name)}"></div>
+    <div class="form-group">
+      <label>التصنيف الرئيسي *</label>
+      <select id="e-maincat">${cats.map(c => `<option ${c===e.mainCategory?'selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="form-group">
+      <label>التصنيف الفرعي *</label>
+      <select id="e-subcat">${subcats.map(s => `<option ${s===e.subCategory?'selected':''}>${s}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label>العنوان *</label><input type="text" id="e-address" value="${esc(e.address)}"></div>
+    <div class="form-group"><label>الهاتف</label><input type="text" id="e-phone" value="${esc(e.phone||'')}"></div>
+    <div class="form-group"><label>رابط الخريطة</label><input type="url" id="e-map" value="${esc(e.mapLink||'')}"></div>
+    <div class="form-group"><label>ملاحظات</label><textarea id="e-notes">${esc(e.notes||'')}</textarea></div>
+    <div class="form-group"><label>رابط التواصل</label><input type="url" id="e-social" value="${esc(e.social||'')}"></div>
+    ${session?.role === 'admin' ? `
+    <div class="form-group"><label>الحالة</label>
+      <select id="e-status"><option ${e.status==='نشط'?'selected':''}>نشط</option><option ${e.status==='مغلق'?'selected':''}>مغلق</option></select>
+    </div>` : ''}
+  `;
+  document.getElementById('edit-err').textContent = '';
+  document.getElementById('edit-modal').classList.add('open');
 }
 
-function toggleForm() {
-  formOpen = !formOpen;
-  document.getElementById('form-body').classList.toggle('open', formOpen);
-  document.getElementById('form-chevron').style.transform = formOpen ? 'rotate(180deg)' : '';
-}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); editingId = null; }
 
-// ═══════════════════════════════════════════════════════════════
-//  الخريطة — مُصلَحة للعمل داخل Android WebView
-// ═══════════════════════════════════════════════════════════════
-function toggleMap() {
-  mapOpen = !mapOpen;
-  document.getElementById('map-section').classList.toggle('open', mapOpen);
-  document.getElementById('map-toggle-txt').textContent = mapOpen ? 'إخفاء الخريطة' : 'تحديد الموقع على الخريطة';
-  if (mapOpen) {
-    if (!mapInitialized) {
-      document.getElementById('map-loading').style.display = 'flex';
-      document.getElementById('map-error').classList.add('hidden');
-      setTimeout(() => initMap(), 200);
-    } else {
-      setTimeout(() => { if (leafMap) leafMap.invalidateSize(true); }, 200);
+function saveEdit() {
+  if (!editingId) return;
+  if (!session) { toast('يجب تسجيل الدخول', 'error'); return; }
+
+  // Daily edit limit check (non-admin)
+  if (session.role !== 'admin') {
+    const today = new Date().toDateString();
+    const todayEdits = audit.filter(a => a.userId === session.id && a.action === 'update' && new Date(a.createdAt).toDateString() === today).length;
+    if (todayEdits >= session.dailyEditLimit) {
+      document.getElementById('edit-err').textContent = `تجاوزت الحد اليومي (${session.dailyEditLimit} تعديلات). يُعاد التعيين غداً.`;
+      return;
     }
   }
-}
 
-function initMap() {
-  try {
-    const container = document.getElementById('leaflet-map');
-    if (container.offsetHeight === 0 || container.offsetWidth === 0) {
-      setTimeout(() => initMap(), 300); return;
-    }
-    leafMap = L.map('leaflet-map', { tap:false, fadeAnimation:true, zoomAnimation:true })
-      .setView([34.7324, 36.7137], 13);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap contributors © CARTO',
-      subdomains: 'abcd', maxZoom: 20, crossOrigin: 'anonymous',
-    }).addTo(leafMap);
-    leafMap.on('click', ev => {
-      pickedLat = ev.latlng.lat; pickedLng = ev.latlng.lng;
-      placeMarker(pickedLat, pickedLng);
-    });
-    setTimeout(() => {
-      if (leafMap) {
-        leafMap.invalidateSize(true);
-        document.getElementById('map-loading').style.display = 'none';
-        mapInitialized = true;
-      }
-    }, 400);
-    setTimeout(() => { if (leafMap) leafMap.invalidateSize(true); }, 1000);
-  } catch {
-    document.getElementById('map-loading').style.display = 'none';
-    document.getElementById('map-error').classList.remove('hidden');
+  const e = entries.find(x => x.id === editingId);
+  if (!e) return;
+  const oldValues = JSON.stringify(e);
+
+  const name = document.getElementById('e-name')?.value.trim();
+  const mainCategory = document.getElementById('e-maincat')?.value.trim();
+  const subCategory = document.getElementById('e-subcat')?.value.trim();
+  const address = document.getElementById('e-address')?.value.trim();
+  if (!name || !mainCategory || !subCategory || !address) {
+    document.getElementById('edit-err').textContent = 'يرجى ملء جميع الحقول المطلوبة'; return;
   }
+
+  e.name = name;
+  e.mainCategory = mainCategory;
+  e.subCategory = subCategory;
+  e.address = address;
+  e.phone = document.getElementById('e-phone')?.value.trim() || null;
+  e.mapLink = document.getElementById('e-map')?.value.trim() || null;
+  e.notes = document.getElementById('e-notes')?.value.trim() || null;
+  e.social = document.getElementById('e-social')?.value.trim() || null;
+  if (session.role === 'admin') e.status = document.getElementById('e-status')?.value || e.status;
+  e.updatedAt = new Date().toISOString();
+
+  saveJSON(STORAGE_KEYS.entries, entries);
+  logAudit({ action: 'update', entryId: e.id, entryName: e.name, oldValues, newValues: JSON.stringify(e) });
+  toast('تم حفظ التعديلات بنجاح ✅', 'success');
+  closeEditModal();
+  render();
 }
 
-function retryMap() {
-  document.getElementById('map-error').classList.add('hidden');
-  document.getElementById('map-loading').style.display = 'flex';
-  if (leafMap) { try { leafMap.remove(); } catch(_){} leafMap=null; leafMarker=null; mapInitialized=false; }
-  setTimeout(() => initMap(), 300);
+// ============================================================
+// ADD FORM TOGGLE
+// ============================================================
+function toggleAddForm() {
+  const body = document.getElementById('add-form-body');
+  const hdr = document.querySelector('.add-form-header');
+  body.classList.toggle('open');
+  hdr.classList.toggle('open');
 }
 
-function placeMarker(lat, lng) {
-  if (leafMarker) leafMap.removeLayer(leafMarker);
-  leafMarker = L.marker([lat, lng]).addTo(leafMap);
-  leafMap.setView([lat, lng], leafMap.getZoom());
-  const d = document.getElementById('coords-display');
-  d.textContent = `📍 خط العرض: ${lat.toFixed(6)} | خط الطول: ${lng.toFixed(6)}`;
-  d.classList.remove('hidden');
-  document.getElementById('f-lat').value = lat.toFixed(6);
-  document.getElementById('f-lng').value = lng.toFixed(6);
+// ============================================================
+// AUDIT LOG
+// ============================================================
+function logAudit(data) {
+  const fp = getFingerprint();
+  audit.push({
+    id: Date.now(),
+    userId: session?.id || null,
+    username: session?.username || 'غير معروف',
+    action: data.action,
+    entryId: data.entryId,
+    entryName: data.entryName,
+    oldValues: data.oldValues,
+    newValues: data.newValues,
+    deviceFingerprint: fp,
+    createdAt: new Date().toISOString(),
+  });
+  saveJSON(STORAGE_KEYS.audit, audit);
 }
 
-function clearMap() {
-  if (leafMarker && leafMap) leafMap.removeLayer(leafMarker);
-  leafMarker = null; pickedLat = null; pickedLng = null;
-  document.getElementById('coords-display').classList.add('hidden');
-  document.getElementById('f-lat').value = '';
-  document.getElementById('f-lng').value = '';
-  document.getElementById('manual-coords-display').classList.add('hidden');
+function renderAudit() {
+  const fUser = document.getElementById('f-user')?.value.toLowerCase() || '';
+  const fAction = document.getElementById('f-action')?.value || '';
+  const filtered = audit.filter(a => {
+    if (fUser && !a.username.toLowerCase().includes(fUser)) return false;
+    if (fAction && a.action !== fAction) return false;
+    return true;
+  }).slice().reverse().slice(0, 100);
+  const tbody = document.getElementById('audit-tbody');
+  if (!tbody) return;
+  if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3)">لا توجد سجلات</td></tr>'; return; }
+  const LABELS = { create: 'إضافة', update: 'تعديل', delete: 'حذف' };
+  tbody.innerHTML = filtered.map(a => `
+    <tr>
+      <td><strong>${a.username}</strong></td>
+      <td><span class="action-badge action-${a.action}">${LABELS[a.action] || a.action}</span></td>
+      <td>${a.entryName}</td>
+      <td>${new Date(a.createdAt).toLocaleString('ar-SY')}</td>
+    </tr>
+  `).join('');
 }
 
-// ─── GPS ─────────────────────────────────────────────────────
-function geoLocate() {
-  const btn = document.getElementById('geolocate-btn');
-  if (!navigator.geolocation) {
-    showToast('error', 'خاصية الموقع الجغرافي غير مدعومة في هذا الجهاز');
-    if (!manualOpen) toggleManualCoords(); return;
-  }
-  btn.textContent = '⏳ جاري التحديد...'; btn.disabled = true;
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      btn.textContent = '📍 موقعي الحالي'; btn.disabled = false;
-      const lat = pos.coords.latitude, lng = pos.coords.longitude;
-      pickedLat = lat; pickedLng = lng;
-      if (!mapInitialized) {
-        if (!mapOpen) {
-          mapOpen = true;
-          document.getElementById('map-section').classList.add('open');
-          document.getElementById('map-toggle-txt').textContent = 'إخفاء الخريطة';
-          document.getElementById('map-loading').style.display = 'flex';
-          setTimeout(() => {
-            initMap();
-            setTimeout(() => {
-              if (leafMap) { placeMarker(lat, lng); leafMap.setView([lat, lng], 16); }
-            }, 700);
-          }, 200);
-        }
-      } else {
-        placeMarker(lat, lng); leafMap.setView([lat, lng], 16);
-      }
-      document.getElementById('f-lat').value = lat.toFixed(6);
-      document.getElementById('f-lng').value = lng.toFixed(6);
-      showToast('success', '✅ تم تحديد موقعك بنجاح!');
-    },
-    function(err) {
-      btn.textContent = '📍 موقعي الحالي'; btn.disabled = false;
-      const msgs = { 1:'تم رفض صلاحية الموقع', 2:'تعذّر تحديد الموقع', 3:'انتهت مهلة الطلب' };
-      showToast('error', msgs[err.code] || 'خطأ في الموقع: ' + err.message);
-      if (!manualOpen) setTimeout(() => toggleManualCoords(), 2000);
-    },
-    { enableHighAccuracy:true, timeout:15000, maximumAge:10000 }
-  );
+function exportCSV() {
+  const rows = [['المستخدم', 'العملية', 'المنشأة', 'التاريخ', 'البصمة']];
+  audit.forEach(a => rows.push([a.username, a.action, a.entryName, a.createdAt, a.deviceFingerprint || '']));
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'homs-audit-' + new Date().toISOString().split('T')[0] + '.csv';
+  link.click();
 }
 
-function toggleManualCoords() {
-  manualOpen = !manualOpen;
-  document.getElementById('manual-coords-section').classList.toggle('hidden', !manualOpen);
-  document.getElementById('manual-coords-txt').textContent =
-    manualOpen ? 'إخفاء الإدخال اليدوي' : 'إدخال إحداثيات يدوياً';
+// ============================================================
+// USER MANAGEMENT
+// ============================================================
+function renderUsers() {
+  const list = document.getElementById('users-list');
+  if (!list) return;
+  list.innerHTML = users.map(u => `
+    <div class="user-row">
+      <div class="user-info">
+        <strong>${u.username}</strong>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap">
+          <span class="role-badge role-${u.role}">${u.role === 'admin' ? '🛡️ مشرف' : u.role === 'editor' ? '✏️ محرر' : '👁️ قارئ'}</span>
+          ${u.isBlocked ? '<span class="blocked-badge">🚫 موقوف</span>' : ''}
+          <span style="font-size:.72rem;color:var(--text3)">حد يومي: ${u.dailyEditLimit}</span>
+        </div>
+      </div>
+      <div class="user-actions">
+        ${u.role !== 'admin' ? `
+          <button class="btn-sm" onclick="toggleBlock(${u.id})">${u.isBlocked ? '✅ فتح الحساب' : '🚫 إيقاف'}</button>
+          <button class="btn-sm" onclick="changeLimit(${u.id})">تعديل الحد</button>
+          <button class="btn-sm" onclick="changeRole(${u.id})">تغيير الدور</button>
+        ` : '<span style="font-size:.75rem;color:var(--text3)">الحساب الرئيسي</span>'}
+      </div>
+    </div>
+  `).join('');
 }
 
-function onManualCoordsChange() {
-  const lat = parseFloat(document.getElementById('f-lat').value);
-  const lng = parseFloat(document.getElementById('f-lng').value);
-  const display = document.getElementById('manual-coords-display');
-  if (!isNaN(lat) && !isNaN(lng)) {
-    pickedLat = lat; pickedLng = lng;
-    display.textContent = `✅ الإحداثيات: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    display.classList.remove('hidden');
-    if (mapInitialized && leafMap) { placeMarker(lat, lng); leafMap.setView([lat, lng], 15); }
-  } else {
-    pickedLat = null; pickedLng = null;
-    display.classList.add('hidden');
-  }
+function toggleBlock(userId) {
+  const u = users.find(x => x.id === userId);
+  if (!u) return;
+  u.isBlocked = !u.isBlocked;
+  saveJSON(STORAGE_KEYS.users, users);
+  toast(u.isBlocked ? `تم إيقاف ${u.username}` : `تم فتح حساب ${u.username}`, 'success');
+  renderUsers();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  لوحة الخريطة المضمّنة
-// ═══════════════════════════════════════════════════════════════
-let viewMap = null, viewMarker = null;
-
-function parseMapCoords(link) {
-  if (!link) return null;
-  let m;
-  m = link.match(/[?&]q=([-\d.]+),([-\d.]+)/);   if (m) return { lat:+m[1], lng:+m[2] };
-  m = link.match(/[?&]ll=([-\d.]+),([-\d.]+)/);   if (m) return { lat:+m[1], lng:+m[2] };
-  m = link.match(/@([-\d.]+),([-\d.]+)/);          if (m) return { lat:+m[1], lng:+m[2] };
-  m = link.match(/^([-\d.]+),([-\d.]+)$/);         if (m) return { lat:+m[1], lng:+m[2] };
-  return null;
+function changeLimit(userId) {
+  const u = users.find(x => x.id === userId);
+  if (!u) return;
+  const val = prompt(`الحد اليومي الحالي لـ "${u.username}": ${u.dailyEditLimit}\nأدخل الحد الجديد:`, u.dailyEditLimit);
+  if (val === null) return;
+  const n = parseInt(val);
+  if (isNaN(n) || n < 0) { toast('قيمة غير صحيحة', 'error'); return; }
+  u.dailyEditLimit = n;
+  saveJSON(STORAGE_KEYS.users, users);
+  toast(`تم تحديث حد ${u.username} إلى ${n} تعديل/يوم`, 'success');
+  renderUsers();
 }
 
-function showInlineMap(lat, lng, name) {
-  const panel = document.getElementById('view-map-panel');
-  document.getElementById('view-map-title').textContent = name || 'موقع المنشأة';
-  document.getElementById('view-map-status').textContent = 'جاري تحميل الخريطة...';
-  if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(_){} viewMap=null; viewMarker=null; }
-  panel.classList.add('open');
-  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
-  setTimeout(() => {
-    const c = document.getElementById('view-leaflet-map');
-    if (!c || c.offsetHeight === 0 || c.offsetWidth === 0) {
-      document.getElementById('view-map-status').textContent = 'جاري الإعداد...';
-      setTimeout(() => _initViewMap(lat, lng, name), 300); return;
-    }
-    _initViewMap(lat, lng, name);
-  }, 300);
+function changeRole(userId) {
+  const u = users.find(x => x.id === userId);
+  if (!u) return;
+  const ROLES = ['editor', 'viewer'];
+  const next = ROLES[(ROLES.indexOf(u.role) + 1) % ROLES.length];
+  u.role = next;
+  saveJSON(STORAGE_KEYS.users, users);
+  toast(`تم تغيير دور ${u.username} إلى ${next}`, 'success');
+  renderUsers();
 }
 
-function _initViewMap(lat, lng, name) {
-  const status = document.getElementById('view-map-status');
-  try {
-    viewMap = L.map('view-leaflet-map', {
-      tap:false, zoomControl:true, attributionControl:true,
-      fadeAnimation:false, zoomAnimation:false, markerZoomAnimation:false,
-    }).setView([lat, lng], 16);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution:'© OpenStreetMap © CARTO', subdomains:'abcd', maxZoom:20, crossOrigin:'anonymous',
-    }).addTo(viewMap);
-    viewMarker = L.marker([lat, lng]).addTo(viewMap);
-    viewMarker.bindPopup(
-      `<b style="font-family:Cairo,sans-serif;font-size:13px;direction:rtl">${name || 'الموقع'}</b>`,
-      { closeButton:false, autoPan:false }
-    ).openPopup();
-    const fix = () => { if (viewMap) { viewMap.invalidateSize(true); viewMap.setView([lat,lng],16); } };
-    [100,400,900,1800].forEach(t => setTimeout(fix, t));
-    status.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  } catch {
-    status.textContent = '⚠️ تعذّر تحميل الخريطة';
-  }
+// ============================================================
+// ADMIN TABS
+// ============================================================
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'audit')));
+  document.getElementById('admin-audit').classList.toggle('active', tab === 'audit');
+  document.getElementById('admin-users').classList.toggle('active', tab === 'users');
+  if (tab === 'audit') renderAudit();
+  if (tab === 'users') renderUsers();
 }
 
-function hideInlineMap() {
-  document.getElementById('view-map-panel').classList.remove('open');
-  if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(_){} viewMap=null; viewMarker=null; }
-  document.getElementById('view-map-status').textContent = 'جاري تحميل الخريطة...';
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') hideInlineMap(); });
-
-// ═══════════════════════════════════════════════════════════════
-//  Toast
-// ═══════════════════════════════════════════════════════════════
-let toastTimer;
-function showToast(type, msg) {
-  const t = document.getElementById('toast');
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
   t.textContent = msg;
-  t.style.background = type === 'success' ? '#059669' : '#dc2626';
-  t.style.display = 'block';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 5000);
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
 }
-</script></body>
+
+// ============================================================
+// UTIL
+// ============================================================
+function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeLoginModal(); closeEditModal(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); document.getElementById('search-input').focus(); }
+});
+
+// Close modals on overlay click
+document.getElementById('login-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLoginModal(); });
+document.getElementById('edit-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeEditModal(); });
+
+// Enter key in login form
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-modal').classList.contains('open')) handleLogin();
+});
+
+// START
+init();
+</script>
+</body>
 </html>
