@@ -127,17 +127,37 @@
     }
     .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
     @keyframes starPulse { from{opacity:.6} to{opacity:1} }
+    /* مؤشر 1…5 فوق النجوم */
+    .star-scale-wrap { display:flex; flex-direction:column; }
+    .star-scale-labels {
+      display:flex; justify-content:space-between;
+      font-size:9px; color:#b0b7c0; line-height:1;
+      padding:0 4px; margin-bottom:2px;
+      pointer-events:none; user-select:none;
+    }
+    /* متوسط التقييم */
+    .rating-avg-badge {
+      font-size:12px; font-weight:700; color:#d97706; line-height:1;
+    }
+    .rating-avg-sep { font-size:9px; color:#9ca3af; font-weight:400; }
+    .rating-cnt-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    /* نص توجيهي قبل التصويت */
     .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    /* شارة بعد التصويت */
     .rated-badge {
       display:inline-flex; align-items:center; gap:3px; font-size:10px;
       font-weight:700; color:#059669; background:#d1fae5; border-radius:6px;
-      padding:2px 7px;
+      padding:2px 6px;
     }
-    .dark-mode .star-btn           { color:#4b5563; }
-    .dark-mode .star-btn.filled    { color:#f59e0b; }
-    .dark-mode .star-btn.hover-dim { color:#374151 !important; }
-    .dark-mode .rating-label       { color:#64748b; }
-    .dark-mode .rated-badge        { background:#064e3b; color:#6ee7b7; }
+    .dark-mode .star-btn            { color:#4b5563; }
+    .dark-mode .star-btn.filled     { color:#f59e0b; }
+    .dark-mode .star-btn.hover-dim  { color:#374151 !important; }
+    .dark-mode .star-scale-labels   { color:#4b5563; }
+    .dark-mode .rating-avg-badge    { color:#f59e0b; }
+    .dark-mode .rating-avg-sep,
+    .dark-mode .rating-cnt-label,
+    .dark-mode .rating-label        { color:#64748b; }
+    .dark-mode .rated-badge         { background:#064e3b; color:#6ee7b7; }
 
     /* ═══ DARK MODE ═══ */
     .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
@@ -726,6 +746,7 @@ function buildRatingHTML(entryId, alreadyRated, userRating) {
   const cnt   = info ? info.count : 0;
   const round = Math.round(avg);
 
+  // ── بناء النجوم ──────────────────────────────────────────────
   let starsHtml = '';
   for (let i = 1; i <= 5; i++) {
     if (alreadyRated) {
@@ -739,17 +760,36 @@ function buildRatingHTML(entryId, alreadyRated, userRating) {
     }
   }
 
-  let infoHtml = '';
-  if (alreadyRated) {
-    infoHtml = `<span class="rated-badge">✓ قيّمت بـ ${userRating}★</span>`;
-  } else if (cnt > 0) {
-    infoHtml = `<span class="rating-label">${avg} · ${cnt} ${cnt === 1 ? 'تقييم' : 'تقييمات'}</span>`;
-  } else {
-    infoHtml = `<span class="rating-label">قيّم هذه المنشأة</span>`;
+  // ── إحصائيات المجتمع (متوسط + عدد) ──────────────────────────
+  let communityHtml = '';
+  if (cnt > 0) {
+    const avgFmt  = Number(avg).toFixed(1);
+    const cntFmt  = cnt >= 1000 ? `${(cnt / 1000).toFixed(1)}k` : cnt;
+    const cntWord = cnt === 1 ? 'تقييم' : 'تقييمات';
+    communityHtml = `<span class="rating-avg-badge">${avgFmt}<span class="rating-avg-sep">/5</span></span>`
+                  + `<span class="rating-cnt-label">· ${cntFmt} ${cntWord}</span>`;
   }
 
-  return `<div class="flex items-center justify-between gap-2 flex-wrap">
-    <div class="star-row">${starsHtml}</div>${infoHtml}</div>`;
+  // ── تجميع الهيكل ─────────────────────────────────────────────
+  if (!alreadyRated) {
+    // مؤشر 1…5 فوق النجوم + إحصائيات على اليمين
+    const scaleLabels = `<div class="star-scale-labels"><span>1</span><span>5</span></div>`;
+    const rightSide   = communityHtml
+      ? `<div class="flex items-center gap-1">${communityHtml}</div>`
+      : `<span class="rating-label">قيّم هذه المنشأة</span>`;
+    return `<div class="flex items-center justify-between gap-2 flex-wrap">
+      <div class="star-scale-wrap">${scaleLabels}<div class="star-row">${starsHtml}</div></div>
+      ${rightSide}</div>`;
+  } else {
+    // بعد التصويت: شارة اختيار المستخدم + متوسط المجتمع
+    const userBadge = `<span class="rated-badge">✓ ${userRating}★</span>`;
+    const right     = communityHtml
+      ? `<div class="flex items-center gap-1">${communityHtml}</div>`
+      : '';
+    return `<div class="flex items-center justify-between gap-2 flex-wrap">
+      <div class="flex items-center gap-2"><div class="star-row">${starsHtml}</div>${userBadge}</div>
+      ${right}</div>`;
+  }
 }
 
 // ─── تفويض حدث النقر على النجوم عبر الشبكة (event delegation) ─
