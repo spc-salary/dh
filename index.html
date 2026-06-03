@@ -636,9 +636,21 @@ function applyDark() {
 //  جلب البيانات من Google Sheet
 // ═══════════════════════════════════════════════════════════════
 async function fetchData() {
-  const icon = document.getElementById('refresh-icon');
-  icon.style.animation = 'spin 1s linear infinite';
+  const icon    = document.getElementById('refresh-icon');
+  const countEl = document.getElementById('entries-count');
+  const hdrEl   = document.getElementById('hdr-count');
+  if (icon) icon.style.animation = 'spin 1s linear infinite';
   document.getElementById('error-banner').classList.add('hidden');
+
+  // ضمان: إذا انتهى fetchData دون تحديث entries-count (خطأ غير متوقع)
+  // يتم تحديثه تلقائياً بعد 15 ثانية كحد أقصى
+  const safetyTimer = setTimeout(() => {
+    if (countEl && countEl.textContent === 'جاري تحميل البيانات...') {
+      countEl.textContent = 'تعذّر تحميل البيانات — اضغط 🔄 للمحاولة';
+      if (icon) icon.style.animation = '';
+    }
+  }, 15000);
+
   try {
     const res = await fetchWithTimeout(SHEET_API);
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -659,12 +671,20 @@ async function fetchData() {
     document.getElementById('error-msg').textContent = 'تعذّر الاتصال: ' + err.message;
     document.getElementById('error-banner').classList.remove('hidden');
   }
-  buildCategoryMap();
-  renderTabs();
-  populateFormDropdowns();
-  renderGrid();
-  document.getElementById('hdr-count').textContent = allEntries.length + ' جهة مسجّلة';
-  icon.style.animation = '';
+
+  try {
+    buildCategoryMap();
+    renderTabs();
+    populateFormDropdowns();
+    renderGrid();
+  } catch (renderErr) {
+    console.error('renderGrid error:', renderErr);
+    if (countEl) countEl.textContent = allEntries.length + ' جهة مسجّلة';
+  }
+
+  clearTimeout(safetyTimer);
+  if (hdrEl) hdrEl.textContent = allEntries.length + ' جهة مسجّلة';
+  if (icon)  icon.style.animation = '';
 }
 
 // ═══════════════════════════════════════════════════════════════
