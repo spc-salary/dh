@@ -95,46 +95,45 @@
     .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
 
     /* ═══ Star Rating ═══ */
-    .star-row { display:flex; align-items:center; gap:3px; direction:ltr; }
+    /* النجوم تتراص من الأسفل حتى تبدو متصاعدة الحجم */
+    .star-row { display:flex; align-items:flex-end; gap:2px; direction:ltr; }
     .star-btn {
-      background:none; border:none; padding:3px; cursor:pointer;
-      font-size:22px; line-height:1; color:#d1d5db;
+      background:none; border:none; padding:2px 1px; cursor:pointer;
+      line-height:1; color:#d1d5db;
       transition:color .12s ease, transform .12s ease, text-shadow .12s ease, opacity .12s ease;
       -webkit-tap-highlight-color:transparent;
       touch-action:manipulation;
       will-change:transform;
     }
     .star-btn:disabled { cursor:default; }
+    /* أحجام تدريجية — 1=أصغر، 5=أكبر */
+    .star-btn[data-star="1"] { font-size:14px; }
+    .star-btn[data-star="2"] { font-size:17px; }
+    .star-btn[data-star="3"] { font-size:20px; }
+    .star-btn[data-star="4"] { font-size:23px; }
+    .star-btn[data-star="5"] { font-size:27px; }
     /* نجمة محددة نهائياً (بعد التصويت أو متوسط المجتمع) */
     .star-btn.filled  { color:#f59e0b; }
     /* تأثير hover/touch — كل نجمة في نطاق الاختيار */
     .star-btn.hover-fill {
       color:#f59e0b !important;
-      text-shadow:0 0 12px rgba(245,158,11,.75), 0 0 5px rgba(245,158,11,.4);
+      text-shadow:0 0 10px rgba(245,158,11,.8), 0 0 4px rgba(245,158,11,.5);
     }
-    /* تكبير تدريجي: النجمة الأقرب للمؤشر أكبر */
-    .star-btn.hover-fill[data-star="1"] { transform:scale(1.08); }
-    .star-btn.hover-fill[data-star="2"] { transform:scale(1.13); }
-    .star-btn.hover-fill[data-star="3"] { transform:scale(1.18); }
-    .star-btn.hover-fill[data-star="4"] { transform:scale(1.22); }
-    .star-btn.hover-fill[data-star="5"] { transform:scale(1.28); }
+    /* تكبير خفيف موحّد — الأحجام الأساسية تختلف أصلاً */
+    .star-btn.hover-fill[data-star="1"] { transform:scale(1.2); }
+    .star-btn.hover-fill[data-star="2"] { transform:scale(1.18); }
+    .star-btn.hover-fill[data-star="3"] { transform:scale(1.15); }
+    .star-btn.hover-fill[data-star="4"] { transform:scale(1.12); }
+    .star-btn.hover-fill[data-star="5"] { transform:scale(1.1); }
     /* تعتيم النجوم خارج النطاق لإبراز الاختيار */
     .star-btn.hover-dim {
       color:#d1d5db !important;
-      opacity:.45;
-      transform:scale(0.95);
+      opacity:.4;
+      transform:scale(0.9);
       text-shadow:none;
     }
     .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
     @keyframes starPulse { from{opacity:.6} to{opacity:1} }
-    /* مؤشر 1…5 فوق النجوم */
-    .star-scale-wrap { display:flex; flex-direction:column; }
-    .star-scale-labels {
-      display:flex; justify-content:space-between;
-      font-size:9px; color:#b0b7c0; line-height:1;
-      padding:0 4px; margin-bottom:2px;
-      pointer-events:none; user-select:none;
-    }
     /* متوسط التقييم */
     .rating-avg-badge {
       font-size:12px; font-weight:700; color:#d97706; line-height:1;
@@ -152,7 +151,6 @@
     .dark-mode .star-btn            { color:#4b5563; }
     .dark-mode .star-btn.filled     { color:#f59e0b; }
     .dark-mode .star-btn.hover-dim  { color:#374151 !important; }
-    .dark-mode .star-scale-labels   { color:#4b5563; }
     .dark-mode .rating-avg-badge    { color:#f59e0b; }
     .dark-mode .rating-avg-sep,
     .dark-mode .rating-cnt-label,
@@ -771,7 +769,7 @@ function buildRatingHTML(entryId, alreadyRated, userRating) {
   for (let i = 5; i >= 1; i--) {
     if (alreadyRated) {
       const cls = i <= (userRating || 0) ? 'filled' : '';
-      starsHtml += `<button class="star-btn ${cls}" disabled aria-label="${i} نجوم">★</button>`;
+      starsHtml += `<button class="star-btn ${cls}" data-star="${i}" disabled aria-label="${i} نجوم">★</button>`;
     } else {
       const cls = i <= round ? 'filled' : '';
       starsHtml += `<button class="star-btn ${cls}"
@@ -792,13 +790,11 @@ function buildRatingHTML(entryId, alreadyRated, userRating) {
 
   // ── تجميع الهيكل ─────────────────────────────────────────────
   if (!alreadyRated) {
-    // مؤشر 1…5 فوق النجوم + إحصائيات على اليمين
-    const scaleLabels = `<div class="star-scale-labels"><span>5</span><span>1</span></div>`;
-    const rightSide   = communityHtml
+    const rightSide = communityHtml
       ? `<div class="flex items-center gap-1">${communityHtml}</div>`
       : `<span class="rating-label">قيّم هذه المنشأة</span>`;
     return `<div class="flex items-center justify-between gap-2 flex-wrap">
-      <div class="star-scale-wrap">${scaleLabels}<div class="star-row">${starsHtml}</div></div>
+      <div class="star-row">${starsHtml}</div>
       ${rightSide}</div>`;
   } else {
     // بعد التصويت: شارة اختيار المستخدم + متوسط المجتمع
