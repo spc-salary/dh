@@ -46,14 +46,14 @@
 <body class="flex items-center justify-center min-h-screen p-4">
 
 <!-- شاشة التحميل -->
-<div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50" style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8,#312e81)">
+<div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50" style="display:none;background:linear-gradient(135deg,#1e3a8a,#1d4ed8,#312e81)">
   <div class="text-center text-white">
     <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
     <p class="font-semibold text-lg">جاري التحقق من الجلسة...</p>
   </div>
 </div>
 
-<div class="w-full max-w-md fade-in" id="main-content" style="display:none">
+<div class="w-full max-w-md fade-in" id="main-content">
 
   <div class="text-center mb-6">
     <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-4 shadow-lg">
@@ -211,35 +211,25 @@
 
 </div>
 
-<script src="js/auth.js"></script>
-<script src="js/logger.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/logger.js"></script>
 <script>
 'use strict';
 
 // ── التحقق من الجلسة عند التحميل ─────────────────────────────
-function showLoginForm() {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('main-content').style.display = '';
-}
-
-// أمان: إظهار النموذج بعد 3 ثوانٍ على أقصى تقدير
-var safetyTimer = setTimeout(showLoginForm, 3000);
-
 window.addEventListener('DOMContentLoaded', async () => {
+  // انتظر حتى ينتهي initDefaultAdmin (async)
+  if (window._authReady) await window._authReady;
+
   try {
-    // انتظر حتى يتهيأ auth.js وينتهي initDefaultAdmin
-    await new Promise(r => setTimeout(r, 400));
     const user = Auth.getCurrentUser();
     if (user) {
-      clearTimeout(safetyTimer);
       window.location.replace(user.role === 'admin' ? '/admin.html' : '/app.html');
       return;
     }
   } catch (e) {
     console.warn('Auth check failed:', e);
   }
-  clearTimeout(safetyTimer);
-  showLoginForm();
 });
 
 function showTab(tab) {
