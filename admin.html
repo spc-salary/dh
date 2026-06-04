@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم — دليل حمص</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Cairo','sans-serif']}}}}</script>
+  <style>
+    *{font-family:'Cairo',sans-serif;box-sizing:border-box;}
+    body{background:#f1f5f9;}
+    .sidebar{width:240px;background:linear-gradient(180deg,#1e3a8a,#1d4ed8);min-height:100vh;position:fixed;top:0;right:0;z-index:30;transition:transform .3s;}
+    .sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 18px;color:rgba(255,255,255,.75);font-size:13px;font-weight:600;border-radius:10px;margin:2px 8px;cursor:pointer;transition:all .2s;border:none;background:none;width:calc(100% - 16px);text-align:right;}
+    .sidebar-link:hover{background:rgba(255,255,255,.12);color:#fff;}
+    .sidebar-link.active{background:rgba(255,255,255,.18);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+    .main-content{margin-right:240px;min-height:100vh;}
+    .stat-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid #e2e8f0;}
+    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+    .badge-admin{background:#dbeafe;color:#1e40af;}
+    .badge-user{background:#f0fdf4;color:#166534;}
+    .badge-active{background:#d1fae5;color:#065f46;}
+    .badge-inactive{background:#fee2e2;color:#991b1b;}
+    .table-row:hover{background:#f8fafc;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;font-family:Cairo,sans-serif;font-weight:700;font-size:12px;border:none;cursor:pointer;transition:all .2s;}
+    .btn-primary{background:#1d4ed8;color:#fff;}
+    .btn-primary:hover{background:#1e40af;}
+    .btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;}
+    .btn-danger:hover{background:#fecaca;}
+    .btn-warning{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+    .btn-warning:hover{background:#fde68a;}
+    .btn-success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}
+    .btn-success:hover{background:#a7f3d0;}
+    .btn-gray{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+    .btn-gray:hover{background:#e2e8f0;}
+    .input-field{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 12px;font-size:13px;font-family:Cairo,sans-serif;outline:none;transition:border-color .2s;}
+    .input-field:focus{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,.1);}
+    .section{display:none;}
+    .section.active{display:block;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;}
+    .modal-box{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+    .log-type-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+    .topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 24px;position:sticky;top:0;z-index:20;}
+    @media(max-width:768px){
+      .sidebar{transform:translateX(100%);}
+      .sidebar.open{transform:translateX(0);}
+      .main-content{margin-right:0;}
+    }
+    .log-LOGIN{background:#dbeafe;color:#1e40af;}
+    .log-LOGOUT{background:#f0fdf4;color:#166534;}
+    .log-LOGIN_FAIL{background:#fee2e2;color:#991b1b;}
+    .log-ENTRY_ADD{background:#d1fae5;color:#065f46;}
+    .log-RATING_ADD{background:#fef3c7;color:#92400e;}
+    .log-USER_CREATE{background:#ede9fe;color:#4c1d95;}
+    .log-USER_UPDATE{background:#fef9c3;color:#713f12;}
+    .log-USER_DELETE{background:#fee2e2;color:#991b1b;}
+    .log-PASSWORD_RESET{background:#fce7f3;color:#9d174d;}
+    .log-default{background:#f1f5f9;color:#475569;}
+    .animate-pulse-once{animation:pulseOnce 1s ease;}
+    @keyframes pulseOnce{0%,100%{opacity:1}50%{opacity:.5}}
+    .scrollbar-thin::-webkit-scrollbar{width:4px;}
+    .scrollbar-thin::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px;}
+  </style>
+</head>
+<body>
+
+<!-- شاشة التحميل -->
+<div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50 bg-blue-900">
+  <div class="text-center text-white">
+    <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+    <p class="font-bold text-lg">لوحة التحكم</p>
+    <p class="text-blue-200 text-sm mt-1">جاري التحقق من الصلاحيات...</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="p-5 border-b border-white/10">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl">🏙️</div>
+      <div>
+        <p class="text-white font-bold text-sm leading-tight">دليل حمص</p>
+        <p class="text-blue-200 text-[10px]">لوحة التحكم</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="p-3 space-y-0.5 mt-2">
+    <button class="sidebar-link active" onclick="showSection('overview')" data-section="overview">
+      <span>📊</span> نظرة عامة
+    </button>
+    <button class="sidebar-link" onclick="showSection('users')" data-section="users">
+      <span>👥</span> إدارة المستخدمين
+    </button>
+    <button class="sidebar-link" onclick="showSection('logs')" data-section="logs">
+      <span>📋</span> سجل النشاطات
+    </button>
+    <button class="sidebar-link" onclick="showSection('entries')" data-section="entries">
+      <span>🗂️</span> مراقبة الإدخالات
+    </button>
+    <button class="sidebar-link" onclick="showSection('settings')" data-section="settings">
+      <span>⚙️</span> الإعدادات
+    </button>
+  </nav>
+
+  <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-sm">👤</div>
+      <div class="min-w-0">
+        <p id="sidebar-name" class="text-white font-bold text-xs truncate"></p>
+        <p class="text-blue-200 text-[10px]">مدير النظام</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <a href="index.html" class="flex-1 text-center btn btn-gray text-[11px] py-1.5">🏠 الرئيسية</a>
+      <button onclick="handleLogout()" class="flex-1 btn btn-danger text-[11px] py-1.5">خروج</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main-content" id="main-content" style="display:none">
+
+  <!-- TOPBAR -->
+  <div class="topbar flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button class="md:hidden btn btn-gray py-1.5 px-3" onclick="toggleSidebar()">☰</button>
+      <div>
+        <h1 id="section-title" class="text-base font-bold text-gray-800">نظرة عامة</h1>
+        <p class="text-[11px] text-gray-400" id="section-date"></p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="refreshCurrentSection()" class="btn btn-gray py-1.5 px-3 text-xs">🔄 تحديث</button>
+    </div>
+  </div>
+
+  <div class="p-5 sm:p-6 space-y-6">
+
+    <!-- ══════════ قسم: نظرة عامة ══════════ -->
+    <div class="section active" id="section-overview">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stat-card">
+          <p class="text-xs font-bold text-gray-500 mb-1">إجمالي المستخدمين</p>
+          <p id="stat-users" class="text-3xl font-bold text-blue-700">—</p>
+          <p class="text-[11px] text-gray-400 mt-1">مسجّل في النظام</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs font-bold text-gray-500 mb-1">نشاطات اليوم</p>
+          <p id="stat-today" class="text-3xl font-bold text-emerald-600">—</p>
+          <p class="text-[11px] text-gray-400 mt-1">حدث مسجّل</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs font-bold text-gray-500 mb-1">إجمالي الدخولات</p>
+          <p id="stat-logins" class="text-3xl font-bold text-indigo-600">—</p>
+          <p class="text-[11px] text-gray-400 mt-1">عملية دخول ناجحة</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs font-bold text-gray-500 mb-1">منشآت مضافة</p>
+          <p id="stat-entries" class="text-3xl font-bold text-amber-600">—</p>
+          <p class="text-[11px] text-gray-400 mt-1">إدخال جديد</p>
+        </div>
+      </div>
+
+      <!-- إحصائيات إضافية -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="stat-card">
+          <h3 class="font-bold text-gray-800 text-sm mb-4">📈 توزيع النشاطات</h3>
+          <div id="activity-breakdown" class="space-y-2.5"></div>
+        </div>
+        <div class="stat-card">
+          <h3 class="font-bold text-gray-800 text-sm mb-4">🕒 آخر 10 نشاطات</h3>
+          <div id="recent-activities" class="space-y-2 scrollbar-thin overflow-y-auto" style="max-height:260px"></div>
+        </div>
+      </div>
+
+      <!-- بطاقات معلومات -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
+        <div class="stat-card bg-blue-50 border-blue-200">
+          <p class="text-xs font-bold text-blue-700 mb-1">محاولات الدخول الفاشلة</p>
+          <p id="stat-fails" class="text-2xl font-bold text-red-600">—</p>
+        </div>
+        <div class="stat-card bg-emerald-50 border-emerald-200">
+          <p class="text-xs font-bold text-emerald-700 mb-1">مستخدمون نشطون</p>
+          <p id="stat-active-users" class="text-2xl font-bold text-emerald-600">—</p>
+        </div>
+        <div class="stat-card bg-amber-50 border-amber-200">
+          <p class="text-xs font-bold text-amber-700 mb-1">نشاطات هذا الأسبوع</p>
+          <p id="stat-week" class="text-2xl font-bold text-amber-600">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ قسم: إدارة المستخدمين ══════════ -->
+    <div class="section" id="section-users">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-gray-800">إدارة المستخدمين</h2>
+          <p id="users-count-label" class="text-xs text-gray-400 mt-0.5"></p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <input id="users-search" type="search" placeholder="بحث..." class="input-field" style="width:200px" oninput="renderUsersTable()" />
+          <button class="btn btn-primary" onclick="openAddUserModal()">➕ مستخدم جديد</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500">#</th>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500">المستخدم</th>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500 hidden sm:table-cell">البريد</th>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500">الدور</th>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500">الحالة</th>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500 hidden md:table-cell">آخر دخول</th>
+                <th class="text-right px-4 py-3 text-xs font-bold text-gray-500">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ قسم: سجل النشاطات ══════════ -->
+    <div class="section" id="section-logs">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-gray-800">سجل النشاطات الكامل</h2>
+          <p id="logs-count-label" class="text-xs text-gray-400 mt-0.5"></p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <button class="btn btn-gray" onclick="Logger.exportLogsCSV()">📥 CSV</button>
+          <button class="btn btn-gray" onclick="Logger.exportLogsJSON()">📥 JSON</button>
+          <button class="btn btn-danger" onclick="confirmClearLogs()">🗑️ مسح الكل</button>
+        </div>
+      </div>
+
+      <!-- فلاتر -->
+      <div class="bg-white rounded-xl border border-gray-200 p-4 mb-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-500 mb-1">نوع الحدث</label>
+          <select id="log-filter-type" class="input-field text-xs" onchange="renderLogsTable()">
+            <option value="">الكل</option>
+            <option value="LOGIN">تسجيل دخول</option>
+            <option value="LOGOUT">تسجيل خروج</option>
+            <option value="LOGIN_FAIL">دخول فاشل</option>
+            <option value="REGISTER">تسجيل حساب</option>
+            <option value="ENTRY_ADD">إضافة منشأة</option>
+            <option value="RATING_ADD">تقييم</option>
+            <option value="USER_CREATE">إنشاء مستخدم</option>
+            <option value="USER_UPDATE">تعديل مستخدم</option>
+            <option value="USER_DELETE">حذف مستخدم</option>
+            <option value="PASSWORD_RESET">إعادة كلمة مرور</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-500 mb-1">المستخدم</label>
+          <input id="log-filter-user" type="text" class="input-field text-xs" placeholder="اسم المستخدم..." oninput="renderLogsTable()" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-500 mb-1">من تاريخ</label>
+          <input id="log-filter-from" type="date" class="input-field text-xs" onchange="renderLogsTable()" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-500 mb-1">بحث في التفاصيل</label>
+          <input id="log-filter-search" type="text" class="input-field text-xs" placeholder="كلمة البحث..." oninput="renderLogsTable()" />
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="text-right px-3 py-3 font-bold text-gray-500">التاريخ والوقت</th>
+                <th class="text-right px-3 py-3 font-bold text-gray-500">المستخدم</th>
+                <th class="text-right px-3 py-3 font-bold text-gray-500">الحدث</th>
+                <th class="text-right px-3 py-3 font-bold text-gray-500">التفاصيل</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body"></tbody>
+          </table>
+        </div>
+        <div id="logs-pagination" class="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ قسم: مراقبة الإدخالات ══════════ -->
+    <div class="section" id="section-entries">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <h2 class="font-bold text-gray-800">مراقبة الإدخالات من SheetBest</h2>
+        <button class="btn btn-primary" onclick="loadEntriesMonitor()">🔄 تحديث</button>
+      </div>
+      <div class="stat-card mb-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-sm font-bold text-gray-700">اتصال SheetBest API</span>
+          <span id="entries-api-status" class="badge badge-active">جاري الفحص...</span>
+        </div>
+        <p class="text-xs text-gray-500 font-mono bg-gray-50 p-2 rounded-lg break-all">
+          https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5
+        </p>
+      </div>
+      <div id="entries-stats-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5"></div>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-700 text-sm">آخر الإدخالات</h3>
+          <input type="search" id="entries-search" placeholder="بحث..." class="input-field text-xs" style="width:180px" oninput="filterEntriesMonitor()" />
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th class="text-right px-3 py-2.5 font-bold text-gray-500">#</th>
+                <th class="text-right px-3 py-2.5 font-bold text-gray-500">الاسم</th>
+                <th class="text-right px-3 py-2.5 font-bold text-gray-500">القسم</th>
+                <th class="text-right px-3 py-2.5 font-bold text-gray-500">التخصص</th>
+                <th class="text-right px-3 py-2.5 font-bold text-gray-500">العنوان</th>
+              </tr>
+            </thead>
+            <tbody id="entries-monitor-body">
+              <tr><td colspan="5" class="text-center py-8 text-gray-400">انقر "تحديث" لتحميل البيانات</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ قسم: الإعدادات ══════════ -->
+    <div class="section" id="section-settings">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        <!-- تغيير كلمة المرور -->
+        <div class="stat-card">
+          <h3 class="font-bold text-gray-800 mb-4">🔐 تغيير كلمة المرور</h3>
+          <div id="pwd-change-msg" class="mb-3"></div>
+          <form onsubmit="changePassword(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">كلمة المرور الحالية</label>
+              <input id="pwd-current" type="password" class="input-field" placeholder="••••••••" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">كلمة المرور الجديدة</label>
+              <input id="pwd-new" type="password" class="input-field" placeholder="••••••••" required minlength="6" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">تأكيد كلمة المرور</label>
+              <input id="pwd-confirm" type="password" class="input-field" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-full justify-center">حفظ كلمة المرور</button>
+          </form>
+        </div>
+
+        <!-- معلومات النظام -->
+        <div class="stat-card">
+          <h3 class="font-bold text-gray-800 mb-4">ℹ️ معلومات النظام</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-xs text-gray-500">إصدار النظام</span>
+              <span class="text-xs font-bold text-gray-700">v2.0.0</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-xs text-gray-500">إجمالي السجلات</span>
+              <span id="sys-logs-count" class="text-xs font-bold text-gray-700">—</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-xs text-gray-500">إجمالي المستخدمين</span>
+              <span id="sys-users-count" class="text-xs font-bold text-gray-700">—</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+              <span class="text-xs text-gray-500">حجم البيانات المحلية</span>
+              <span id="sys-storage-size" class="text-xs font-bold text-gray-700">—</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-xs text-gray-500">تاريخ اليوم</span>
+              <span id="sys-date" class="text-xs font-bold text-gray-700"></span>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100 space-y-2">
+            <button onclick="Logger.exportLogsCSV()" class="btn btn-gray w-full justify-center text-xs">📥 تصدير السجلات CSV</button>
+            <button onclick="Logger.exportLogsJSON()" class="btn btn-gray w-full justify-center text-xs">📥 تصدير السجلات JSON</button>
+            <button onclick="confirmClearLogs()" class="btn btn-danger w-full justify-center text-xs">🗑️ مسح جميع السجلات</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ Modal: إضافة / تعديل مستخدم ═══ -->
+<div id="user-modal" class="modal-overlay" style="display:none" onclick="closeUserModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 id="user-modal-title" class="font-bold text-gray-800 text-base">إضافة مستخدم جديد</h3>
+      <button onclick="closeUserModal()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+    </div>
+    <div id="user-modal-error" class="mb-3" style="display:none">
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-xs font-bold"></div>
+    </div>
+    <form id="user-modal-form" onsubmit="handleUserModalSubmit(event)" class="space-y-3.5">
+      <input type="hidden" id="modal-user-id" />
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1.5">الاسم الكامل *</label>
+          <input id="modal-name" type="text" class="input-field" placeholder="الاسم" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1.5">اسم المستخدم *</label>
+          <input id="modal-username" type="text" class="input-field" placeholder="username" required minlength="3" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1.5">البريد الإلكتروني</label>
+        <input id="modal-email" type="email" class="input-field" dir="ltr" placeholder="email@example.com" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1.5">الدور</label>
+          <select id="modal-role" class="input-field">
+            <option value="user">مستخدم</option>
+            <option value="admin">مدير</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1.5">الحالة</label>
+          <select id="modal-status" class="input-field">
+            <option value="active">نشط</option>
+            <option value="inactive">موقوف</option>
+          </select>
+        </div>
+      </div>
+      <div id="modal-password-section">
+        <label class="block text-xs font-bold text-gray-600 mb-1.5">
+          كلمة المرور <span id="pwd-optional-label" class="text-gray-400 font-normal">(اتركها فارغة للإبقاء على الحالية)</span>
+        </label>
+        <input id="modal-password" type="password" class="input-field" placeholder="••••••••" />
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn btn-primary flex-1 justify-center">
+          <span id="modal-submit-txt">حفظ</span>
+        </button>
+        <button type="button" onclick="closeUserModal()" class="btn btn-gray flex-1 justify-center">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ Modal: تأكيد الحذف ═══ -->
+<div id="confirm-modal" class="modal-overlay" style="display:none" onclick="closeConfirmModal()">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:360px">
+    <div class="text-center mb-5">
+      <div class="text-4xl mb-3" id="confirm-icon">⚠️</div>
+      <h3 id="confirm-title" class="font-bold text-gray-800 text-base mb-2">تأكيد الإجراء</h3>
+      <p id="confirm-msg" class="text-sm text-gray-500"></p>
+    </div>
+    <div class="flex gap-3">
+      <button id="confirm-ok-btn" class="btn btn-danger flex-1 justify-center">تأكيد</button>
+      <button onclick="closeConfirmModal()" class="btn btn-gray flex-1 justify-center">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Toast ═══ -->
+<div id="admin-toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:12px;color:#fff;font-weight:700;font-size:13px;z-index:9999;display:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2)"></div>
+
+<script src="js/auth.js"></script>
+<script src="js/logger.js"></script>
+<script>
+'use strict';
+
+const SHEET_API = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
+let currentUser = null;
+let allEntriesData = [];
+let logsPage = 0;
+const LOGS_PER_PAGE = 30;
+let confirmCallback = null;
+
+// ── تهيئة ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  await new Promise(r => setTimeout(r, 600));
+  currentUser = Auth.checkAuth(true);
+  if (!currentUser) return;
+  document.getElementById('sidebar-name').textContent = currentUser.name || currentUser.username;
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = '';
+  updateSectionDate();
+  loadOverview();
+  Logger.log('PAGE_VISIT', 'زيارة لوحة التحكم');
+});
+
+function updateSectionDate() {
+  const d = new Date();
+  document.getElementById('section-date').textContent =
+    d.toLocaleDateString('ar-SY', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('sys-date').textContent =
+    d.toLocaleDateString('ar-SY', { year:'numeric', month:'short', day:'numeric' });
+}
+
+// ── التنقل بين الأقسام ─────────────────────────────────────────
+const SECTION_TITLES = {
+  overview: 'نظرة عامة',
+  users:    'إدارة المستخدمين',
+  logs:     'سجل النشاطات',
+  entries:  'مراقبة الإدخالات',
+  settings: 'الإعدادات',
+};
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(b => {
+    b.classList.toggle('active', b.dataset.section === name);
+  });
+  document.getElementById('section-' + name).classList.add('active');
+  document.getElementById('section-title').textContent = SECTION_TITLES[name] || name;
+  if (name === 'overview') loadOverview();
+  if (name === 'users')    renderUsersTable();
+  if (name === 'logs')     { logsPage = 0; renderLogsTable(); }
+  if (name === 'entries')  loadEntriesMonitor();
+  if (name === 'settings') loadSettings();
+  if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function refreshCurrentSection() {
+  const active = document.querySelector('.sidebar-link.active');
+  if (active) showSection(active.dataset.section);
+}
+
+// ── تسجيل الخروج ──────────────────────────────────────────────
+function handleLogout() {
+  Logger.log('LOGOUT', 'خرج المدير: ' + (currentUser?.username || ''));
+  Auth.logout();
+  window.location.href = 'login.html';
+}
+
+// ── النظرة العامة ─────────────────────────────────────────────
+function loadOverview() {
+  const stats = Logger.getStats();
+  const users = Auth.getAllUsers();
+  setEl('stat-users',       users.length);
+  setEl('stat-today',       stats.today);
+  setEl('stat-logins',      stats.logins);
+  setEl('stat-entries',     stats.entriesAdded);
+  setEl('stat-fails',       stats.loginsFailed);
+  setEl('stat-active-users',stats.activeUsers);
+  setEl('stat-week',        stats.thisWeek);
+
+  // توزيع النشاطات
+  const breakdown = document.getElementById('activity-breakdown');
+  const sortedTypes = Object.entries(stats.byType).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxVal = sortedTypes[0]?.[1] || 1;
+  breakdown.innerHTML = sortedTypes.map(([type, count]) => `
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-gray-600 w-32 truncate text-right">${type}</span>
+      <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+        <div class="h-2 bg-blue-500 rounded-full" style="width:${Math.round(count/maxVal*100)}%"></div>
+      </div>
+      <span class="text-xs font-bold text-gray-700 w-8 text-left">${count}</span>
+    </div>`).join('') || '<p class="text-xs text-gray-400">لا توجد بيانات بعد</p>';
+
+  // آخر النشاطات
+  const { logs } = Logger.getFilteredLogs({ limit: 10 });
+  const recent = document.getElementById('recent-activities');
+  recent.innerHTML = logs.map(l => `
+    <div class="flex items-start gap-2 py-1.5 border-b border-gray-50">
+      <span class="log-type-badge ${getLogClass(l.type)} flex-shrink-0">${l.typeLabel}</span>
+      <div class="min-w-0 flex-1">
+        <p class="text-xs text-gray-700 font-semibold truncate">${escHtml(l.username)}</p>
+        <p class="text-[10px] text-gray-400">${formatDate(l.timestamp)}</p>
+      </div>
+    </div>`).join('') || '<p class="text-xs text-gray-400">لا توجد نشاطات</p>';
+}
+
+// ── جدول المستخدمين ───────────────────────────────────────────
+function renderUsersTable() {
+  const q = (document.getElementById('users-search')?.value || '').toLowerCase();
+  let users = Auth.getAllUsers();
+  if (q) users = users.filter(u =>
+    u.username.toLowerCase().includes(q) ||
+    (u.name || '').toLowerCase().includes(q) ||
+    (u.email || '').toLowerCase().includes(q)
+  );
+  document.getElementById('users-count-label').textContent = `${users.length} مستخدم`;
+  const tbody = document.getElementById('users-table-body');
+  tbody.innerHTML = users.map((u, i) => `
+    <tr class="table-row border-b border-gray-50">
+      <td class="px-4 py-3 text-xs text-gray-400">${i+1}</td>
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
+            ${(u.name || u.username).charAt(0)}
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-800">${escHtml(u.name || '')}</p>
+            <p class="text-[10px] text-gray-400">@${escHtml(u.username)}</p>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 py-3 text-xs text-gray-500 hidden sm:table-cell">${escHtml(u.email || '—')}</td>
+      <td class="px-4 py-3">
+        <span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">
+          ${u.role === 'admin' ? '👑 مدير' : '👤 مستخدم'}
+        </span>
+      </td>
+      <td class="px-4 py-3">
+        <span class="badge ${u.status === 'active' ? 'badge-active' : 'badge-inactive'}">
+          ${u.status === 'active' ? '● نشط' : '○ موقوف'}
+        </span>
+      </td>
+      <td class="px-4 py-3 text-[10px] text-gray-400 hidden md:table-cell">
+        ${u.lastLogin ? formatDate(u.lastLogin) : 'لم يدخل بعد'}
+      </td>
+      <td class="px-4 py-3">
+        <div class="flex gap-1 flex-wrap">
+          <button onclick="openEditUserModal('${u.id}')" class="btn btn-warning py-1 px-2 text-[10px]">✏️ تعديل</button>
+          ${u.status === 'active'
+            ? `<button onclick="toggleUserStatus('${u.id}','inactive')" class="btn btn-danger py-1 px-2 text-[10px]">⏸</button>`
+            : `<button onclick="toggleUserStatus('${u.id}','active')" class="btn btn-success py-1 px-2 text-[10px]">▶</button>`}
+          ${u.id !== currentUser.userId
+            ? `<button onclick="confirmDeleteUser('${u.id}','${escHtml(u.username)}')" class="btn btn-danger py-1 px-2 text-[10px]">🗑️</button>`
+            : ''}
+        </div>
+      </td>
+    </tr>`).join('') || `<tr><td colspan="7" class="text-center py-10 text-gray-400 text-xs">لا توجد مستخدمون</td></tr>`;
+}
+
+// ── Modal المستخدم ─────────────────────────────────────────────
+function openAddUserModal() {
+  document.getElementById('user-modal-title').textContent   = 'إضافة مستخدم جديد';
+  document.getElementById('modal-submit-txt').textContent   = 'إنشاء الحساب';
+  document.getElementById('pwd-optional-label').textContent = '(مطلوب)';
+  document.getElementById('modal-password').required        = true;
+  document.getElementById('modal-user-id').value   = '';
+  document.getElementById('modal-name').value      = '';
+  document.getElementById('modal-username').value  = '';
+  document.getElementById('modal-email').value     = '';
+  document.getElementById('modal-role').value      = 'user';
+  document.getElementById('modal-status').value    = 'active';
+  document.getElementById('modal-password').value  = '';
+  hideModalError();
+  document.getElementById('user-modal').style.display = 'flex';
+}
+
+function openEditUserModal(userId) {
+  const users = Auth.getAllUsers();
+  const user  = users.find(u => u.id === userId);
+  if (!user) return;
+  document.getElementById('user-modal-title').textContent   = 'تعديل المستخدم';
+  document.getElementById('modal-submit-txt').textContent   = 'حفظ التعديلات';
+  document.getElementById('pwd-optional-label').textContent = '(اتركها فارغة للإبقاء)';
+  document.getElementById('modal-password').required        = false;
+  document.getElementById('modal-user-id').value   = user.id;
+  document.getElementById('modal-name').value      = user.name || '';
+  document.getElementById('modal-username').value  = user.username;
+  document.getElementById('modal-email').value     = user.email || '';
+  document.getElementById('modal-role').value      = user.role;
+  document.getElementById('modal-status').value    = user.status;
+  document.getElementById('modal-password').value  = '';
+  hideModalError();
+  document.getElementById('user-modal').style.display = 'flex';
+}
+
+function closeUserModal(e) {
+  if (e && e.target !== document.getElementById('user-modal')) return;
+  document.getElementById('user-modal').style.display = 'none';
+}
+
+function hideModalError() {
+  const el = document.getElementById('user-modal-error');
+  el.style.display = 'none';
+  el.querySelector('div').textContent = '';
+}
+
+async function handleUserModalSubmit(e) {
+  e.preventDefault();
+  hideModalError();
+  const id       = document.getElementById('modal-user-id').value;
+  const name     = document.getElementById('modal-name').value.trim();
+  const username = document.getElementById('modal-username').value.trim();
+  const email    = document.getElementById('modal-email').value.trim();
+  const role     = document.getElementById('modal-role').value;
+  const status   = document.getElementById('modal-status').value;
+  const password = document.getElementById('modal-password').value;
+
+  let result;
+  if (id) {
+    const changes = { name, username, email, role, status };
+    if (password) changes.password = password;
+    result = await Auth.updateUser(id, changes);
+    if (result.ok) {
+      Logger.log('USER_UPDATE', `تعديل مستخدم: ${username}`);
+      showToast('✅ تم تحديث المستخدم');
+    }
+  } else {
+    result = await Auth.register({ name, username, email, password, role });
+    if (result.ok) {
+      if (status !== 'active') await Auth.updateUser(result.user.id, { status });
+      Logger.log('USER_CREATE', `إنشاء مستخدم جديد: ${username}`);
+      showToast('✅ تم إنشاء المستخدم');
+    }
+  }
+
+  if (!result.ok) {
+    const el = document.getElementById('user-modal-error');
+    el.querySelector('div').textContent = result.error;
+    el.style.display = '';
+    return;
+  }
+  document.getElementById('user-modal').style.display = 'none';
+  renderUsersTable();
+  loadOverview();
+}
+
+async function toggleUserStatus(id, newStatus) {
+  const users = Auth.getAllUsers();
+  const user  = users.find(u => u.id === id);
+  if (!user) return;
+  await Auth.updateUser(id, { status: newStatus });
+  const action = newStatus === 'active' ? 'USER_ACTIVATE' : 'USER_SUSPEND';
+  Logger.log(action, `${action === 'USER_ACTIVATE' ? 'تفعيل' : 'إيقاف'} مستخدم: ${user.username}`);
+  showToast(newStatus === 'active' ? '✅ تم تفعيل الحساب' : '⏸ تم إيقاف الحساب');
+  renderUsersTable();
+  loadOverview();
+}
+
+function confirmDeleteUser(id, username) {
+  document.getElementById('confirm-icon').textContent  = '🗑️';
+  document.getElementById('confirm-title').textContent = 'حذف المستخدم';
+  document.getElementById('confirm-msg').textContent   = `هل أنت متأكد من حذف المستخدم "${username}"؟ هذا الإجراء لا يمكن التراجع عنه.`;
+  document.getElementById('confirm-ok-btn').onclick    = () => { deleteUser(id, username); closeConfirmModal(); };
+  document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+function deleteUser(id, username) {
+  Auth.deleteUser(id);
+  Logger.log('USER_DELETE', `حذف مستخدم: ${username}`);
+  showToast('🗑️ تم حذف المستخدم');
+  renderUsersTable();
+  loadOverview();
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirm-modal').style.display = 'none';
+}
+
+// ── سجل النشاطات ──────────────────────────────────────────────
+function renderLogsTable() {
+  const type   = document.getElementById('log-filter-type')?.value || '';
+  const user   = document.getElementById('log-filter-user')?.value.trim() || '';
+  const from   = document.getElementById('log-filter-from')?.value || '';
+  const search = document.getElementById('log-filter-search')?.value.trim() || '';
+  const offset = logsPage * LOGS_PER_PAGE;
+
+  const { logs, total } = Logger.getFilteredLogs({ type, username: user, dateFrom: from, search, limit: LOGS_PER_PAGE, offset });
+  document.getElementById('logs-count-label').textContent = `${total} سجل`;
+
+  const tbody = document.getElementById('logs-table-body');
+  tbody.innerHTML = logs.map(l => `
+    <tr class="table-row border-b border-gray-50">
+      <td class="px-3 py-2.5 text-[10px] text-gray-400 whitespace-nowrap font-mono">${formatDate(l.timestamp)}</td>
+      <td class="px-3 py-2.5">
+        <span class="text-xs font-bold text-gray-700">${escHtml(l.username)}</span>
+        <span class="text-[9px] text-gray-400 block">${l.role === 'admin' ? '👑' : '👤'} ${l.role}</span>
+      </td>
+      <td class="px-3 py-2.5">
+        <span class="log-type-badge ${getLogClass(l.type)}">${l.typeLabel}</span>
+      </td>
+      <td class="px-3 py-2.5 text-[11px] text-gray-500 max-w-xs truncate">${escHtml(l.details || '—')}</td>
+    </tr>`).join('') || `<tr><td colspan="4" class="text-center py-10 text-gray-400 text-xs">لا توجد سجلات تطابق الفلتر</td></tr>`;
+
+  const totalPages = Math.ceil(total / LOGS_PER_PAGE);
+  document.getElementById('logs-pagination').innerHTML = `
+    <span class="text-xs text-gray-500">صفحة ${logsPage+1} من ${totalPages || 1} · ${total} سجل</span>
+    <div class="flex gap-2">
+      <button ${logsPage === 0 ? 'disabled' : ''} onclick="logsPage--; renderLogsTable()"
+        class="btn btn-gray py-1 px-3 text-xs ${logsPage === 0 ? 'opacity-40' : ''}">السابق</button>
+      <button ${logsPage >= totalPages-1 ? 'disabled' : ''} onclick="logsPage++; renderLogsTable()"
+        class="btn btn-primary py-1 px-3 text-xs ${logsPage >= totalPages-1 ? 'opacity-40' : ''}">التالي</button>
+    </div>`;
+}
+
+function confirmClearLogs() {
+  document.getElementById('confirm-icon').textContent  = '🗑️';
+  document.getElementById('confirm-title').textContent = 'مسح جميع السجلات';
+  document.getElementById('confirm-msg').textContent   = 'هل أنت متأكد من مسح جميع سجلات النشاطات؟ لا يمكن التراجع.';
+  document.getElementById('confirm-ok-btn').onclick    = () => {
+    Logger.clearLogs();
+    Logger.log('ADMIN_ACTION', 'مسح جميع سجلات النشاطات');
+    closeConfirmModal();
+    renderLogsTable();
+    loadOverview();
+    showToast('🗑️ تم مسح السجلات');
+  };
+  document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+// ── مراقبة الإدخالات ──────────────────────────────────────────
+async function loadEntriesMonitor() {
+  document.getElementById('entries-api-status').textContent = 'جاري الاتصال...';
+  document.getElementById('entries-api-status').className   = 'badge';
+  document.getElementById('entries-api-status').style.background = '#fef3c7';
+  document.getElementById('entries-api-status').style.color = '#92400e';
+
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 12000);
+    const res = await fetch(SHEET_API, { signal: ctrl.signal });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const raw = await res.json();
+    allEntriesData = Array.isArray(raw) ? raw : [];
+
+    document.getElementById('entries-api-status').textContent = '✓ متصل';
+    document.getElementById('entries-api-status').className   = 'badge badge-active';
+
+    // إحصائيات
+    const categories = {};
+    allEntriesData.forEach(e => {
+      const cat = e['القسم'] || 'غير محدد';
+      categories[cat] = (categories[cat] || 0) + 1;
+    });
+    const topCats = Object.entries(categories).sort((a,b)=>b[1]-a[1]).slice(0,4);
+    document.getElementById('entries-stats-grid').innerHTML = [
+      { label: 'إجمالي الإدخالات', value: allEntriesData.length, color: 'text-blue-700' },
+      ...topCats.map(([cat, count]) => ({ label: cat, value: count, color: 'text-gray-700' }))
+    ].map(s => `
+      <div class="stat-card">
+        <p class="text-xs font-bold text-gray-500 mb-1 truncate">${s.label}</p>
+        <p class="text-2xl font-bold ${s.color}">${s.value}</p>
+      </div>`).join('');
+
+    renderEntriesMonitorTable(allEntriesData);
+    Logger.log('ADMIN_ACTION', `جلب ${allEntriesData.length} إدخال من SheetBest`);
+  } catch (err) {
+    document.getElementById('entries-api-status').textContent = '✗ خطأ اتصال';
+    document.getElementById('entries-api-status').style.background = '#fee2e2';
+    document.getElementById('entries-api-status').style.color      = '#991b1b';
+    document.getElementById('entries-monitor-body').innerHTML =
+      `<tr><td colspan="5" class="text-center py-8 text-red-500 text-xs">⚠️ تعذّر الاتصال: ${err.message}</td></tr>`;
+  }
+}
+
+function filterEntriesMonitor() {
+  const q = document.getElementById('entries-search').value.toLowerCase();
+  const filtered = q ? allEntriesData.filter(e =>
+    Object.values(e).some(v => v && String(v).toLowerCase().includes(q))
+  ) : allEntriesData;
+  renderEntriesMonitorTable(filtered);
+}
+
+function renderEntriesMonitorTable(data) {
+  const tbody = document.getElementById('entries-monitor-body');
+  tbody.innerHTML = data.slice(0, 100).map((e, i) => `
+    <tr class="table-row border-b border-gray-50">
+      <td class="px-3 py-2 text-[10px] text-gray-400">${e['معرف  id'] || i+1}</td>
+      <td class="px-3 py-2 text-xs font-semibold text-gray-800 max-w-[160px] truncate">${escHtml(e['اسم المكان'] || '—')}</td>
+      <td class="px-3 py-2 text-[10px] text-gray-600">${escHtml(e['القسم'] || '—')}</td>
+      <td class="px-3 py-2 text-[10px] text-gray-500">${escHtml(e['الوصف'] || '—')}</td>
+      <td class="px-3 py-2 text-[10px] text-gray-400 max-w-[140px] truncate">${escHtml(e['العنوان بالتفصيل'] || '—')}</td>
+    </tr>`).join('') || `<tr><td colspan="5" class="text-center py-8 text-gray-400 text-xs">لا توجد بيانات</td></tr>`;
+}
+
+// ── الإعدادات ──────────────────────────────────────────────────
+function loadSettings() {
+  const logs  = Logger.getLogs();
+  const users = Auth.getAllUsers();
+  let size = 0;
+  try {
+    for (let k in localStorage) {
+      if (localStorage.hasOwnProperty(k) && k.startsWith('homs_')) {
+        size += ((localStorage[k] || '').length * 2);
+      }
+    }
+  } catch {}
+  setEl('sys-logs-count',    logs.length + ' سجل');
+  setEl('sys-users-count',   users.length + ' مستخدم');
+  setEl('sys-storage-size',  formatBytes(size));
+}
+
+async function changePassword(e) {
+  e.preventDefault();
+  const msgEl   = document.getElementById('pwd-change-msg');
+  const current = document.getElementById('pwd-current').value;
+  const newPwd  = document.getElementById('pwd-new').value;
+  const confirm = document.getElementById('pwd-confirm').value;
+
+  msgEl.innerHTML = '';
+  if (newPwd !== confirm) {
+    msgEl.innerHTML = '<div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-xs font-bold">كلمة المرور وتأكيدها غير متطابقتين</div>';
+    return;
+  }
+
+  const verify = await Auth.login(currentUser.username, current);
+  if (!verify.ok) {
+    msgEl.innerHTML = '<div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-xs font-bold">كلمة المرور الحالية غير صحيحة</div>';
+    return;
+  }
+
+  await Auth.updateUser(currentUser.userId, { password: newPwd });
+  Logger.log('PASSWORD_RESET', 'تغيير كلمة مرور المدير: ' + currentUser.username);
+  msgEl.innerHTML = '<div class="bg-green-50 border border-green-200 text-green-700 rounded-lg px-3 py-2 text-xs font-bold">✅ تم تغيير كلمة المرور بنجاح</div>';
+  document.getElementById('pwd-current').value = '';
+  document.getElementById('pwd-new').value     = '';
+  document.getElementById('pwd-confirm').value = '';
+}
+
+// ── مساعدات ────────────────────────────────────────────────────
+function getLogClass(type) {
+  const map = {
+    LOGIN:'log-LOGIN', LOGOUT:'log-LOGOUT', LOGIN_FAIL:'log-LOGIN_FAIL',
+    ENTRY_ADD:'log-ENTRY_ADD', RATING_ADD:'log-RATING_ADD',
+    USER_CREATE:'log-USER_CREATE', USER_UPDATE:'log-USER_UPDATE',
+    USER_DELETE:'log-USER_DELETE', PASSWORD_RESET:'log-PASSWORD_RESET',
+  };
+  return map[type] || 'log-default';
+}
+
+function formatDate(iso) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('ar-SY', { year:'2-digit', month:'short', day:'numeric' })
+      + ' ' + d.toLocaleTimeString('ar', { hour:'2-digit', minute:'2-digit' });
+  } catch { return iso; }
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1024/1024).toFixed(2) + ' MB';
+}
+
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+let toastTimer;
+function showToast(msg, ok = true) {
+  const t = document.getElementById('admin-toast');
+  t.textContent = msg;
+  t.style.background = ok ? '#059669' : '#dc2626';
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+</script>
+</body>
+</html>
