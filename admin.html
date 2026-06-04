@@ -484,7 +484,6 @@ let confirmCallback = null;
 
 // ── تهيئة ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  await new Promise(r => setTimeout(r, 600));
   currentUser = Auth.checkAuth(true);
   if (!currentUser) return;
   document.getElementById('sidebar-name').textContent = currentUser.name || currentUser.username;
