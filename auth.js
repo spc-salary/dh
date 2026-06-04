@@ -91,7 +91,7 @@ async function login(username, password) {
 }
 
 async function register(data) {
-  const { username, name, email, password, role = 'user' } = data;
+  const { username, name, email, password, role = 'user', securityQuestion = '', securityAnswer = '' } = data;
   const users = store.get(AUTH_KEYS.USERS, []);
 
   if (!username || username.length < 3)
@@ -112,6 +112,8 @@ async function register(data) {
     password:  hashed,
     role,
     status:    'active',
+    securityQuestion,
+    securityAnswer,
     createdAt: new Date().toISOString(),
     lastLogin: null,
   };
@@ -203,7 +205,7 @@ async function resetPasswordBySecurity(username, securityAnswer, newPassword) {
   return { ok: true };
 }
 
-initDefaultAdmin();
+window._authReady = initDefaultAdmin();
 
 window.Auth = {
   login,
