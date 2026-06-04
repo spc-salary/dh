@@ -523,7 +523,6 @@
 
 // ── التحقق من الجلسة ─────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  await new Promise(r => setTimeout(r, 600));
   const user = Auth.getCurrentUser();
   if (!user) {
     window.location.href = 'login.html';
