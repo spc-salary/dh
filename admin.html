@@ -470,8 +470,8 @@
 <!-- ═══ Toast ═══ -->
 <div id="admin-toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:12px;color:#fff;font-weight:700;font-size:13px;z-index:9999;display:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2)"></div>
 
-<script src="/js/auth.js"></script>
-<script src="/js/logger.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/logger.js"></script>
 <script>
 'use strict';
 
@@ -489,7 +489,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     currentUser = Auth.checkAuth(true);
     if (!currentUser) return;
   } catch (e) {
-    window.location.replace('/login.html');
+    window.location.replace('login.html');
     return;
   }
   document.getElementById('sidebar-name').textContent = currentUser.name || currentUser.username;
@@ -545,7 +545,7 @@ function refreshCurrentSection() {
 function handleLogout() {
   Logger.log('LOGOUT', 'خرج المدير: ' + (currentUser?.username || ''));
   Auth.logout();
-  window.location.replace('/login.html');
+  window.location.replace('login.html');
 }
 
 // ── النظرة العامة ─────────────────────────────────────────────
