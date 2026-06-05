@@ -100,6 +100,9 @@
     .card-toggle-bar:active  { background:#dbeafe; }
     .card-toggle-arrow       { font-size:9px; transition:transform .2s; display:inline-block; }
     .card-toggle-bar[aria-expanded="true"] .card-toggle-arrow { transform:rotate(180deg); }
+
+    /* ═══ Star Rating ═══ */
+    /* النجوم تتراص من الأسفل حتى تبدو متصاعدة الحجم */
     .star-row { display:flex; align-items:flex-end; gap:2px; direction:ltr; }
     .star-btn {
       background:none; border:none; padding:2px 1px; cursor:pointer;
@@ -110,21 +113,26 @@
       will-change:transform;
     }
     .star-btn:disabled { cursor:default; }
+    /* أحجام تدريجية — 1=أصغر، 5=أكبر */
     .star-btn[data-star="1"] { font-size:14px; }
     .star-btn[data-star="2"] { font-size:17px; }
     .star-btn[data-star="3"] { font-size:20px; }
     .star-btn[data-star="4"] { font-size:23px; }
     .star-btn[data-star="5"] { font-size:27px; }
+    /* نجمة محددة نهائياً (بعد التصويت أو متوسط المجتمع) */
     .star-btn.filled  { color:#f59e0b; }
+    /* تأثير hover/touch — كل نجمة في نطاق الاختيار */
     .star-btn.hover-fill {
       color:#f59e0b !important;
       text-shadow:0 0 10px rgba(245,158,11,.8), 0 0 4px rgba(245,158,11,.5);
     }
+    /* تكبير خفيف موحّد — الأحجام الأساسية تختلف أصلاً */
     .star-btn.hover-fill[data-star="1"] { transform:scale(1.2); }
     .star-btn.hover-fill[data-star="2"] { transform:scale(1.18); }
     .star-btn.hover-fill[data-star="3"] { transform:scale(1.15); }
     .star-btn.hover-fill[data-star="4"] { transform:scale(1.12); }
     .star-btn.hover-fill[data-star="5"] { transform:scale(1.1); }
+    /* تعتيم النجوم خارج النطاق لإبراز الاختيار */
     .star-btn.hover-dim {
       color:#d1d5db !important;
       opacity:.4;
@@ -133,10 +141,15 @@
     }
     .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
     @keyframes starPulse { from{opacity:.6} to{opacity:1} }
-    .rating-avg-badge { font-size:12px; font-weight:700; color:#d97706; line-height:1; }
+    /* متوسط التقييم */
+    .rating-avg-badge {
+      font-size:12px; font-weight:700; color:#d97706; line-height:1;
+    }
     .rating-avg-sep { font-size:9px; color:#9ca3af; font-weight:400; }
     .rating-cnt-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    /* نص توجيهي قبل التصويت */
     .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    /* شارة بعد التصويت */
     .rated-badge {
       display:inline-flex; align-items:center; gap:3px; font-size:10px;
       font-weight:700; color:#059669; background:#d1fae5; border-radius:6px;
@@ -150,6 +163,8 @@
     .dark-mode .rating-cnt-label,
     .dark-mode .rating-label        { color:#64748b; }
     .dark-mode .rated-badge         { background:#064e3b; color:#6ee7b7; }
+
+    /* ═══ قسم الأعلى تقييماً ═══ */
     .top-rated-chip {
       min-width:110px; max-width:140px; cursor:pointer;
       text-align:right;
@@ -162,6 +177,8 @@
       100%{ box-shadow:0 0 0 0 rgba(245,158,11,0); }
     }
     .dark-mode .top-rated-chip { background:#1e293b!important; border-color:#334155!important; }
+
+    /* ═══ DARK MODE ═══ */
     .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
     .dark-mode .bg-white        { background:#1e293b!important; }
     .dark-mode .bg-gray-50      { background:#0f172a!important; }
@@ -188,26 +205,13 @@
     .dark-mode .skeleton        { background:#374151!important; }
     .dark-mode .entry-card:hover { box-shadow:0 12px 24px rgba(0,0,0,.4); }
     input[type="search"]::-webkit-search-cancel-button { display:none; }
-    /* شريط المستخدم */
-    #user-bar { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:6px 14px; display:flex; align-items:center; gap:8px; }
-    #user-bar .user-name { color:#fff; font-size:12px; font-weight:700; }
-    #user-bar .user-role { color:#bfdbfe; font-size:10px; }
   </style>
 </head>
 
 <body id="body" class="min-h-screen flex flex-col text-gray-800" style="background:#f8fafc">
 
-<!-- شاشة التحميل -->
-<div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50" style="display:none;background:linear-gradient(135deg,#1e3a8a,#1d4ed8,#312e81)">
-  <div class="text-center text-white">
-    <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-    <p class="font-bold text-lg">دليل مدينة حمص</p>
-    <p class="text-blue-200 text-sm mt-1">جاري التحميل...</p>
-  </div>
-</div>
-
 <!-- ══════════════ HEADER ══════════════ -->
-<header class="relative overflow-hidden" id="main-header">
+<header class="relative overflow-hidden">
   <div class="absolute inset-0 bg-gradient-to-l from-blue-900 via-blue-800 to-indigo-900"></div>
   <div class="relative max-w-7xl mx-auto px-4 py-5 sm:py-7">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -225,24 +229,11 @@
         </div>
         <p class="text-blue-200 text-sm">منصة تشاركية مفتوحة — أضف طبيبك، محلّك، وخدمتك وشاركها فوراً</p>
       </div>
-      <div class="flex items-center gap-2 flex-wrap justify-center">
-
-        <!-- بطاقة العداد -->
+      <div class="flex items-center gap-2">
         <div class="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-center hidden sm:block">
-          <p class="text-emerald-300 text-xs font-bold">📋 دليل حمص</p>
+          <p class="text-emerald-300 text-xs font-bold">🔒 وضع الحماية</p>
           <p id="hdr-count" class="text-white/70 text-[10px] mt-0.5">جاري التحميل...</p>
         </div>
-
-        <!-- معلومات المستخدم الحالي -->
-        <div id="user-bar" style="display:none">
-          <div class="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center text-white text-xs font-bold" id="user-avatar">?</div>
-          <div>
-            <p class="user-name" id="user-display-name">—</p>
-            <p class="user-role" id="user-display-role">—</p>
-          </div>
-        </div>
-
-        <!-- أزرار الإجراءات -->
         <button onclick="fetchData()" title="تحديث"
           class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg id="refresh-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -257,38 +248,20 @@
               d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
           </svg>
         </button>
-
-        <!-- زر لوحة التحكم (للمدير فقط) -->
-        <a id="admin-link" href="admin.html" style="display:none"
-          class="bg-amber-500/80 hover:bg-amber-500 border border-amber-400/50 text-white rounded-xl px-3 py-2 text-xs font-bold transition-all">
-          ⚙️ الإدارة
-        </a>
-
-        <!-- زر تسجيل الدخول — يظهر للزوار غير المسجلين -->
-        <a id="login-btn" href="login.html" style="display:none"
-          class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl px-4 py-2 text-xs font-bold transition-all">
-          🔑 تسجيل الدخول
-        </a>
-
-        <!-- زر الخروج — يظهر للمستخدمين المسجلين -->
-        <button id="logout-btn" onclick="handleLogout()" title="تسجيل الخروج" style="display:none"
-          class="bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-white rounded-xl px-3 py-2 text-xs font-bold transition-all">
-          خروج
-        </button>
       </div>
     </div>
   </div>
 </header>
 
 <!-- ══════════════ MAIN ══════════════ -->
-<main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6" id="main-content">
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
 
   <div id="error-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2">
     ⚠️ <span id="error-msg"></span>
   </div>
 
   <!-- ══ نموذج الإضافة ══ -->
-  <div id="add-section" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style="display:none">
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <button type="button" onclick="toggleForm()"
       class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-all">
       <div class="flex items-center gap-3">
@@ -492,10 +465,10 @@
     <div id="view-map-status">جاري تحميل الخريطة...</div>
   </div>
 
+  <!-- ══ الشبكة ══ -->
   <!-- ══ قسم الأعلى تقييماً ══ -->
   <div id="top-rated-section" style="display:none"></div>
 
-  <!-- ══ الشبكة ══ -->
   <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
       <div class="h-2 skeleton w-1/3 mb-4"></div><div class="h-4 skeleton w-3/4 mb-3"></div>
@@ -514,70 +487,27 @@
 </main>
 
 <!-- ══════════════ FOOTER ══════════════ -->
-<footer class="bg-white border-t border-gray-200 py-4 px-6 text-center text-xs text-gray-400 mt-auto" id="main-footer">
+<footer class="bg-white border-t border-gray-200 py-4 px-6 text-center text-xs text-gray-400 mt-auto">
   دليل مدينة حمص المفتوح والتشاركي © 2026 · wm.hn
 </footer>
 
 <div id="toast"></div>
 
-<!-- ══════════════ SCRIPTS ══════════════ -->
-<script src="js/auth.js"></script>
-<script src="js/logger.js"></script>
+<!-- ══════════════ SCRIPT ══════════════ -->
 <script>
 'use strict';
 
-// ── التحقق من الجلسة ─────────────────────────────────────────
-let _currentUser = null;
-
-window.addEventListener('DOMContentLoaded', async () => {
-  try {
-    await new Promise(r => setTimeout(r, 300));
-    _currentUser = Auth.getCurrentUser();
-  } catch (e) { _currentUser = null; }
-
-  // عرض حالة المستخدم في الهيدر
-  if (_currentUser) {
-    document.getElementById('user-bar').style.display = '';
-    document.getElementById('logout-btn').style.display = '';
-    document.getElementById('user-display-name').textContent = _currentUser.name || _currentUser.username;
-    document.getElementById('user-display-role').textContent = _currentUser.role === 'admin' ? '👑 مدير' : '👤 مستخدم';
-    document.getElementById('user-avatar').textContent = (_currentUser.name || _currentUser.username).charAt(0);
-    if (_currentUser.role === 'admin') document.getElementById('admin-link').style.display = '';
-  } else {
-    document.getElementById('login-btn').style.display = '';
-  }
-
-  // إظهار/إخفاء نموذج الإضافة بحسب تسجيل الدخول
-  document.getElementById('add-section').style.display = _currentUser ? '' : 'none';
-
-  // إظهار المحتوى
-  document.getElementById('loading-screen').style.display  = 'none';
-  document.getElementById('main-header').style.display     = '';
-  document.getElementById('main-content').style.display    = '';
-  document.getElementById('main-footer').style.display     = '';
-
-  isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
-  applyDark();
-  document.getElementById('map-loading').style.display = 'none';
-  loadLocalRatingsMap();
-  Promise.all([fetchData(), fetchServerRatings()]);
-
-  Logger.log('PAGE_VISIT', 'زيارة الصفحة الرئيسية');
-});
-
-function handleLogout() {
-  Logger.log('LOGOUT', 'خرج المستخدم: ' + (Auth.getCurrentUser()?.username || ''));
-  Auth.logout();
-  window.location.replace('login.html');
-}
-
 // ═══════════════════════════════════════════════════════════════
 //  API URLs
+//  SHEET_API  : مصدر بيانات Google Sheet (للقراءة والكتابة)
+//  RATINGS_API: نقطة مزامنة التقييمات مع الخادم (اختيارية)
+//              التقييمات تُحفظ أولاً في localStorage دائماً
 // ═══════════════════════════════════════════════════════════════
-const SHEET_API   = 'https://api.sheetbest.com/sheets/d5c48739-6761-4ac4-8626-bd3205eb64c5';
+https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnSkckoBDVo2hIcx1AYgPaDefDJZYAjU8-yO4RjedMeoOX8fNyOumXrkARX6fiCcR5tYHac2SHnF5y0HHfszqx2jMtl8DfXlf-Kn6ymDqL7wCbIPv5sxsIBbVsiEoN1wNMgliuKLo-uWYJdB004n0hhOymwAZE9SN8De0WuCu0VDb9BRiCxXqGk1ni7CF4o6ryTy6p-EMwlLyI-6mAJh-0P4jdFVOfvMvLc3tsv_5LbsGwTz-6U8CuVD2wxNx-6gIQ8a_gjilHxwUsxpr8q_RatzzFEEfA&lib=MJaqNg089-mUDznXsAViAZXc7neZF186U';
 const RATINGS_API = (function() {
   try {
     const origin = window.location.origin;
+    // إذا كان الملف مفتوحاً محلياً (file://) لا نحاول الاتصال بخادم
     if (!origin || origin === 'null' || origin.startsWith('file')) return null;
     return origin + '/api/ratings';
   } catch { return null; }
@@ -622,10 +552,11 @@ const CAT_CLS = {
   'خدمات عامة وحرفية':       { card:'card-services', badge:'badge-services' },
 };
 
+// ─── الحالة العامة ────────────────────────────────────────────
 let allEntries     = [];
 let categoryMap    = {};
-let ratingsMap     = {};
-let pendingRatings = new Set();
+let ratingsMap     = {};          // { entryId: { avg, count } }
+let pendingRatings = new Set();   // يمنع إرسال نفس التقييم مرتين
 let activeMain     = 'الكل';
 let activeSub      = 'الكل';
 let searchQ        = '';
@@ -639,25 +570,57 @@ let mapOpen        = false;
 let manualOpen     = false;
 let mapInitialized = false;
 
+// ═══════════════════════════════════════════════════════════════
+//  localStorage — آمن ضد الاستثناءات (WebView + Private Mode)
+// ═══════════════════════════════════════════════════════════════
 const store = {
   get(key, fallback = {}) {
-    try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
-    catch { return fallback; }
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch { return fallback; }
   },
   set(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* نتجاهل */ }
   },
 };
 
 function getUserRatings()         { return store.get('homs_ratings', {}); }
 function saveUserRating(id, val)  { const r = getUserRatings(); r[id] = val; store.set('homs_ratings', r); }
 
+// ═══════════════════════════════════════════════════════════════
+//  fetch مع مهلة زمنية
+// ═══════════════════════════════════════════════════════════════
 function fetchWithTimeout(url, opts = {}, ms = 12000) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(timer));
+  return fetch(url, { ...opts, signal: ctrl.signal })
+    .finally(() => clearTimeout(timer));
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  تهيئة
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  applyDark();
+  document.getElementById('map-loading').style.display = 'none';
+  // بناء ratingsMap من localStorage لعرض تقييمات المستخدم السابقة فوراً
+  loadLocalRatingsMap();
+  Promise.all([fetchData(), fetchServerRatings()]);
+});
+
+// ─── تحميل التقييمات من localStorage إلى ratingsMap ──────────
+function loadLocalRatingsMap() {
+  const saved = getUserRatings();
+  Object.entries(saved).forEach(([id, val]) => {
+    if (!ratingsMap[id]) {
+      ratingsMap[id] = { avg: val, count: 1 };
+    }
+  });
+}
+
+// ─── Dark Mode ────────────────────────────────────────────────
 function toggleDark() { isDark = !isDark; applyDark(); }
 function applyDark() {
   const body = document.getElementById('body');
@@ -669,6 +632,9 @@ function applyDark() {
     : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  جلب البيانات من Google Sheet
+// ═══════════════════════════════════════════════════════════════
 async function fetchData() {
   const icon = document.getElementById('refresh-icon');
   icon.style.animation = 'spin 1s linear infinite';
@@ -701,38 +667,52 @@ async function fetchData() {
   icon.style.animation = '';
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  جلب ملخص التقييمات من الخادم (اختياري — فشل صامت)
+// ═══════════════════════════════════════════════════════════════
 async function fetchServerRatings() {
-  if (!RATINGS_API) return;
+  if (!RATINGS_API) return; // لا خادم متاح (file:// أو WebView مستقل)
   try {
     const res = await fetchWithTimeout(RATINGS_API + '/summary', {}, 8000);
     if (!res.ok) return;
     const serverMap = await res.json();
+    // دمج تقييمات الخادم مع التقييمات المحلية (الأولوية للخادم)
     Object.assign(ratingsMap, serverMap);
+    // تطبيق تقييمات المستخدم المحلية فوق تقييمات الخادم
     const saved = getUserRatings();
     Object.entries(saved).forEach(([id, val]) => {
       if (!ratingsMap[id]) ratingsMap[id] = { avg: val, count: 1 };
     });
     renderGrid();
     renderTopRated();
-  } catch {}
+  } catch {
+    // فشل صامت — التقييمات المحلية تعمل بشكل مستقل
+  }
 }
 
-function loadLocalRatingsMap() {
-  const saved = getUserRatings();
-  Object.entries(saved).forEach(([id, val]) => {
-    if (!ratingsMap[id]) ratingsMap[id] = { avg: val, count: 1 };
-  });
-}
-
+// ═══════════════════════════════════════════════════════════════
+//  إرسال التقييم — localStorage أولاً، ثم مزامنة خلفية مع الخادم
+//
+//  المنطق:
+//  ① حفظ فوري في localStorage (يعمل دائماً بلا إنترنت أو خادم)
+//  ② تحديث ratingsMap محلياً وعرض النجاح فوراً
+//  ③ محاولة مزامنة مع الخادم في الخلفية (صامتة — لا تؤثر على النتيجة)
+// ═══════════════════════════════════════════════════════════════
 async function submitRating(entryId, rating, widgetEl) {
   if (!entryId || pendingRatings.has(entryId)) return;
   pendingRatings.add(entryId);
+
+  // حالة الانتظار: تعطيل النجوم مؤقتاً
   const stars = widgetEl.querySelectorAll('.star-btn');
   stars.forEach((s, i) => {
     s.disabled = true;
     s.className = 'star-btn' + (i < rating ? ' pending' : '');
   });
+
+  // ① حفظ التقييم فوراً في localStorage — يعمل في كل البيئات
   saveUserRating(entryId, rating);
+
+  // ② تحديث ratingsMap محلياً
   const prev = ratingsMap[entryId];
   if (prev) {
     const newCount = prev.count + 1;
@@ -743,41 +723,55 @@ async function submitRating(entryId, rating, widgetEl) {
   } else {
     ratingsMap[entryId] = { avg: rating, count: 1 };
   }
+
   pendingRatings.delete(entryId);
+
+  // ② عرض النجاح فوراً — لا ننتظر الخادم
   widgetEl.innerHTML = buildRatingHTML(entryId, true, rating);
   showToast('success', '⭐ شكراً! تم حفظ تقييمك بنجاح');
-  // تسجيل التقييم في سجل النشاطات
-  const entry = allEntries.find(e => e.ID === entryId);
-  Logger.log('RATING_ADD', `تقييم "${entry?.Name || entryId}" بـ ${rating} نجوم`);
   renderTopRated();
+
+  // ③ مزامنة مع الخادم في الخلفية — إذا نجحت نستخدم المتوسط الحقيقي من قاعدة البيانات
   if (RATINGS_API) {
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 8000);
       const res = await fetch(RATINGS_API, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
-        signal: ctrl.signal,
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ entryId: String(entryId), rating: Number(rating) }),
+        signal:  ctrl.signal,
       });
       clearTimeout(timer);
       if (res.ok) {
         const data = await res.json();
+        // تحديث ratingsMap بالمتوسط الحقيقي المحسوب من قاعدة البيانات
         if (data.avg !== undefined && data.count !== undefined) {
           ratingsMap[entryId] = { avg: data.avg, count: data.count };
+          // تحديث الواجهة بالبيانات الحقيقية من الخادم
           const widget = document.querySelector(`.rating-widget[data-entry="${escHtml(entryId)}"]`);
-          if (widget) widget.innerHTML = buildRatingHTML(entryId, true, rating);
+          if (widget) {
+            widget.innerHTML = buildRatingHTML(entryId, true, rating);
+          }
           renderTopRated();
         }
       }
-    } catch {}
+    } catch {
+      // فشل صامت — localStorage هو المصدر الأساسي للتقييمات
+    }
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  بناء HTML ودجت النجوم
+// ═══════════════════════════════════════════════════════════════
 function buildRatingHTML(entryId, alreadyRated, userRating) {
   const info  = ratingsMap[entryId];
   const avg   = info ? info.avg   : 0;
   const cnt   = info ? info.count : 0;
   const round = Math.round(avg);
+
+  // ── بناء النجوم (من 5 إلى 1 من اليسار — نظام RTL) ──────────
   let starsHtml = '';
   for (let i = 5; i >= 1; i--) {
     if (alreadyRated) {
@@ -785,41 +779,60 @@ function buildRatingHTML(entryId, alreadyRated, userRating) {
       starsHtml += `<button class="star-btn ${cls}" data-star="${i}" disabled aria-label="${i} نجوم">★</button>`;
     } else {
       const cls = i <= round ? 'filled' : '';
-      starsHtml += `<button class="star-btn ${cls}" data-entry-id="${escHtml(entryId)}" data-star="${i}" aria-label="أعطِ ${i} من 5 نجوم">★</button>`;
+      starsHtml += `<button class="star-btn ${cls}"
+        data-entry-id="${escHtml(entryId)}" data-star="${i}"
+        aria-label="أعطِ ${i} من 5 نجوم">★</button>`;
     }
   }
+
+  // ── إحصائيات المجتمع (متوسط + عدد) ──────────────────────────
   let communityHtml = '';
   if (cnt > 0) {
     const avgFmt  = Number(avg).toFixed(1);
-    const cntFmt  = cnt >= 1000 ? `${(cnt/1000).toFixed(1)}k` : cnt;
+    const cntFmt  = cnt >= 1000 ? `${(cnt / 1000).toFixed(1)}k` : cnt;
     const cntWord = cnt === 1 ? 'تقييم' : 'تقييمات';
-    communityHtml = `<span class="rating-avg-badge">${avgFmt}<span class="rating-avg-sep">/5</span></span><span class="rating-cnt-label">· ${cntFmt} ${cntWord}</span>`;
+    communityHtml = `<span class="rating-avg-badge">${avgFmt}<span class="rating-avg-sep">/5</span></span>`
+                  + `<span class="rating-cnt-label">· ${cntFmt} ${cntWord}</span>`;
   }
+
+  // ── تجميع الهيكل ─────────────────────────────────────────────
   if (!alreadyRated) {
     const rightSide = communityHtml
       ? `<div class="flex items-center gap-1">${communityHtml}</div>`
       : `<span class="rating-label">قيّم هذه المنشأة</span>`;
-    return `<div class="flex items-center justify-between gap-2 flex-wrap"><div class="star-row">${starsHtml}</div>${rightSide}</div>`;
+    return `<div class="flex items-center justify-between gap-2 flex-wrap">
+      <div class="star-row">${starsHtml}</div>
+      ${rightSide}</div>`;
   } else {
+    // بعد التصويت: شارة اختيار المستخدم + متوسط المجتمع
     const userBadge = `<span class="rated-badge">✓ ${userRating}★</span>`;
-    const right     = communityHtml ? `<div class="flex items-center gap-1">${communityHtml}</div>` : '';
-    return `<div class="flex items-center justify-between gap-2 flex-wrap"><div class="flex items-center gap-2"><div class="star-row">${starsHtml}</div>${userBadge}</div>${right}</div>`;
+    const right     = communityHtml
+      ? `<div class="flex items-center gap-1">${communityHtml}</div>`
+      : '';
+    return `<div class="flex items-center justify-between gap-2 flex-wrap">
+      <div class="flex items-center gap-2"><div class="star-row">${starsHtml}</div>${userBadge}</div>
+      ${right}</div>`;
   }
 }
 
+// ─── تفويض حدث النقر على النجوم عبر الشبكة (event delegation) ─
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
   const entryId = btn.dataset.entryId;
   const rating  = parseInt(btn.dataset.star, 10);
   if (!entryId || !rating) return;
+
   const widgetEl = btn.closest('.rating-widget');
   if (!widgetEl) return;
+
   const userRatings = getUserRatings();
   if (entryId in userRatings) return;
+
   submitRating(entryId, rating, widgetEl);
 });
 
+// ─── مساعد: تطبيق حالة hover/touch على صف النجوم ────────────────
 function applyStarHover(row, activeStar) {
   row.querySelectorAll('.star-btn').forEach(s => {
     const n = parseInt(s.dataset.star, 10);
@@ -828,32 +841,42 @@ function applyStarHover(row, activeStar) {
   });
 }
 function clearStarHover(row) {
-  row.querySelectorAll('.star-btn').forEach(s => { s.classList.remove('hover-fill', 'hover-dim'); });
+  row.querySelectorAll('.star-btn').forEach(s => {
+    s.classList.remove('hover-fill', 'hover-dim');
+  });
 }
 
+// ─── Desktop: mouseover / mouseout ───────────────────────────────
 document.addEventListener('mouseover', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
   const row = btn.parentElement;
-  if (row) applyStarHover(row, parseInt(btn.dataset.star, 10));
+  if (!row) return;
+  applyStarHover(row, parseInt(btn.dataset.star, 10));
 });
 document.addEventListener('mouseout', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
   const row = btn.parentElement;
-  if (row) clearStarHover(row);
+  if (!row) return;
+  clearStarHover(row);
 });
+
+// ─── Mobile: touchstart / touchend ───────────────────────────────
 document.addEventListener('touchstart', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
   const row = btn.parentElement;
-  if (row) applyStarHover(row, parseInt(btn.dataset.star, 10));
+  if (!row) return;
+  applyStarHover(row, parseInt(btn.dataset.star, 10));
 }, { passive: true });
 document.addEventListener('touchend', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
   if (!btn || btn.disabled) return;
   const row = btn.parentElement;
-  if (row) setTimeout(() => clearStarHover(row), 350);
+  if (!row) return;
+  // تأخير قصير بعد اللمس حتى يرى المستخدم الاختيار قبل إرسال التقييم
+  setTimeout(() => clearStarHover(row), 350);
 }, { passive: true });
 document.addEventListener('touchcancel', function(e) {
   const btn = e.target.closest('.star-btn[data-entry-id]');
@@ -862,23 +885,31 @@ document.addEventListener('touchcancel', function(e) {
   if (row) clearStarHover(row);
 }, { passive: true });
 
+// ═══════════════════════════════════════════════════════════════
+//  قسم الأعلى تقييماً
+// ═══════════════════════════════════════════════════════════════
 function renderTopRated() {
   const section = document.getElementById('top-rated-section');
   if (!section) return;
+
+  // منشآت مرتّبة: متوسط تنازلياً، ثم عدد تنازلياً — حد أدنى تقييمان
   const rated = Object.entries(ratingsMap)
     .filter(([, r]) => r.count >= 2)
     .sort((a, b) => b[1].avg - a[1].avg || b[1].count - a[1].count)
     .slice(0, 10);
+
   if (rated.length === 0) { section.style.display = 'none'; return; }
   section.style.display = '';
+
   const entryMap = {};
   allEntries.forEach(e => { if (e.ID) entryMap[e.ID] = e; });
+
   const chips = rated.map(([id, r]) => {
     const entry = entryMap[id];
     if (!entry) return '';
-    const icon = CAT_ICONS[entry.MainCategory] || '📁';
-    const avg  = Number(r.avg).toFixed(1);
-    const cnt  = r.count >= 1000 ? `${(r.count/1000).toFixed(1)}k` : r.count;
+    const icon  = CAT_ICONS[entry.MainCategory] || '📁';
+    const avg   = Number(r.avg).toFixed(1);
+    const cnt   = r.count >= 1000 ? `${(r.count / 1000).toFixed(1)}k` : r.count;
     return `<button type="button" onclick="scrollToEntry('${escHtml(id)}')"
       class="top-rated-chip flex-shrink-0 flex flex-col items-start gap-1 bg-white border border-gray-200 rounded-xl px-3 py-2.5 shadow-sm hover:shadow-md hover:border-amber-300 transition-all active:scale-95">
       <div class="flex items-center gap-1.5 w-full min-w-0">
@@ -891,14 +922,16 @@ function renderTopRated() {
       </div>
     </button>`;
   }).join('');
-  section.innerHTML = `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-    <div class="flex items-center gap-2 mb-3">
-      <span class="text-lg leading-none">🏆</span>
-      <h2 class="text-sm font-bold text-gray-800">الأعلى تقييماً</h2>
-      <span class="text-[11px] text-gray-400">· حسب تقييمات المجتمع</span>
-    </div>
-    <div class="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">${chips}</div>
-  </div>`;
+
+  section.innerHTML = `
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-lg leading-none">🏆</span>
+        <h2 class="text-sm font-bold text-gray-800">الأعلى تقييماً</h2>
+        <span class="text-[11px] text-gray-400">· حسب تقييمات المجتمع</span>
+      </div>
+      <div class="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">${chips}</div>
+    </div>`;
 }
 
 function scrollToEntry(entryId) {
@@ -906,15 +939,25 @@ function scrollToEntry(entryId) {
   if (!card) return;
   card.scrollIntoView({ behavior: 'smooth', block: 'center' });
   card.classList.remove('top-rated-highlight');
-  void card.offsetWidth;
+  void card.offsetWidth; // reflow لإعادة تشغيل الأنيميشن
   card.classList.add('top-rated-highlight');
   setTimeout(() => card.classList.remove('top-rated-highlight'), 1600);
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  مساعد لتهريب HTML (يمنع XSS في data-*)
+// ═══════════════════════════════════════════════════════════════
 function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  بناء خريطة الأقسام
+// ═══════════════════════════════════════════════════════════════
 function buildCategoryMap() {
   categoryMap = {};
   Object.entries(DEFAULT_CATS).forEach(([m, subs]) => { categoryMap[m] = new Set(subs); });
@@ -926,6 +969,9 @@ function buildCategoryMap() {
   });
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  التبويبات
+// ═══════════════════════════════════════════════════════════════
 function renderTabs() {
   const cont = document.getElementById('main-tabs');
   cont.innerHTML = '';
@@ -954,7 +1000,8 @@ function renderSubTabs() {
   const mkS = (label, active) => {
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = label;
-    b.className = `px-3 py-1 rounded-lg text-[11px] font-semibold transition-all border ${active ? 'subtab-active border-transparent' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'}`;
+    b.className = `px-3 py-1 rounded-lg text-[11px] font-semibold transition-all border ${
+      active ? 'subtab-active border-transparent' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'}`;
     b.onclick = () => { activeSub = label; renderSubTabs(); renderGrid(); };
     return b;
   };
@@ -970,13 +1017,15 @@ function selectMain(cat) {
   renderTabs(); renderGrid();
 }
 
+// ─── البحث ───────────────────────────────────────────────────
 function onSearch() {
-  const q = document.getElementById('search-input').value.trim();
-  searchQ = q;
+  searchQ = document.getElementById('search-input').value.trim();
   renderGrid();
-  if (q.length > 2) Logger.log('SEARCH', `بحث: "${q}"`);
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  عرض البطاقات
+// ═══════════════════════════════════════════════════════════════
 function toggleCardDetails(btn) {
   const panel = btn.closest('.entry-card').querySelector('.card-details');
   const open  = panel.classList.toggle('open');
@@ -993,24 +1042,36 @@ function renderGrid() {
   }
   if (searchQ) {
     const q = searchQ.toLowerCase();
-    list = list.filter(e => [e.Name, e.Address, e.SubCategory, e.MainCategory, e.Notes, e.Phone, e.Social].some(v => v && v.toLowerCase().includes(q)));
+    list = list.filter(e =>
+      [e.Name, e.Address, e.SubCategory, e.MainCategory, e.Notes, e.Phone, e.Social]
+        .some(v => v && v.toLowerCase().includes(q))
+    );
   }
+
   document.getElementById('entries-count').textContent =
     searchQ ? `${list.length} نتيجة من أصل ${allEntries.length}` : `${list.length} جهة مسجّلة`;
+
   const grid = document.getElementById('directory-grid');
   grid.innerHTML = '';
+
   if (list.length === 0) {
-    grid.innerHTML = `<div class="col-span-3 flex flex-col items-center py-20 text-center">
-      <div class="text-4xl mb-4">${searchQ ? '🔍' : '➕'}</div>
-      <h3 class="text-lg font-bold text-gray-700 mb-2">${searchQ ? 'لا توجد نتائج' : 'لا توجد جهات مسجّلة هنا بعد'}</h3>
-      <p class="text-sm text-gray-400 max-w-xs">${searchQ ? `لم نجد نتيجة لـ "${escHtml(searchQ)}"` : 'كن أول من يُضيف بيانات هنا!'}</p>
-      ${(!searchQ && _currentUser) ? '<button onclick="toggleForm()" class="mt-4 bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-800">إضافة الآن</button>' : ''}
-    </div>`;
+    grid.innerHTML = `
+      <div class="col-span-3 flex flex-col items-center py-20 text-center">
+        <div class="text-4xl mb-4">${searchQ ? '🔍' : '➕'}</div>
+        <h3 class="text-lg font-bold text-gray-700 mb-2">${searchQ ? 'لا توجد نتائج' : 'لا توجد جهات مسجّلة هنا بعد'}</h3>
+        <p class="text-sm text-gray-400 max-w-xs">${searchQ
+          ? `لم نجد نتيجة لـ "${escHtml(searchQ)}"`
+          : 'كن أول من يُضيف بيانات هنا!'}</p>
+        ${!searchQ ? '<button onclick="toggleForm()" class="mt-4 bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-800">إضافة الآن</button>' : ''}
+      </div>`;
     return;
   }
+
   const userRatings = getUserRatings();
+
   list.forEach(e => {
     const cls = CAT_CLS[e.MainCategory] || { card:'card-default', badge:'badge-default' };
+
     let mapHtml = '';
     if (e.MapLink) {
       const coords = parseMapCoords(e.MapLink);
@@ -1023,26 +1084,35 @@ function renderGrid() {
         </button>`;
       }
     }
+
     let socialHtml = '';
     if (e.Social) {
       const displayUrl = e.Social.replace(/^https?:\/\/(www\.)?/, '');
       socialHtml = `<div class="flex items-center gap-1.5"><span class="text-gray-400 text-[10px]">🔗</span>
-        <a href="${escHtml(e.Social)}" target="_blank" rel="noopener" class="text-blue-600 text-[10px] hover:underline truncate">${escHtml(displayUrl)}</a></div>`;
+        <a href="${escHtml(e.Social)}" target="_blank" rel="noopener"
+          class="text-blue-600 text-[10px] hover:underline truncate">${escHtml(displayUrl)}</a></div>`;
     }
+
     const mainIcon     = CAT_ICONS[e.MainCategory] || '📁';
     const entryId      = e.ID;
     const alreadyRated = entryId !== '' && (entryId in userRatings);
     const userRating   = alreadyRated ? userRatings[entryId] : null;
-    const card         = document.createElement('div');
-    card.className     = `entry-card bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
+
+    const card = document.createElement('div');
+    card.className = `entry-card bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col overflow-hidden ${cls.card}`;
     if (entryId) card.dataset.entryCard = entryId;
+
+    // محتوى التفاصيل المخفية
     const detailsContent = [
       e.Phone  ? `<div class="flex items-center gap-1.5"><span class="flex-shrink-0">📞</span><a href="tel:${escHtml(e.Phone)}" dir="ltr" class="text-blue-600 font-mono hover:underline">${escHtml(e.Phone)}</a></div>` : '',
       e.Notes  ? `<div class="flex items-start gap-1.5"><span class="flex-shrink-0">🕐</span><span>${escHtml(e.Notes)}</span></div>` : '',
       socialHtml,
     ].join('') || `<div class="text-gray-400 text-[10px]">لا توجد معلومات إضافية</div>`;
+
     card.innerHTML = `
       <div class="p-2.5 flex flex-col gap-1.5">
+
+        <!-- ── صف ١: أيقونة · قسم · تصنيف فرعي · رقم ── -->
         <div class="flex items-center justify-between gap-1 min-w-0">
           <div class="flex items-center gap-1 min-w-0 text-[10px] text-gray-400 truncate">
             <span class="flex-shrink-0 leading-none">${mainIcon}</span>
@@ -1052,24 +1122,42 @@ function renderGrid() {
           </div>
           ${e.ID ? `<span class="text-gray-300 text-[9px] font-mono flex-shrink-0">#${escHtml(e.ID)}</span>` : ''}
         </div>
+
+        <!-- ── صف ٢: الاسم ── -->
         <h3 class="text-sm font-bold text-gray-800 leading-snug">${escHtml(e.Name)}</h3>
-        ${e.Address ? `<div class="flex items-start gap-1 text-[11px] text-gray-500 leading-snug"><span class="flex-shrink-0">📍</span><span>${escHtml(e.Address)}</span></div>` : ''}
+
+        <!-- ── صف ٣: العنوان ── -->
+        ${e.Address ? `<div class="flex items-start gap-1 text-[11px] text-gray-500 leading-snug">
+          <span class="flex-shrink-0">📍</span><span>${escHtml(e.Address)}</span>
+        </div>` : ''}
+
+        <!-- ── صف ٤: تقييم + زر الموقع ── -->
         <div class="flex items-center gap-1.5 pt-1.5 border-t border-gray-100 flex-wrap">
-          ${entryId ? `<div class="rating-widget flex-1 min-w-0">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>` : '<div class="flex-1"></div>'}
+          ${entryId
+            ? `<div class="rating-widget flex-1 min-w-0">${buildRatingHTML(entryId, alreadyRated, userRating)}</div>`
+            : '<div class="flex-1"></div>'}
           ${mapHtml}
         </div>
+
       </div>
+
+      <!-- ── زر التفاصيل (دائماً ظاهر) ── -->
       <button class="card-toggle-bar" onclick="toggleCardDetails(this)" aria-expanded="false">
         <span class="card-toggle-label">التفاصيل</span>
         <span class="card-toggle-arrow">▼</span>
       </button>
+
+      <!-- ── قسم التفاصيل المخفية ── -->
       <div class="card-details text-[11px] text-gray-500">${detailsContent}</div>`;
     grid.appendChild(card);
   });
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  قوائم النموذج
+// ═══════════════════════════════════════════════════════════════
 function populateFormDropdowns() {
-  const sel  = document.getElementById('f-main');
+  const sel = document.getElementById('f-main');
   const prev = sel.value;
   sel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
   Object.keys(categoryMap).forEach(c => {
@@ -1114,11 +1202,14 @@ function onSubChange() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  إرسال النموذج
+// ═══════════════════════════════════════════════════════════════
 async function handleSubmit(event) {
   event.preventDefault();
-  if (!_currentUser) { showToast('error', 'يجب تسجيل الدخول أولاً للإضافة'); return; }
   let mainCat = document.getElementById('f-main').value;
   let subCat  = document.getElementById('f-sub').value;
+
   if (mainCat === '__NEW__') {
     mainCat = document.getElementById('f-new-main').value.trim();
     if (!mainCat) { showToast('error', 'يرجى كتابة اسم القسم الرئيسي الجديد'); return; }
@@ -1127,15 +1218,17 @@ async function handleSubmit(event) {
     subCat = document.getElementById('f-new-sub').value.trim();
     if (!subCat) { showToast('error', 'يرجى كتابة اسم التخصص الجديد'); return; }
   }
-  if (!mainCat || !subCat) { showToast('error', 'يرجى اختيار أو كتابة القسم والتخصص أولاً'); return; }
+  if (!mainCat || !subCat) {
+    showToast('error', 'يرجى اختيار أو كتابة القسم والتخصص أولاً');
+    return;
+  }
   let mapValue = '';
   if (pickedLat !== null && pickedLng !== null) {
     mapValue = `https://www.google.com/maps?q=${pickedLat.toFixed(6)},${pickedLng.toFixed(6)}`;
   }
-  const entryName = document.getElementById('f-name').value.trim();
   const payload = {
     [COL.id]:      allEntries.length + 1,
-    [COL.name]:    entryName,
+    [COL.name]:    document.getElementById('f-name').value.trim(),
     [COL.main]:    mainCat,
     [COL.sub]:     subCat,
     [COL.address]: document.getElementById('f-address').value.trim(),
@@ -1155,8 +1248,6 @@ async function handleSubmit(event) {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     showToast('success', `✅ تم إدراج "${payload[COL.name]}" بنجاح في الدليل!`);
-    // تسجيل النشاط
-    Logger.log('ENTRY_ADD', `إضافة منشأة: "${entryName}" — ${mainCat} / ${subCat}`);
     document.getElementById('dir-form').reset();
     document.getElementById('f-new-main').style.display = 'none';
     document.getElementById('f-new-sub').style.display  = 'none';
@@ -1183,6 +1274,9 @@ function toggleForm() {
   document.getElementById('form-chevron').style.transform = formOpen ? 'rotate(180deg)' : '';
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  الخريطة — مُصلَحة للعمل داخل Android WebView
+// ═══════════════════════════════════════════════════════════════
 function toggleMap() {
   mapOpen = !mapOpen;
   document.getElementById('map-section').classList.toggle('open', mapOpen);
@@ -1255,6 +1349,7 @@ function clearMap() {
   document.getElementById('manual-coords-display').classList.add('hidden');
 }
 
+// ─── GPS ─────────────────────────────────────────────────────
 function geoLocate() {
   const btn = document.getElementById('geolocate-btn');
   if (!navigator.geolocation) {
@@ -1275,10 +1370,14 @@ function geoLocate() {
           document.getElementById('map-loading').style.display = 'flex';
           setTimeout(() => {
             initMap();
-            setTimeout(() => { if (leafMap) { placeMarker(lat, lng); leafMap.setView([lat, lng], 16); } }, 700);
+            setTimeout(() => {
+              if (leafMap) { placeMarker(lat, lng); leafMap.setView([lat, lng], 16); }
+            }, 700);
           }, 200);
         }
-      } else { placeMarker(lat, lng); leafMap.setView([lat, lng], 16); }
+      } else {
+        placeMarker(lat, lng); leafMap.setView([lat, lng], 16);
+      }
       document.getElementById('f-lat').value = lat.toFixed(6);
       document.getElementById('f-lng').value = lng.toFixed(6);
       showToast('success', '✅ تم تحديد موقعك بنجاح!');
@@ -1315,6 +1414,9 @@ function onManualCoordsChange() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  لوحة الخريطة المضمّنة
+// ═══════════════════════════════════════════════════════════════
 let viewMap = null, viewMarker = null;
 
 function parseMapCoords(link) {
@@ -1334,7 +1436,6 @@ function showInlineMap(lat, lng, name) {
   if (viewMap) { try { viewMap.off(); viewMap.remove(); } catch(_){} viewMap=null; viewMarker=null; }
   panel.classList.add('open');
   setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
-  Logger.log('MAP_VIEW', `عرض خريطة: ${name || ''}`);
   setTimeout(() => {
     const c = document.getElementById('view-leaflet-map');
     if (!c || c.offsetHeight === 0 || c.offsetWidth === 0) {
@@ -1356,11 +1457,16 @@ function _initViewMap(lat, lng, name) {
       attribution:'© OpenStreetMap © CARTO', subdomains:'abcd', maxZoom:20, crossOrigin:'anonymous',
     }).addTo(viewMap);
     viewMarker = L.marker([lat, lng]).addTo(viewMap);
-    viewMarker.bindPopup(`<b style="font-family:Cairo,sans-serif;font-size:13px;direction:rtl">${name || 'الموقع'}</b>`, { closeButton:false, autoPan:false }).openPopup();
+    viewMarker.bindPopup(
+      `<b style="font-family:Cairo,sans-serif;font-size:13px;direction:rtl">${name || 'الموقع'}</b>`,
+      { closeButton:false, autoPan:false }
+    ).openPopup();
     const fix = () => { if (viewMap) { viewMap.invalidateSize(true); viewMap.setView([lat,lng],16); } };
     [100,400,900,1800].forEach(t => setTimeout(fix, t));
     status.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  } catch { status.textContent = '⚠️ تعذّر تحميل الخريطة'; }
+  } catch {
+    status.textContent = '⚠️ تعذّر تحميل الخريطة';
+  }
 }
 
 function hideInlineMap() {
@@ -1371,6 +1477,9 @@ function hideInlineMap() {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hideInlineMap(); });
 
+// ═══════════════════════════════════════════════════════════════
+//  Toast
+// ═══════════════════════════════════════════════════════════════
 let toastTimer;
 function showToast(type, msg) {
   const t = document.getElementById('toast');
@@ -1380,6 +1489,5 @@ function showToast(type, msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.style.display = 'none'; }, 5000);
 }
-</script>
-</body>
+</script></body>
 </html>
