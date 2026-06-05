@@ -892,6 +892,7 @@ function togglePwVis(inputId, btn) {
    STATE
    ════════════════════════════════════════════ */
 let allData = [];
+let pendingEntries = [];   /* بطاقات مضافة محلياً ولم تُثبَّت بعد في Sheetson */
 let activeTab = '';
 let activeSubTab = '';
 let formMap = null;
@@ -943,7 +944,7 @@ async function fetchData() {
       skip += limit;
     }
 
-    allData = allRows.map((r, i) => {
+    const serverData = allRows.map((r, i) => {
       const name = col(r, 'اسم المكان', 'الاسم', 'name');
       const main = col(r, 'القسم', 'القسم الرئيسي', 'main');
       return {
@@ -962,6 +963,13 @@ async function fetchData() {
         ratingCount: parseInt(col(r, 'عدد_التقييمات', 'عدد التقييمات')) || 0,
       };
     }).filter(r => r.name.trim() !== '');
+
+    /* ── أزل من pending أي بطاقة وصلت من الخادم ── */
+    const serverIds = new Set(serverData.map(r => r.id));
+    pendingEntries = pendingEntries.filter(p => !serverIds.has(p.id));
+
+    /* ── اجمع: البطاقات المعلّقة أولاً ثم بيانات الخادم ── */
+    allData = [...pendingEntries, ...serverData];
 
     document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
 
@@ -1432,7 +1440,9 @@ async function handleSubmit(e) {
       status:      'نشط',
       ratingCount: 0,
     };
-    allData.unshift(localEntry);   /* أضفها في الأعلى */
+    /* احفظها في pending حتى يؤكدها الخادم */
+    pendingEntries.unshift(localEntry);
+    allData = [...pendingEntries, ...allData.filter(r => !pendingEntries.some(p => p.id === r.id))];
 
     buildTabs();
     buildSubFilter();
@@ -1445,8 +1455,8 @@ async function handleSubmit(e) {
     document.getElementById('form-body').classList.remove('open');
     document.getElementById('form-chevron').style.transform = '';
 
-    /* مزامنة خلفية بعد 3 ثوانٍ لضمان التوافق مع Sheetson */
-    setTimeout(() => fetchData(), 3000);
+    /* مزامنة خلفية — pending تبقى حتى يُرجعها الخادم */
+    setTimeout(() => fetchData(), 4000);
 
   } catch (err) {
     showToast('خطأ في الحفظ: ' + err.message, '#ef4444');
