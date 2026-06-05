@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>دليل مدينة حمص الخدمي والتجاري</title>
+  <meta name="description" content="منصة تشاركية مفتوحة لتسجيل الأطباء، المحامين، الصيدليات، والمحلات في حمص" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { sans: ['Cairo', 'sans-serif'] } } }
+    }
+  </script>
+  <style>
+    * { font-family: 'Cairo', sans-serif; box-sizing: border-box; }
+    body { background: #f8fafc !important; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(148,163,184,.4); border-radius: 99px; }
+    .tab-active    { background:#1d4ed8!important; color:#fff!important; border-color:#1d4ed8!important; box-shadow:0 4px 12px rgba(29,78,216,.25); }
+    .subtab-active { background:#1e293b!important; color:#fff!important; }
+    .card-medical  { border-top:3px solid #10b981; }
+    .card-legal    { border-top:3px solid #8b5cf6; }
+    .card-shopping { border-top:3px solid #f59e0b; }
+    .card-food     { border-top:3px solid #f43f5e; }
+    .card-services { border-top:3px solid #3b82f6; }
+    .card-default  { border-top:3px solid #6b7280; }
+    .badge-medical  { background:#d1fae5; color:#065f46; }
+    .badge-legal    { background:#ede9fe; color:#4c1d95; }
+    .badge-shopping { background:#fef3c7; color:#78350f; }
+    .badge-food     { background:#ffe4e6; color:#9f1239; }
+    .badge-services { background:#dbeafe; color:#1e3a8a; }
+    .badge-default  { background:#f3f4f6; color:#374151; }
+    #toast {
+      position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%);
+      padding:.75rem 1.5rem; border-radius:1rem; font-weight:600; font-size:.875rem;
+      color:#fff; z-index:9999; display:none; white-space:nowrap;
+      box-shadow:0 10px 25px rgba(0,0,0,.2); animation:slideUp .25s ease;
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(12px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+    .skeleton { animation:pulse 1.5s ease-in-out infinite; background:#e5e7eb; border-radius:.5rem; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+    #form-body  { display:none; }
+    #form-body.open { display:block; }
+    #map-section { display:none; }
+    #map-section.open { display:block; }
+    #leaflet-map {
+      height:260px; width:100%; border-radius:12px; overflow:hidden;
+      border:1px solid #e5e7eb; background:#e5e7eb; position:relative; z-index:1;
+    }
+    .leaflet-pane { z-index:1!important; }
+    .leaflet-top, .leaflet-bottom { z-index:2!important; }
+    #view-map-panel {
+      display:none; background:#fff; border-radius:16px;
+      border:1px solid #e2e8f0; box-shadow:0 4px 24px rgba(0,0,0,.10);
+      overflow:hidden; margin-bottom:8px;
+    }
+    #view-map-panel.open { display:block; }
+    #view-map-panel-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-bottom:1px solid #f1f5f9; background:#f8fafc;
+    }
+    #view-map-title {
+      font-size:14px; font-weight:700; color:#1e293b; flex:1;
+      text-align:right; overflow:hidden; text-overflow:ellipsis;
+      white-space:nowrap; margin-left:8px;
+    }
+    #close-view-map-btn {
+      display:flex; align-items:center; gap:4px; padding:5px 12px;
+      border-radius:8px; background:#fee2e2; border:1px solid #fca5a5;
+      color:#dc2626; font-size:12px; font-weight:700; cursor:pointer;
+      flex-shrink:0; transition:background .15s;
+    }
+    #close-view-map-btn:hover { background:#fecaca; }
+    #view-leaflet-map { display:block; width:100%; height:340px; background:#e5e7eb; }
+    #view-map-status {
+      padding:6px 16px; font-size:11px; color:#94a3b8; text-align:center;
+      font-family:monospace; background:#f8fafc; border-top:1px solid #f1f5f9;
+    }
+    .dark-mode #view-map-panel  { background:#1e293b; border-color:#334155; }
+    .dark-mode #view-map-panel-header { background:#0f172a; border-color:#334155; }
+    .dark-mode #view-map-title  { color:#f1f5f9; }
+    .dark-mode #view-map-status { background:#0f172a; border-color:#334155; }
+    .dot-pulse {
+      display:inline-block; width:.5rem; height:.5rem; background:#10b981;
+      border-radius:50%; animation:dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
+    .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
+    .card-details            { display:none; flex-direction:column; gap:3px; padding:6px 10px 8px; border-top:1px solid #f3f4f6; }
+    .card-details.open       { display:flex; }
+    .card-toggle-bar         { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:6px 10px; background:#f8fafc; border:none; border-top:1px solid #e5e7eb; cursor:pointer; font-size:11px; font-weight:600; color:#3b82f6; transition:background .15s; }
+    .card-toggle-bar:hover   { background:#eff6ff; }
+    .card-toggle-bar:active  { background:#dbeafe; }
+    .card-toggle-arrow       { font-size:9px; transition:transform .2s; display:inline-block; }
+    .card-toggle-bar[aria-expanded="true"] .card-toggle-arrow { transform:rotate(180deg); }
+
+    /* ═══ Star Rating ═══ */
+    .star-row { display:flex; align-items:flex-end; gap:2px; direction:ltr; }
+    .star-btn {
+      background:none; border:none; padding:2px 1px; cursor:pointer;
+      line-height:1; color:#d1d5db;
+      transition:color .12s ease, transform .12s ease, text-shadow .12s ease, opacity .12s ease;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation; will-change:transform;
+    }
+    .star-btn:disabled { cursor:default; }
+    .star-btn[data-star="1"] { font-size:14px; }
+    .star-btn[data-star="2"] { font-size:17px; }
+    .star-btn[data-star="3"] { font-size:20px; }
+    .star-btn[data-star="4"] { font-size:23px; }
+    .star-btn[data-star="5"] { font-size:27px; }
+    .star-btn.filled  { color:#f59e0b; }
+    .star-btn.hover-fill {
+      color:#f59e0b !important;
+      text-shadow:0 0 10px rgba(245,158,11,.8), 0 0 4px rgba(245,158,11,.5);
+    }
+    .star-btn.hover-fill[data-star="1"] { transform:scale(1.2); }
+    .star-btn.hover-fill[data-star="2"] { transform:scale(1.18); }
+    .star-btn.hover-fill[data-star="3"] { transform:scale(1.15); }
+    .star-btn.hover-fill[data-star="4"] { transform:scale(1.12); }
+    .star-btn.hover-fill[data-star="5"] { transform:scale(1.1); }
+    .star-btn.hover-dim {
+      color:#d1d5db !important; opacity:.4;
+      transform:scale(0.9); text-shadow:none;
+    }
+    .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
+    @keyframes starPulse { from{opacity:.6} to{opacity:1} }
+    .rating-avg-badge { font-size:12px; font-weight:700; color:#d97706; line-height:1; }
+    .rating-avg-sep { font-size:9px; color:#9ca3af; font-weight:400; }
+    .rating-cnt-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    .rated-badge {
+      display:inline-flex; align-items:center; gap:3px; font-size:10px;
+      font-weight:700; color:#059669; background:#d1fae5; border-radius:6px; padding:2px 6px;
+    }
+    .dark-mode .star-btn            { color:#4b5563; }
+    .dark-mode .star-btn.filled     { color:#f59e0b; }
+    .dark-mode .star-btn.hover-dim  { color:#374151 !important; }
+    .dark-mode .rating-avg-badge    { color:#f59e0b; }
+    .dark-mode .rating-avg-sep,
+    .dark-mode .rating-cnt-label,
+    .dark-mode .rating-label        { color:#64748b; }
+    .dark-mode .rated-badge         { background:#064e3b; color:#6ee7b7; }
+
+    /* ═══ Top Rated Section ═══ */
+    .top-rated-chip { min-width:110px; max-width:140px; cursor:pointer; text-align:right; }
+    .scrollbar-hide::-webkit-scrollbar { display:none; }
+    .scrollbar-hide { -ms-overflow-style:none; scrollbar-width:none; }
+    .top-rated-highlight { animation:highlightPulse 1.5s ease-out; }
+    @keyframes highlightPulse {
+      0%  { box-shadow:0 0 0 3px rgba(245,158,11,.6); }
+      100%{ box-shadow:0 0 0 0 rgba(245,158,11,0); }
+    }
+    .dark-mode .top-rated-chip { background:#1e293b!important; border-color:#334155!important; }
+
+    /* ═══ DARK MODE ═══ */
+    .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
+    .dark-mode .bg-white        { background:#1e293b!important; }
+    .dark-mode .bg-gray-50      { background:#0f172a!important; }
+    .dark-mode .bg-blue-50      { background:rgba(29,78,216,.15)!important; }
+    .dark-mode .bg-amber-50     { background:rgba(180,83,9,.15)!important; }
+    .dark-mode .text-gray-800   { color:#f1f5f9!important; }
+    .dark-mode .text-gray-700   { color:#e2e8f0!important; }
+    .dark-mode .text-gray-600   { color:#cbd5e1!important; }
+    .dark-mode .text-gray-500   { color:#94a3b8!important; }
+    .dark-mode .text-gray-400   { color:#64748b!important; }
+    .dark-mode .border-gray-100 { border-color:#334155!important; }
+    .dark-mode .border-gray-200 { border-color:#334155!important; }
+    .dark-mode input, .dark-mode select, .dark-mode textarea { background:#0f172a!important; border-color:#334155!important; color:#f1f5f9!important; }
+    .dark-mode input::placeholder { color:#475569!important; }
+    .dark-mode .bg-gray-100     { background:#334155!important; }
+    .dark-mode .text-blue-800   { color:#93c5fd!important; }
+    .dark-mode .badge-medical   { background:#064e3b!important; color:#6ee7b7!important; }
+    .dark-mode .badge-legal     { background:#2e1065!important; color:#c4b5fd!important; }
+    .dark-mode .badge-shopping  { background:#451a03!important; color:#fde68a!important; }
+    .dark-mode .badge-food      { background:#4c0519!important; color:#fda4af!important; }
+    .dark-mode .badge-services  { background:#1e3a8a!important; color:#93c5fd!important; }
+    .dark-mode .badge-default   { background:#1f2937!important; color:#9ca3af!important; }
+    .dark-mode .subtab-active   { background:#3b82f6!important; }
+    .dark-mode .skeleton        { background:#374151!important; }
+    .dark-mode .entry-card:hover { box-shadow:0 12px 24px rgba(0,0,0,.4); }
+    input[type="search"]::-webkit-search-cancel-button { display:none; }
+
+    /* ═══ LOGIN MODAL ═══ */
+    #login-overlay {
+      position:fixed; inset:0; z-index:10000;
+      background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
+      display:none; align-items:center; justify-content:center;
+    }
+    #login-overlay.open { display:flex; }
+    #login-box {
+      background:#fff; border-radius:24px; padding:36px 32px; width:92%; max-width:420px;
+      box-shadow:0 24px 60px rgba(0,0,0,.25); animation:loginDrop .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes loginDrop { from{opacity:0;transform:translateY(-24px) scale(.96)} to{opacity:1;transform:none} }
+    .dark-mode #login-box { background:#1e293b; }
+    .login-tab { padding:8px 20px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; border:2px solid transparent; }
+    .login-tab.active { background:#1d4ed8; color:#fff; border-color:#1d4ed8; }
+    .login-tab:not(.active) { background:#f1f5f9; color:#64748b; }
+    .dark-mode .login-tab:not(.active) { background:#334155; color:#94a3b8; }
+    .login-input {
+      width:100%; border:2px solid #e2e8f0; border-radius:14px; padding:12px 16px;
+      font-size:14px; outline:none; transition:border-color .2s;
+      font-family:'Cairo',sans-serif; background:#f8fafc; color:#1e293b;
+    }
+    .login-input:focus { border-color:#1d4ed8; background:#fff; }
+    .dark-mode .login-input { background:#0f172a; border-color:#334155; color:#f1f5f9; }
+    .dark-mode .login-input:focus { border-color:#3b82f6; }
+    .btn-login {
+      width:100%; background:linear-gradient(135deg,#1d4ed8,#6366f1); color:#fff;
+      border:none; border-radius:14px; padding:13px; font-size:15px; font-weight:700;
+      cursor:pointer; transition:all .2s; font-family:'Cairo',sans-serif;
+      box-shadow:0 4px 16px rgba(29,78,216,.35);
+    }
+    .btn-login:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(29,78,216,.4); }
+    .btn-login:active { transform:none; }
+    .btn-login:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+    /* ═══ ADMIN BAR ═══ */
+    #admin-bar {
+      display:none; background:linear-gradient(135deg,#0f172a,#1e293b);
+      padding:8px 16px; align-items:center; justify-content:space-between; gap:8px;
+    }
+    #admin-bar.visible { display:flex; }
+    #admin-bar .admin-user { font-size:12px; color:#94a3b8; }
+    #admin-bar .admin-user span { color:#60a5fa; font-weight:700; }
+
+    /* ═══ EDIT MODAL ═══ */
+    #edit-overlay {
+      position:fixed; inset:0; z-index:9900;
+      background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
+      display:none; align-items:flex-start; justify-content:center;
+      padding:20px 12px; overflow-y:auto;
+    }
+    #edit-overlay.open { display:flex; }
+    #edit-box {
+      background:#fff; border-radius:24px; padding:28px 24px;
+      width:100%; max-width:600px; box-shadow:0 24px 60px rgba(0,0,0,.25);
+      animation:loginDrop .3s cubic-bezier(.34,1.56,.64,1);
+      margin:auto;
+    }
+    .dark-mode #edit-box { background:#1e293b; }
+  </style>
+</head>
+
+<body id="body" class="min-h-screen flex flex-col text-gray-800">
+
+<!-- ══════════════ LOGIN OVERLAY ══════════════ -->
+<div id="login-overlay">
+  <div id="login-box">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold text-gray-800 dark:text-white">
+        <span class="text-blue-700">🔐</span> بوابة المشرفين
+      </h2>
+      <button onclick="closeLogin()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div id="login-tabs" class="flex gap-2 mb-6 p-1 bg-gray-100 rounded-2xl" style="display:flex">
+      <button class="login-tab active flex-1" onclick="switchLoginTab('login')" id="tab-login">تسجيل الدخول</button>
+      <button class="login-tab flex-1" onclick="switchLoginTab('register')" id="tab-register">إنشاء حساب</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form-section">
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1.5">اسم المستخدم</label>
+          <input id="login-username" type="text" class="login-input" placeholder="admin" autocomplete="username" />
+        </div>
+        <div class="relative">
+          <label class="block text-xs font-bold text-gray-500 mb-1.5">كلمة المرور</label>
+          <input id="login-password" type="password" class="login-input" placeholder="••••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')doLogin()" />
+          <button type="button" onclick="togglePwVis('login-password',this)"
+            class="absolute left-3 top-9 text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="login-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mb-4 font-bold text-center"></div>
+      <button onclick="doLogin()" id="btn-do-login" class="btn-login">دخول</button>
+      <p class="text-center text-xs text-gray-400 mt-4">
+        بيانات المشرف الافتراضية: <b class="text-blue-600">admin</b> / <b class="text-blue-600">homs2024</b>
+      </p>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form-section" style="display:none">
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1.5">اسم المستخدم الجديد</label>
+          <input id="reg-username" type="text" class="login-input" placeholder="اسم المستخدم" autocomplete="username" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1.5">كلمة المرور</label>
+          <input id="reg-password" type="password" class="login-input" placeholder="••••••••" autocomplete="new-password" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1.5">تأكيد كلمة المرور</label>
+          <input id="reg-password2" type="password" class="login-input" placeholder="••••••••" autocomplete="new-password"
+            onkeydown="if(event.key==='Enter')doRegister()" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1.5">رمز المشرف الرئيسي</label>
+          <input id="reg-master" type="password" class="login-input" placeholder="رمز سري للتسجيل" autocomplete="off" />
+          <p class="text-[10px] text-gray-400 mt-1">يتطلب رمزاً سرياً للتسجيل — تواصل مع مدير النظام</p>
+        </div>
+      </div>
+      <div id="reg-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mb-4 font-bold text-center"></div>
+      <div id="reg-success" class="hidden text-xs text-green-700 bg-green-50 rounded-xl p-3 mb-4 font-bold text-center"></div>
+      <button onclick="doRegister()" class="btn-login">إنشاء الحساب</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EDIT OVERLAY ══════════════ -->
+<div id="edit-overlay">
+  <div id="edit-box">
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="text-lg font-bold text-gray-800">✏️ تعديل المدخل</h3>
+      <button onclick="closeEdit()" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input type="hidden" id="edit-rowIndex" />
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري *</label>
+        <input id="edit-name" type="text" class="login-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
+        <input id="edit-main" type="text" class="login-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">التخصص / القسم الفرعي</label>
+        <input id="edit-sub" type="text" class="login-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص</label>
+        <input id="edit-address" type="text" class="login-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
+        <input id="edit-phone" type="text" dir="ltr" class="login-input text-left" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام</label>
+        <input id="edit-notes" type="text" class="login-input" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
+        <input id="edit-social" type="url" dir="ltr" class="login-input text-left" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-bold text-gray-600 mb-1">إحداثيات الخريطة (خط العرض,خط الطول)</label>
+        <input id="edit-coords" type="text" dir="ltr" class="login-input text-left" placeholder="34.7294,36.7095" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">الحالة</label>
+        <select id="edit-status" class="login-input">
+          <option value="نشط">نشط</option>
+          <option value="مغلق">مغلق</option>
+          <option value="غير معروف">غير معروف</option>
+        </select>
+      </div>
+    </div>
+    <div id="edit-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mt-4 font-bold text-center"></div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="saveEdit()" class="btn-login flex-1">💾 حفظ التعديلات</button>
+      <button onclick="closeEdit()" class="flex-1 border-2 border-gray-200 rounded-xl py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ADMIN BAR ══════════════ -->
+<div id="admin-bar">
+  <div class="admin-user">مرحباً، <span id="admin-name-display"></span> 👋</div>
+  <div class="flex items-center gap-2">
+    <span class="text-xs text-emerald-400 font-bold flex items-center gap-1">
+      <span class="dot-pulse bg-emerald-400 w-2 h-2"></span> وضع المشرف
+    </span>
+    <button onclick="doLogout()"
+      class="text-xs font-bold text-red-400 hover:text-red-300 border border-red-800 rounded-lg px-3 py-1 hover:bg-red-900/30 transition-all">
+      خروج
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header class="relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-l from-blue-900 via-blue-800 to-indigo-900"></div>
+  <div class="relative max-w-7xl mx-auto px-4 py-5 sm:py-7">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-center sm:text-right">
+        <div class="flex items-center justify-center sm:justify-start gap-3 mb-1">
+          <div class="bg-white/20 rounded-xl p-2">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">دليل مدينة حمص الخدمي والتجاري</h1>
+        </div>
+        <p class="text-blue-200 text-sm">منصة تشاركية — أضف طبيبك، محلّك، وخدمتك وشاركها فوراً</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-center hidden sm:block">
+          <p class="text-emerald-300 text-xs font-bold">🔗 Sheetson API</p>
+          <p id="hdr-count" class="text-white/70 text-[10px] mt-0.5">جاري التحميل...</p>
+        </div>
+        <button onclick="openLogin()" id="btn-login-header" title="تسجيل دخول المشرف"
+          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </button>
+        <button onclick="fetchData()" title="تحديث"
+          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
+          <svg id="refresh-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </button>
+        <button onclick="toggleDark()" title="تبديل المظهر"
+          class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
+          <svg id="dark-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
+
+  <div id="error-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2">
+    ⚠️ <span id="error-msg"></span>
+  </div>
+
+  <!-- ══ نموذج الإضافة ══ -->
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <button type="button" onclick="toggleForm()"
+      class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-all">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-100 text-blue-700 rounded-xl p-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-gray-800 text-sm">إضافة منشأة / طبيب / مكتب / محل</p>
+          <p class="text-xs text-gray-400 mt-0.5" id="form-hint-txt">انقر لفتح نموذج الإضافة (يتطلب تسجيل الدخول)</p>
+        </div>
+      </div>
+      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s"
+        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+
+    <div id="form-body">
+      <div class="border-t border-gray-100 p-5">
+        <div class="bg-blue-50 border-r-4 border-blue-500 rounded-l-xl p-3 mb-5">
+          <p class="text-xs text-blue-800 leading-relaxed">
+            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة
+            وسيظهر تبويبه تلقائياً بعد الحفظ.
+          </p>
+        </div>
+
+        <form id="dir-form" onsubmit="handleSubmit(event)"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري / اسم المهني *</label>
+            <input id="f-name" type="text" required placeholder="مثال: د. أحمد فلان — عيادة الأطفال"
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
+            <select id="f-main" onchange="onMainChange()" required
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="">— اختر القسم الرئيسي —</option>
+            </select>
+            <input id="f-new-main" type="text" placeholder="اكتب اسم القسم الرئيسي الجديد" style="display:none"
+              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">التصنيف الفرعي / التخصص *</label>
+            <select id="f-sub" onchange="onSubChange()" required
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="">— اختر التصنيف الفرعي —</option>
+            </select>
+            <input id="f-new-sub" type="text" placeholder="اكتب اسم التخصص الجديد" style="display:none"
+              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص *</label>
+            <input id="f-address" type="text" required placeholder="مثال: الإنشاءات — شارع البرازيل"
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
+            <input id="f-phone" type="text" dir="ltr" placeholder="09xxxxxxxx"
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام / ملاحظات</label>
+            <input id="f-notes" type="text" placeholder="مثال: السبت–الأربعاء (4–8 مساءً)"
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
+            <input id="f-social" type="url" dir="ltr" placeholder="https://facebook.com/..."
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+
+          <div class="md:col-span-2 lg:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 mb-1">الموقع الجغرافي (اختياري)</label>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="toggleMap()"
+                class="flex items-center gap-2 text-xs text-blue-700 border border-blue-200 bg-blue-50 px-3 py-2 rounded-xl hover:bg-blue-100 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                </svg>
+                <span id="map-toggle-txt">تحديد الموقع على الخريطة</span>
+              </button>
+              <button type="button" onclick="locateMe()"
+                class="flex items-center gap-2 text-xs text-emerald-700 border border-emerald-200 bg-emerald-50 px-3 py-2 rounded-xl hover:bg-emerald-100 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                موقعي الحالي
+              </button>
+              <span id="coords-badge" class="hidden text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl font-mono"></span>
+            </div>
+            <div id="map-section" class="mt-3">
+              <div id="leaflet-map"></div>
+              <p class="text-[10px] text-gray-400 mt-1 text-center">انقر على الخريطة لتحديد الموقع</p>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 lg:col-span-3 flex gap-3 pt-2">
+            <button type="submit" id="submit-btn"
+              class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+              💾 حفظ المدخل
+            </button>
+            <button type="button" onclick="resetForm()"
+              class="border border-gray-200 text-gray-600 font-bold py-2.5 px-5 rounded-xl text-sm hover:bg-gray-50 transition-all">
+              مسح
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ الأعلى تقييماً ══ -->
+  <div id="top-rated-section" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hidden">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-lg">⭐</span>
+      <p class="font-bold text-gray-800 text-sm">الأعلى تقييماً</p>
+    </div>
+    <div id="top-rated-list" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1"></div>
+  </div>
+
+  <!-- ══ خريطة العرض ══ -->
+  <div id="view-map-panel">
+    <div id="view-map-panel-header">
+      <button id="close-view-map-btn" onclick="closeViewMap()">✕ إغلاق</button>
+      <span id="view-map-title">الموقع على الخريطة</span>
+    </div>
+    <div id="view-leaflet-map"></div>
+    <div id="view-map-status"></div>
+  </div>
+
+  <!-- ══ بحث وتصفية ══ -->
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="relative flex-grow">
+        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input id="search-input" type="search" placeholder="ابحث بالاسم، العنوان، التخصص..."
+          oninput="renderCards()" class="w-full border border-gray-200 rounded-xl pr-9 pl-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+      </div>
+      <select id="sub-filter" onchange="renderCards()"
+        class="border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none min-w-[160px]">
+        <option value="">كل التخصصات</option>
+      </select>
+      <select id="status-filter" onchange="renderCards()"
+        class="border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none min-w-[130px]">
+        <option value="">كل الحالات</option>
+        <option value="نشط">نشط فقط</option>
+        <option value="مغلق">مغلق فقط</option>
+      </select>
+    </div>
+    <div id="result-count" class="text-xs text-gray-400 mt-2 text-left hidden"></div>
+  </div>
+
+  <!-- ══ تبويبات الأقسام ══ -->
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div id="tabs-bar" class="flex flex-wrap gap-2 p-3 border-b border-gray-100"></div>
+    <div id="subtabs-bar" class="flex flex-wrap gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100 hidden"></div>
+    <div id="cards-grid" class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[200px]">
+      <!-- skeleton -->
+      <div class="skeleton h-32 rounded-2xl"></div>
+      <div class="skeleton h-32 rounded-2xl"></div>
+      <div class="skeleton h-32 rounded-2xl"></div>
+      <div class="skeleton h-32 rounded-2xl"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="text-center text-xs text-gray-400 py-4">
+  دليل مدينة حمص © 2024 — مدعوم بـ Sheetson API
+</footer>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════
+   SHEETSON API CONFIG
+   ════════════════════════════════════════════ */
+const API_KEY        = 'eNx0s9qu7lEIuykRKQdhjaq6vlt75XAd7d5JJGiTOlvD15vdNndNvEKLiE4';
+const SPREADSHEET_ID = '1H219HS_3WqfGn_mz8sHvtTx0rlKcQtiDgx7G0nzzfNI';
+const SHEET_NAME     = 'Sheet1';
+const BASE_URL       = 'https://api.sheetson.com';
+
+function buildUrl(endpoint, params = {}) {
+  const url = new URL(`${BASE_URL}/${endpoint}`);
+  url.searchParams.append('apiKey', API_KEY);
+  url.searchParams.append('spreadsheetId', SPREADSHEET_ID);
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null) url.searchParams.append(k, String(v));
+  });
+  return url.toString();
+}
+
+async function apiGet(params = {}) {
+  const r = await fetch(buildUrl(SHEET_NAME, params));
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPost(data) {
+  const r = await fetch(buildUrl(SHEET_NAME), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPatch(rowIndex, data) {
+  const r = await fetch(buildUrl(`${SHEET_NAME}/${rowIndex}`), {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiDelete(rowIndex) {
+  const r = await fetch(buildUrl(`${SHEET_NAME}/${rowIndex}`), { method: 'DELETE' });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return true;
+}
+
+/* ════════════════════════════════════════════
+   AUTH SYSTEM (localStorage-based, static site)
+   ════════════════════════════════════════════ */
+const MASTER_CODE = 'HOMS_ADMIN_2024'; // Change this secret code for new registrations
+
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem('homs_users') || '[]'); } catch { return []; }
+}
+function saveUsers(users) { localStorage.setItem('homs_users', JSON.stringify(users)); }
+function getCurrentUser() { return sessionStorage.getItem('homs_current_user') || null; }
+function setCurrentUser(u) { sessionStorage.setItem('homs_current_user', u); }
+function clearCurrentUser() { sessionStorage.removeItem('homs_current_user'); }
+
+// Ensure default admin exists
+(function ensureDefaultAdmin() {
+  const users = getUsers();
+  if (!users.find(u => u.username === 'admin')) {
+    users.push({ username: 'admin', password: btoa('homs2024') });
+    saveUsers(users);
+  }
+})();
+
+function doLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.classList.add('hidden');
+
+  if (!username || !password) {
+    showLoginError('الرجاء إدخال اسم المستخدم وكلمة المرور'); return;
+  }
+
+  const users = getUsers();
+  const user = users.find(u => u.username === username && u.password === btoa(password));
+  if (!user) { showLoginError('اسم المستخدم أو كلمة المرور غير صحيحة'); return; }
+
+  setCurrentUser(username);
+  closeLogin();
+  updateAuthUI();
+  showToast('✅ مرحباً ' + username + '! أنت الآن في وضع المشرف', '#059669');
+}
+
+function doRegister() {
+  const username = document.getElementById('reg-username').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const password2 = document.getElementById('reg-password2').value;
+  const master = document.getElementById('reg-master').value;
+  const errEl = document.getElementById('reg-error');
+  const sucEl = document.getElementById('reg-success');
+  errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+
+  if (!username || !password) { showRegError('الرجاء ملء جميع الحقول'); return; }
+  if (username.length < 3) { showRegError('اسم المستخدم يجب أن يكون 3 أحرف على الأقل'); return; }
+  if (password.length < 6) { showRegError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+  if (password !== password2) { showRegError('كلمتا المرور غير متطابقتين'); return; }
+  if (master !== MASTER_CODE) { showRegError('رمز المشرف غير صحيح'); return; }
+
+  const users = getUsers();
+  if (users.find(u => u.username === username)) { showRegError('اسم المستخدم موجود مسبقاً'); return; }
+
+  users.push({ username, password: btoa(password) });
+  saveUsers(users);
+
+  sucEl.textContent = '✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.';
+  sucEl.classList.remove('hidden');
+  setTimeout(() => switchLoginTab('login'), 2000);
+}
+
+function doLogout() {
+  clearCurrentUser();
+  updateAuthUI();
+  showToast('👋 تم تسجيل الخروج', '#64748b');
+}
+
+function updateAuthUI() {
+  const user = getCurrentUser();
+  const adminBar = document.getElementById('admin-bar');
+  const btnLogin = document.getElementById('btn-login-header');
+  const nameDisplay = document.getElementById('admin-name-display');
+  const hintTxt = document.getElementById('form-hint-txt');
+
+  if (user) {
+    adminBar.classList.add('visible');
+    nameDisplay.textContent = user;
+    btnLogin.style.display = 'none';
+    if (hintTxt) hintTxt.textContent = 'انقر لفتح نموذج الإضافة';
+  } else {
+    adminBar.classList.remove('visible');
+    btnLogin.style.display = '';
+    if (hintTxt) hintTxt.textContent = 'انقر لفتح نموذج الإضافة (يتطلب تسجيل الدخول)';
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.classList.remove('hidden');
+}
+function showRegError(msg) {
+  const el = document.getElementById('reg-error');
+  el.textContent = msg; el.classList.remove('hidden');
+}
+
+/* ══ Login UI ══ */
+function openLogin() {
+  if (getCurrentUser()) { doLogout(); return; }
+  document.getElementById('login-overlay').classList.add('open');
+  document.getElementById('login-username').focus();
+}
+function closeLogin() { document.getElementById('login-overlay').classList.remove('open'); }
+
+function switchLoginTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('login-form-section').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form-section').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+function togglePwVis(inputId, btn) {
+  const input = document.getElementById(inputId);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+/* ════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════ */
+let allData = [];
+let activeTab = '';
+let activeSubTab = '';
+let formMap = null;
+let formMarker = null;
+let viewMap = null;
+let viewMarker = null;
+let formLat = null;
+let formLng = null;
+const userRatings = {};
+
+/* ════════════════════════════════════════════
+   FETCH DATA
+   ════════════════════════════════════════════ */
+async function fetchData() {
+  showError(null);
+  const icon = document.getElementById('refresh-icon');
+  icon.style.animation = 'spin 1s linear infinite';
+  icon.style.setProperty('animation', 'spin 1s linear infinite');
+
+  try {
+    let allRows = [];
+    let skip = 0;
+    const limit = 100;
+    while (true) {
+      const res = await apiGet({ limit, skip });
+      const rows = res.results || res || [];
+      if (!Array.isArray(rows) || rows.length === 0) break;
+      allRows = allRows.concat(rows);
+      if (rows.length < limit) break;
+      skip += limit;
+    }
+
+    allData = allRows.map((r, i) => ({
+      rowIndex: r.rowIndex || (i + 2),
+      id:       r['معرف  id'] || r['معرف id'] || String(i + 1),
+      name:     r['اسم المكان'] || '',
+      main:     r['القسم'] || '',
+      sub:      r['الوصف'] || '',
+      address:  r['العنوان بالتفصيل'] || '',
+      coords:   r['الخريطة'] || '',
+      phone:    r['الهاتف / الجوال'] || '',
+      notes:    r['اوقات الدوام '] || r['اوقات الدوام'] || '',
+      social:   r['رابط الفيسبوك / انستغرام'] || '',
+      rating:   parseFloat(r['التقييم']) || 0,
+      status:   r['الحالة'] || '',
+      ratingCount: parseInt(r['عدد_التقييمات']) || 0,
+    })).filter(r => r.name);
+
+    document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
+
+    buildTabs();
+    buildSubFilter();
+    buildTopRated();
+    renderCards();
+    populateFormSelects();
+
+  } catch (e) {
+    showError('تعذّر الاتصال بـ Sheetson API: ' + e.message);
+  } finally {
+    icon.style.animation = '';
+  }
+}
+
+/* ════════════════════════════════════════════
+   TABS
+   ════════════════════════════════════════════ */
+function buildTabs() {
+  const mains = [...new Set(allData.map(r => r.main).filter(Boolean))];
+  const bar = document.getElementById('tabs-bar');
+  bar.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.textContent = 'الكل';
+  allBtn.className = 'tab-btn text-xs font-bold px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
+  if (!activeTab) allBtn.classList.add('tab-active');
+  allBtn.onclick = () => { activeTab = ''; activeSubTab = ''; buildTabs(); renderCards(); };
+  bar.appendChild(allBtn);
+
+  mains.forEach(m => {
+    const btn = document.createElement('button');
+    btn.textContent = m;
+    btn.className = 'tab-btn text-xs font-bold px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
+    if (activeTab === m) btn.classList.add('tab-active');
+    btn.onclick = () => { activeTab = m; activeSubTab = ''; buildTabs(); buildSubTabs(); renderCards(); };
+    bar.appendChild(btn);
+  });
+
+  buildSubTabs();
+}
+
+function buildSubTabs() {
+  const bar = document.getElementById('subtabs-bar');
+  if (!activeTab) { bar.classList.add('hidden'); return; }
+  const subs = [...new Set(allData.filter(r => r.main === activeTab).map(r => r.sub).filter(Boolean))];
+  if (subs.length === 0) { bar.classList.add('hidden'); return; }
+
+  bar.classList.remove('hidden');
+  bar.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.textContent = 'الكل';
+  allBtn.className = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
+  if (!activeSubTab) allBtn.classList.add('subtab-active');
+  allBtn.onclick = () => { activeSubTab = ''; buildSubTabs(); renderCards(); };
+  bar.appendChild(allBtn);
+
+  subs.forEach(s => {
+    const btn = document.createElement('button');
+    btn.textContent = s;
+    btn.className = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
+    if (activeSubTab === s) btn.classList.add('subtab-active');
+    btn.onclick = () => { activeSubTab = s; buildSubTabs(); renderCards(); };
+    bar.appendChild(btn);
+  });
+}
+
+/* ════════════════════════════════════════════
+   SUB-FILTER DROPDOWN
+   ════════════════════════════════════════════ */
+function buildSubFilter() {
+  const sel = document.getElementById('sub-filter');
+  const val = sel.value;
+  sel.innerHTML = '<option value="">كل التخصصات</option>';
+  const subs = [...new Set(allData.map(r => r.sub).filter(Boolean))].sort();
+  subs.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    if (s === val) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+/* ════════════════════════════════════════════
+   TOP RATED
+   ════════════════════════════════════════════ */
+function buildTopRated() {
+  const top = allData.filter(r => r.rating >= 4).sort((a, b) => b.rating - a.rating).slice(0, 10);
+  const section = document.getElementById('top-rated-section');
+  const list = document.getElementById('top-rated-list');
+  if (top.length === 0) { section.classList.add('hidden'); return; }
+  section.classList.remove('hidden');
+  list.innerHTML = top.map(r => `
+    <div class="top-rated-chip bg-white border border-gray-200 rounded-2xl p-2.5 flex-shrink-0 hover:border-amber-300 transition-all"
+      onclick="scrollToCard('${r.id}')">
+      <div class="text-[11px] font-bold text-gray-700 truncate">${r.name}</div>
+      <div class="text-[10px] text-gray-400 truncate">${r.sub || r.main}</div>
+      <div class="flex items-center gap-1 mt-1">
+        <span class="text-amber-500 text-xs">⭐</span>
+        <span class="rating-avg-badge">${r.rating.toFixed(1)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function scrollToCard(id) {
+  const el = document.getElementById('card-' + id);
+  if (!el) { activeTab = ''; activeSubTab = ''; buildTabs(); renderCards(); setTimeout(() => scrollToCard(id), 100); return; }
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.add('top-rated-highlight');
+  setTimeout(() => el.classList.remove('top-rated-highlight'), 1600);
+}
+
+/* ════════════════════════════════════════════
+   RENDER CARDS
+   ════════════════════════════════════════════ */
+function getCardClass(main) {
+  const m = (main || '').toLowerCase();
+  if (m.includes('طب') || m.includes('صيدل') || m.includes('مستشفى') || m.includes('عيادة') || m.includes('health') || m.includes('medical')) return 'card-medical';
+  if (m.includes('قانون') || m.includes('محامي') || m.includes('legal') || m.includes('محكمة')) return 'card-legal';
+  if (m.includes('تسوق') || m.includes('محل') || m.includes('ملابس') || m.includes('بيع') || m.includes('shopping')) return 'card-shopping';
+  if (m.includes('مطعم') || m.includes('طعام') || m.includes('food') || m.includes('مقهى') || m.includes('كافيه')) return 'card-food';
+  if (m.includes('خدم') || m.includes('service') || m.includes('صيانة') || m.includes('نقل')) return 'card-services';
+  return 'card-default';
+}
+
+function getBadgeClass(main) {
+  return getCardClass(main).replace('card-', 'badge-');
+}
+
+function renderCards() {
+  const q = (document.getElementById('search-input').value || '').trim().toLowerCase();
+  const subF = document.getElementById('sub-filter').value;
+  const statF = document.getElementById('status-filter').value;
+
+  let data = allData;
+  if (activeTab) data = data.filter(r => r.main === activeTab);
+  if (activeSubTab) data = data.filter(r => r.sub === activeSubTab);
+  if (subF) data = data.filter(r => r.sub === subF);
+  if (statF) data = data.filter(r => r.status === statF);
+  if (q) data = data.filter(r =>
+    (r.name + r.sub + r.main + r.address + r.notes).toLowerCase().includes(q)
+  );
+
+  const grid = document.getElementById('cards-grid');
+  const countEl = document.getElementById('result-count');
+
+  if (q || subF || statF) {
+    countEl.textContent = `${data.length} نتيجة`;
+    countEl.classList.remove('hidden');
+  } else { countEl.classList.add('hidden'); }
+
+  if (data.length === 0) {
+    grid.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center py-16 text-gray-400">
+      <svg class="w-14 h-14 mb-3 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <p class="font-bold text-sm">لا توجد نتائج</p>
+      <p class="text-xs mt-1">جرّب تغيير مصطلح البحث أو الفلاتر</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = data.map(r => buildCard(r)).join('');
+}
+
+function buildCard(r) {
+  const cardClass = getCardClass(r.main);
+  const badgeClass = getBadgeClass(r.main);
+  const statusColor = r.status === 'نشط' ? 'bg-emerald-100 text-emerald-700' : r.status === 'مغلق' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500';
+  const isAdmin = !!getCurrentUser();
+
+  const userRat = userRatings[r.id] || 0;
+  const avgRat = r.rating || 0;
+  const ratCount = r.ratingCount || 0;
+
+  const ratingHtml = `
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="star-row" id="stars-${r.id}" onmouseleave="starLeave('${r.id}')">
+        ${[1,2,3,4,5].map(s => `
+          <button class="star-btn ${avgRat > 0 && s <= Math.round(avgRat) ? 'filled' : ''}" 
+            data-star="${s}" data-id="${r.id}"
+            onmouseenter="starHover('${r.id}',${s})"
+            onclick="submitRating('${r.id}',${s},${r.rowIndex})"
+            ${userRat > 0 ? 'disabled' : ''}
+            aria-label="تقييم ${s} نجوم">★</button>
+        `).join('')}
+      </div>
+      ${avgRat > 0 ? `<span class="rating-avg-badge">${avgRat.toFixed(1)}</span><span class="rating-avg-sep">/5</span>
+        <span class="rating-cnt-label">(${ratCount})</span>` : ''}
+      ${userRat > 0 ? `<span class="rated-badge">✓ قيّمت</span>` : `<span class="rating-label">قيّم</span>`}
+    </div>
+  `;
+
+  const hasCoords = r.coords && r.coords.includes(',');
+
+  return `
+  <div class="entry-card bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden ${cardClass}" id="card-${r.id}">
+    <div class="p-3">
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-gray-800 text-sm leading-tight truncate">${esc(r.name)}</p>
+          <p class="text-xs text-gray-500 truncate mt-0.5">${esc(r.sub || r.main)}</p>
+        </div>
+        <div class="flex flex-col items-end gap-1 flex-shrink-0">
+          <span class="${badgeClass} text-[10px] font-bold px-2 py-0.5 rounded-lg">${esc(r.main)}</span>
+          ${r.status ? `<span class="${statusColor} text-[9px] font-bold px-1.5 py-0.5 rounded-md">${esc(r.status)}</span>` : ''}
+        </div>
+      </div>
+      ${r.address ? `<p class="text-[11px] text-gray-500 flex items-center gap-1"><span>📍</span><span class="truncate">${esc(r.address)}</span></p>` : ''}
+      ${ratingHtml}
+    </div>
+
+    <!-- Toggle details bar -->
+    <button class="card-toggle-bar" aria-expanded="false" onclick="toggleCard(this)">
+      <span>تفاصيل</span>
+      <span class="card-toggle-arrow">▼</span>
+    </button>
+
+    <div class="card-details">
+      ${r.phone ? `<a href="tel:${r.phone}" class="text-[11px] text-blue-600 flex items-center gap-1.5 hover:underline"><span>📞</span>${esc(r.phone)}</a>` : ''}
+      ${r.notes ? `<p class="text-[11px] text-gray-500 flex items-center gap-1.5"><span>🕐</span>${esc(r.notes)}</p>` : ''}
+      ${r.social ? `<a href="${esc(r.social)}" target="_blank" rel="noopener" class="text-[11px] text-blue-600 flex items-center gap-1.5 hover:underline"><span>🔗</span>صفحة التواصل</a>` : ''}
+      ${hasCoords ? `<button onclick="showOnMap('${r.id}','${esc(r.name)}','${esc(r.coords)}')"
+        class="text-[11px] text-emerald-700 flex items-center gap-1.5 hover:underline bg-none border-none cursor-pointer p-0 text-right">
+        <span>🗺️</span>عرض على الخريطة</button>` : ''}
+      ${isAdmin ? `
+        <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+          <button onclick="openEdit(${JSON.stringify(r).replace(/"/g, '&quot;')})"
+            class="flex-1 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg py-1 hover:bg-blue-100 transition-all">✏️ تعديل</button>
+          <button onclick="deleteEntry('${r.id}',${r.rowIndex})"
+            class="flex-1 text-[11px] font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg py-1 hover:bg-red-100 transition-all">🗑️ حذف</button>
+        </div>
+      ` : ''}
+    </div>
+  </div>`;
+}
+
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toggleCard(btn) {
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!expanded));
+  btn.nextElementSibling.classList.toggle('open', !expanded);
+}
+
+/* ════════════════════════════════════════════
+   MAP — VIEW
+   ════════════════════════════════════════════ */
+function showOnMap(id, name, coords) {
+  const panel = document.getElementById('view-map-panel');
+  const title = document.getElementById('view-map-title');
+  const status = document.getElementById('view-map-status');
+  const parts = coords.split(',').map(Number);
+  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
+    showToast('إحداثيات غير صالحة', '#ef4444'); return;
+  }
+  const [lat, lng] = parts;
+  title.textContent = name;
+  status.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  setTimeout(() => {
+    if (!viewMap) {
+      viewMap = L.map('view-leaflet-map').setView([lat, lng], 16);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors', maxZoom: 19
+      }).addTo(viewMap);
+    } else {
+      viewMap.setView([lat, lng], 16);
+      if (viewMarker) viewMap.removeLayer(viewMarker);
+    }
+    viewMarker = L.marker([lat, lng]).addTo(viewMap).bindPopup(name).openPopup();
+    viewMap.invalidateSize();
+  }, 200);
+}
+
+function closeViewMap() {
+  document.getElementById('view-map-panel').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════
+   MAP — FORM
+   ════════════════════════════════════════════ */
+function toggleMap() {
+  const sec = document.getElementById('map-section');
+  const txt = document.getElementById('map-toggle-txt');
+  const isOpen = sec.classList.contains('open');
+  if (isOpen) { sec.classList.remove('open'); txt.textContent = 'تحديد الموقع على الخريطة'; return; }
+  sec.classList.add('open');
+  txt.textContent = 'إخفاء الخريطة';
+  setTimeout(() => {
+    if (!formMap) {
+      formMap = L.map('leaflet-map').setView([34.7294, 36.7095], 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors', maxZoom: 19
+      }).addTo(formMap);
+      formMap.on('click', function(e) { setFormPin(e.latlng.lat, e.latlng.lng); });
+    }
+    formMap.invalidateSize();
+    if (formLat && formLng && formMarker) {
+      formMarker.setLatLng([formLat, formLng]);
+    }
+  }, 100);
+}
+
+function setFormPin(lat, lng) {
+  formLat = lat; formLng = lng;
+  if (!formMarker) {
+    formMarker = L.marker([lat, lng], { draggable: true }).addTo(formMap);
+    formMarker.on('dragend', function(e) {
+      const p = e.target.getLatLng();
+      formLat = p.lat; formLng = p.lng;
+      updateCoordsBadge();
+    });
+  } else { formMarker.setLatLng([lat, lng]); }
+  updateCoordsBadge();
+  formMap.setView([lat, lng], 16);
+}
+
+function updateCoordsBadge() {
+  const badge = document.getElementById('coords-badge');
+  if (formLat !== null && formLng !== null) {
+    badge.textContent = `${formLat.toFixed(5)}, ${formLng.toFixed(5)}`;
+    badge.classList.remove('hidden');
+  } else { badge.classList.add('hidden'); }
+}
+
+function locateMe() {
+  if (!navigator.geolocation) { showToast('المتصفح لا يدعم تحديد الموقع', '#ef4444'); return; }
+  showToast('⏳ جاري تحديد موقعك...', '#1d4ed8');
+  navigator.geolocation.getCurrentPosition(p => {
+    const lat = p.coords.latitude, lng = p.coords.longitude;
+    if (!document.getElementById('map-section').classList.contains('open')) toggleMap();
+    setTimeout(() => { setFormPin(lat, lng); }, 200);
+    showToast('✅ تم تحديد موقعك', '#059669');
+  }, () => { showToast('تعذّر تحديد الموقع', '#ef4444'); });
+}
+
+/* ════════════════════════════════════════════
+   FORM SELECTS
+   ════════════════════════════════════════════ */
+function populateFormSelects() {
+  const mains = [...new Set(allData.map(r => r.main).filter(Boolean))];
+  const mainSel = document.getElementById('f-main');
+  const current = mainSel.value;
+  mainSel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
+  mains.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m; o.textContent = m;
+    mainSel.appendChild(o);
+  });
+  const addNew = document.createElement('option');
+  addNew.value = '__new__'; addNew.textContent = '+ إضافة قسم جديد';
+  mainSel.appendChild(addNew);
+  if (current) mainSel.value = current;
+  onMainChange();
+}
+
+function onMainChange() {
+  const val = document.getElementById('f-main').value;
+  const newMainInp = document.getElementById('f-new-main');
+  const subSel = document.getElementById('f-sub');
+
+  newMainInp.style.display = val === '__new__' ? 'block' : 'none';
+  subSel.innerHTML = '<option value="">— اختر التصنيف الفرعي —</option>';
+
+  if (val && val !== '__new__') {
+    const subs = [...new Set(allData.filter(r => r.main === val).map(r => r.sub).filter(Boolean))];
+    subs.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      subSel.appendChild(o);
+    });
+  }
+  const addNew = document.createElement('option');
+  addNew.value = '__new__'; addNew.textContent = '+ إضافة تخصص جديد';
+  subSel.appendChild(addNew);
+  onSubChange();
+}
+
+function onSubChange() {
+  const val = document.getElementById('f-sub').value;
+  document.getElementById('f-new-sub').style.display = val === '__new__' ? 'block' : 'none';
+}
+
+/* ════════════════════════════════════════════
+   FORM TOGGLE
+   ════════════════════════════════════════════ */
+function toggleForm() {
+  if (!getCurrentUser()) {
+    openLogin();
+    showToast('🔐 يجب تسجيل الدخول أولاً للإضافة', '#1d4ed8');
+    return;
+  }
+  const body = document.getElementById('form-body');
+  const chevron = document.getElementById('form-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+function resetForm() {
+  document.getElementById('dir-form').reset();
+  formLat = null; formLng = null;
+  updateCoordsBadge();
+  if (formMarker && formMap) { formMap.removeLayer(formMarker); formMarker = null; }
+  document.getElementById('f-new-main').style.display = 'none';
+  document.getElementById('f-new-sub').style.display = 'none';
+  const ms = document.getElementById('map-section');
+  ms.classList.remove('open');
+  document.getElementById('map-toggle-txt').textContent = 'تحديد الموقع على الخريطة';
+}
+
+/* ════════════════════════════════════════════
+   SUBMIT
+   ════════════════════════════════════════════ */
+async function handleSubmit(e) {
+  e.preventDefault();
+  if (!getCurrentUser()) { openLogin(); return; }
+
+  const mainVal = document.getElementById('f-main').value;
+  const subVal  = document.getElementById('f-sub').value;
+  const mainFinal = mainVal === '__new__' ? document.getElementById('f-new-main').value.trim() : mainVal;
+  const subFinal  = subVal  === '__new__' ? document.getElementById('f-new-sub').value.trim()  : subVal;
+
+  if (!mainFinal) { showToast('الرجاء اختيار أو كتابة القسم الرئيسي', '#ef4444'); return; }
+  if (!subFinal)  { showToast('الرجاء اختيار أو كتابة التخصص', '#ef4444'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+
+  const newId = Date.now().toString();
+  const row = {
+    'معرف  id': newId,
+    'اسم المكان': document.getElementById('f-name').value.trim(),
+    'القسم': mainFinal,
+    'الوصف': subFinal,
+    'العنوان بالتفصيل': document.getElementById('f-address').value.trim(),
+    'الهاتف / الجوال': document.getElementById('f-phone').value.trim(),
+    'اوقات الدوام ': document.getElementById('f-notes').value.trim(),
+    'رابط الفيسبوك / انستغرام': document.getElementById('f-social').value.trim(),
+    'الخريطة': (formLat && formLng) ? `${formLat},${formLng}` : '',
+    'التقييم': '0',
+    'الحالة': 'نشط',
+    'عدد_التقييمات': '0',
+  };
+
+  try {
+    await apiPost(row);
+    showToast('✅ تمت الإضافة بنجاح!', '#059669');
+    resetForm();
+    document.getElementById('form-body').classList.remove('open');
+    document.getElementById('form-chevron').style.transform = '';
+    await fetchData();
+  } catch (err) {
+    showToast('خطأ في الحفظ: ' + err.message, '#ef4444');
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 حفظ المدخل';
+  }
+}
+
+/* ════════════════════════════════════════════
+   EDIT
+   ════════════════════════════════════════════ */
+function openEdit(r) {
+  if (!getCurrentUser()) { openLogin(); return; }
+  document.getElementById('edit-rowIndex').value = r.rowIndex;
+  document.getElementById('edit-name').value = r.name;
+  document.getElementById('edit-main').value = r.main;
+  document.getElementById('edit-sub').value = r.sub;
+  document.getElementById('edit-address').value = r.address;
+  document.getElementById('edit-phone').value = r.phone;
+  document.getElementById('edit-notes').value = r.notes;
+  document.getElementById('edit-social').value = r.social;
+  document.getElementById('edit-coords').value = r.coords;
+  document.getElementById('edit-status').value = r.status || 'نشط';
+  document.getElementById('edit-error').classList.add('hidden');
+  document.getElementById('edit-overlay').classList.add('open');
+}
+
+function closeEdit() { document.getElementById('edit-overlay').classList.remove('open'); }
+
+async function saveEdit() {
+  if (!getCurrentUser()) { openLogin(); return; }
+  const rowIndex = document.getElementById('edit-rowIndex').value;
+  if (!rowIndex) return;
+
+  const data = {
+    'اسم المكان': document.getElementById('edit-name').value.trim(),
+    'القسم': document.getElementById('edit-main').value.trim(),
+    'الوصف': document.getElementById('edit-sub').value.trim(),
+    'العنوان بالتفصيل': document.getElementById('edit-address').value.trim(),
+    'الهاتف / الجوال': document.getElementById('edit-phone').value.trim(),
+    'اوقات الدوام ': document.getElementById('edit-notes').value.trim(),
+    'رابط الفيسبوك / انستغرام': document.getElementById('edit-social').value.trim(),
+    'الخريطة': document.getElementById('edit-coords').value.trim(),
+    'الحالة': document.getElementById('edit-status').value,
+  };
+
+  try {
+    await apiPatch(rowIndex, data);
+    closeEdit();
+    showToast('✅ تم التعديل بنجاح', '#059669');
+    await fetchData();
+  } catch (e) {
+    const err = document.getElementById('edit-error');
+    err.textContent = 'خطأ: ' + e.message; err.classList.remove('hidden');
+  }
+}
+
+/* ════════════════════════════════════════════
+   DELETE
+   ════════════════════════════════════════════ */
+async function deleteEntry(id, rowIndex) {
+  if (!getCurrentUser()) { openLogin(); return; }
+  if (!confirm('هل أنت متأكد من حذف هذا المدخل؟')) return;
+  try {
+    await apiDelete(rowIndex);
+    showToast('🗑️ تم الحذف', '#64748b');
+    await fetchData();
+  } catch (e) {
+    showToast('خطأ في الحذف: ' + e.message, '#ef4444');
+  }
+}
+
+/* ════════════════════════════════════════════
+   RATING
+   ════════════════════════════════════════════ */
+function starHover(id, n) {
+  const container = document.getElementById('stars-' + id);
+  if (!container) return;
+  container.querySelectorAll('.star-btn').forEach(btn => {
+    const s = parseInt(btn.dataset.star);
+    btn.classList.toggle('hover-fill', s <= n);
+    btn.classList.toggle('hover-dim', s > n);
+  });
+}
+
+function starLeave(id) {
+  const container = document.getElementById('stars-' + id);
+  if (!container) return;
+  container.querySelectorAll('.star-btn').forEach(btn => {
+    btn.classList.remove('hover-fill', 'hover-dim');
+  });
+}
+
+async function submitRating(id, stars, rowIndex) {
+  if (userRatings[id]) { showToast('لقد قيّمت هذا المكان مسبقاً', '#f59e0b'); return; }
+  userRatings[id] = stars;
+
+  const entry = allData.find(r => r.id === id);
+  if (!entry) return;
+  const oldCount = entry.ratingCount || 0;
+  const oldAvg = entry.rating || 0;
+  const newCount = oldCount + 1;
+  const newAvg = ((oldAvg * oldCount) + stars) / newCount;
+  entry.rating = newAvg;
+  entry.ratingCount = newCount;
+
+  const starsEl = document.getElementById('stars-' + id);
+  if (starsEl) starsEl.querySelectorAll('.star-btn').forEach(b => { b.disabled = true; b.classList.add('pending'); });
+  showToast('⭐ شكراً على تقييمك!', '#d97706');
+
+  try {
+    await apiPatch(rowIndex, {
+      'التقييم': newAvg.toFixed(2),
+      'عدد_التقييمات': String(newCount),
+    });
+    renderCards();
+    buildTopRated();
+  } catch { /* silent — local rating saved */ }
+}
+
+/* ════════════════════════════════════════════
+   DARK MODE
+   ════════════════════════════════════════════ */
+function toggleDark() {
+  const body = document.getElementById('body');
+  const isDark = body.classList.toggle('dark-mode');
+  localStorage.setItem('homs_dark', isDark ? '1' : '0');
+}
+
+/* ════════════════════════════════════════════
+   TOAST
+   ════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, color = '#1d4ed8') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = color;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+/* ════════════════════════════════════════════
+   ERROR BANNER
+   ════════════════════════════════════════════ */
+function showError(msg) {
+  const b = document.getElementById('error-banner');
+  const m = document.getElementById('error-msg');
+  if (msg) { m.textContent = msg; b.classList.remove('hidden'); }
+  else b.classList.add('hidden');
+}
+
+/* ════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('homs_dark') === '1') document.getElementById('body').classList.add('dark-mode');
+  updateAuthUI();
+  fetchData();
+});
+
+// Close modals on overlay click
+document.getElementById('login-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeLogin();
+});
+document.getElementById('edit-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeEdit();
+});
+
+// CSS spin animation
+const style = document.createElement('style');
+style.textContent = '@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
