@@ -1414,12 +1414,40 @@ async function handleSubmit(e) {
   };
 
   try {
-    await apiPost(row);
+    const saved = await apiPost(row);
+
+    /* ── تحديث محلي فوري بدون انتظار Sheetson ── */
+    const localEntry = {
+      rowIndex:    saved.rowIndex || (allData.length + 2),
+      id:          newId,
+      name:        row['اسم المكان'],
+      main:        row['القسم'],
+      sub:         row['الوصف'],
+      address:     row['العنوان بالتفصيل'],
+      coords:      row['الخريطة'],
+      phone:       row['الهاتف / الجوال'],
+      notes:       row['اوقات الدوام '],
+      social:      row['رابط الفيسبوك / انستغرام'],
+      rating:      0,
+      status:      'نشط',
+      ratingCount: 0,
+    };
+    allData.unshift(localEntry);   /* أضفها في الأعلى */
+
+    buildTabs();
+    buildSubFilter();
+    buildTopRated();
+    renderCards();
+    document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
+
     showToast('✅ تمت الإضافة بنجاح!', '#059669');
     resetForm();
     document.getElementById('form-body').classList.remove('open');
     document.getElementById('form-chevron').style.transform = '';
-    await fetchData();
+
+    /* مزامنة خلفية بعد 3 ثوانٍ لضمان التوافق مع Sheetson */
+    setTimeout(() => fetchData(), 3000);
+
   } catch (err) {
     showToast('خطأ في الحفظ: ' + err.message, '#ef4444');
   } finally {
