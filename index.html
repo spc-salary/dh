@@ -306,21 +306,23 @@
       <div class="space-y-4 mb-5">
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">اسم المستخدم الجديد</label>
-          <input id="reg-username" type="text" class="login-input" placeholder="اسم المستخدم" autocomplete="username" />
+          <input id="reg-username" type="text" class="login-input" placeholder="مثال: ahmed123" autocomplete="username" />
         </div>
-        <div>
+        <div class="relative">
           <label class="block text-xs font-bold text-gray-500 mb-1.5">كلمة المرور</label>
-          <input id="reg-password" type="password" class="login-input" placeholder="••••••••" autocomplete="new-password" />
+          <input id="reg-password" type="password" class="login-input" placeholder="6 أحرف على الأقل" autocomplete="new-password" />
+          <button type="button" onclick="togglePwVis('reg-password',this)"
+            class="absolute left-3 top-9 text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </button>
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">تأكيد كلمة المرور</label>
-          <input id="reg-password2" type="password" class="login-input" placeholder="••••••••" autocomplete="new-password"
+          <input id="reg-password2" type="password" class="login-input" placeholder="أعد كتابة كلمة المرور" autocomplete="new-password"
             onkeydown="if(event.key==='Enter')doRegister()" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-500 mb-1.5">رمز المشرف الرئيسي</label>
-          <input id="reg-master" type="password" class="login-input" placeholder="رمز سري للتسجيل" autocomplete="off" />
-          <p class="text-[10px] text-gray-400 mt-1">يتطلب رمزاً سرياً للتسجيل — تواصل مع مدير النظام</p>
         </div>
       </div>
       <div id="reg-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mb-4 font-bold text-center"></div>
@@ -721,37 +723,57 @@ async function apiDelete(rowIndex) {
 /* ════════════════════════════════════════════
    AUTH SYSTEM (localStorage-based, static site)
    ════════════════════════════════════════════ */
-const MASTER_CODE = 'HOMS_ADMIN_2024'; // Change this secret code for new registrations
+/* ── تشفير كلمة المرور بشكل آمن يدعم الأحرف العربية والرموز ── */
+function hashPw(str) {
+  try {
+    return btoa(unescape(encodeURIComponent(str)));
+  } catch(e) {
+    /* fallback: حرف بحرف */
+    let r = '';
+    for (let i = 0; i < str.length; i++) r += str.charCodeAt(i).toString(16);
+    return r;
+  }
+}
 
 function getUsers() {
   try { return JSON.parse(localStorage.getItem('homs_users') || '[]'); } catch { return []; }
 }
 function saveUsers(users) { localStorage.setItem('homs_users', JSON.stringify(users)); }
-function getCurrentUser() { return sessionStorage.getItem('homs_current_user') || null; }
-function setCurrentUser(u) { sessionStorage.setItem('homs_current_user', u); }
-function clearCurrentUser() { sessionStorage.removeItem('homs_current_user'); }
+function getCurrentUser() {
+  try { return localStorage.getItem('homs_session') || null; } catch { return null; }
+}
+function setCurrentUser(u) {
+  try { localStorage.setItem('homs_session', u); } catch {}
+}
+function clearCurrentUser() {
+  try { localStorage.removeItem('homs_session'); } catch {}
+}
 
-// Ensure default admin exists
+/* ── تأكد من وجود حساب admin الافتراضي دائماً ── */
 (function ensureDefaultAdmin() {
-  const users = getUsers();
-  if (!users.find(u => u.username === 'admin')) {
-    users.push({ username: 'admin', password: btoa('homs2024') });
-    saveUsers(users);
-  }
+  try {
+    const users = getUsers();
+    if (!users.find(u => u.username === 'admin')) {
+      users.push({ username: 'admin', pw: hashPw('homs2024') });
+      saveUsers(users);
+    }
+  } catch(e) {}
 })();
 
 function doLogin() {
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errEl = document.getElementById('login-error');
-  errEl.classList.add('hidden');
+  const username = (document.getElementById('login-username').value || '').trim();
+  const password = document.getElementById('login-password').value || '';
+  document.getElementById('login-error').classList.add('hidden');
 
   if (!username || !password) {
     showLoginError('الرجاء إدخال اسم المستخدم وكلمة المرور'); return;
   }
 
   const users = getUsers();
-  const user = users.find(u => u.username === username && u.password === btoa(password));
+  const hashed = hashPw(password);
+  const user = users.find(u =>
+    u.username === username && (u.pw === hashed || u.password === hashed)
+  );
   if (!user) { showLoginError('اسم المستخدم أو كلمة المرور غير صحيحة'); return; }
 
   setCurrentUser(username);
@@ -761,29 +783,40 @@ function doLogin() {
 }
 
 function doRegister() {
-  const username = document.getElementById('reg-username').value.trim();
-  const password = document.getElementById('reg-password').value;
-  const password2 = document.getElementById('reg-password2').value;
-  const master = document.getElementById('reg-master').value;
+  const username = (document.getElementById('reg-username').value || '').trim();
+  const password  = document.getElementById('reg-password').value  || '';
+  const password2 = document.getElementById('reg-password2').value || '';
   const errEl = document.getElementById('reg-error');
   const sucEl = document.getElementById('reg-success');
   errEl.classList.add('hidden'); sucEl.classList.add('hidden');
 
-  if (!username || !password) { showRegError('الرجاء ملء جميع الحقول'); return; }
+  if (!username) { showRegError('الرجاء كتابة اسم المستخدم'); return; }
+  if (!password)  { showRegError('الرجاء كتابة كلمة المرور'); return; }
   if (username.length < 3) { showRegError('اسم المستخدم يجب أن يكون 3 أحرف على الأقل'); return; }
   if (password.length < 6) { showRegError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
   if (password !== password2) { showRegError('كلمتا المرور غير متطابقتين'); return; }
-  if (master !== MASTER_CODE) { showRegError('رمز المشرف غير صحيح'); return; }
 
   const users = getUsers();
-  if (users.find(u => u.username === username)) { showRegError('اسم المستخدم موجود مسبقاً'); return; }
+  if (users.find(u => u.username === username)) {
+    showRegError('اسم المستخدم موجود مسبقاً، اختر اسماً آخر'); return;
+  }
 
-  users.push({ username, password: btoa(password) });
+  users.push({ username, pw: hashPw(password) });
   saveUsers(users);
 
-  sucEl.textContent = '✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.';
+  sucEl.textContent = '✅ تم إنشاء الحساب بنجاح! سيتم تحويلك لتسجيل الدخول...';
   sucEl.classList.remove('hidden');
-  setTimeout(() => switchLoginTab('login'), 2000);
+  errEl.classList.add('hidden');
+
+  /* تنظيف الحقول وانتقال تلقائي */
+  document.getElementById('reg-username').value  = '';
+  document.getElementById('reg-password').value  = '';
+  document.getElementById('reg-password2').value = '';
+  setTimeout(() => {
+    switchLoginTab('login');
+    document.getElementById('login-username').value = username;
+    document.getElementById('login-password').focus();
+  }, 1800);
 }
 
 function doLogout() {
