@@ -345,6 +345,7 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <input type="hidden" id="edit-rowIndex" />
+      <input type="hidden" id="edit-id" />
       <div>
         <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري *</label>
         <input id="edit-name" type="text" class="login-input" />
@@ -1471,15 +1472,16 @@ async function handleSubmit(e) {
 function openEdit(r) {
   if (!getCurrentUser()) { openLogin(); return; }
   document.getElementById('edit-rowIndex').value = r.rowIndex;
-  document.getElementById('edit-name').value = r.name;
-  document.getElementById('edit-main').value = r.main;
-  document.getElementById('edit-sub').value = r.sub;
-  document.getElementById('edit-address').value = r.address;
-  document.getElementById('edit-phone').value = r.phone;
-  document.getElementById('edit-notes').value = r.notes;
-  document.getElementById('edit-social').value = r.social;
-  document.getElementById('edit-coords').value = r.coords;
-  document.getElementById('edit-status').value = r.status || 'نشط';
+  document.getElementById('edit-id').value       = r.id || '';
+  document.getElementById('edit-name').value     = r.name    || '';
+  document.getElementById('edit-main').value     = r.main    || '';
+  document.getElementById('edit-sub').value      = r.sub     || '';
+  document.getElementById('edit-address').value  = r.address || '';
+  document.getElementById('edit-phone').value    = r.phone   || '';
+  document.getElementById('edit-notes').value    = r.notes   || '';
+  document.getElementById('edit-social').value   = r.social  || '';
+  document.getElementById('edit-coords').value   = r.coords  || '';
+  document.getElementById('edit-status').value   = r.status  || 'نشط';
   document.getElementById('edit-error').classList.add('hidden');
   document.getElementById('edit-overlay').classList.add('open');
 }
@@ -1489,28 +1491,70 @@ function closeEdit() { document.getElementById('edit-overlay').classList.remove(
 async function saveEdit() {
   if (!getCurrentUser()) { openLogin(); return; }
   const rowIndex = document.getElementById('edit-rowIndex').value;
+  const entryId  = document.getElementById('edit-id').value;
   if (!rowIndex) return;
 
-  const data = {
-    'اسم المكان': document.getElementById('edit-name').value.trim(),
-    'القسم': document.getElementById('edit-main').value.trim(),
-    'الوصف': document.getElementById('edit-sub').value.trim(),
-    'العنوان بالتفصيل': document.getElementById('edit-address').value.trim(),
-    'الهاتف / الجوال': document.getElementById('edit-phone').value.trim(),
-    'اوقات الدوام ': document.getElementById('edit-notes').value.trim(),
-    'رابط الفيسبوك / انستغرام': document.getElementById('edit-social').value.trim(),
-    'الخريطة': document.getElementById('edit-coords').value.trim(),
-    'الحالة': document.getElementById('edit-status').value,
+  const name    = document.getElementById('edit-name').value.trim();
+  const main    = document.getElementById('edit-main').value.trim();
+  const sub     = document.getElementById('edit-sub').value.trim();
+  const address = document.getElementById('edit-address').value.trim();
+  const phone   = document.getElementById('edit-phone').value.trim();
+  const notes   = document.getElementById('edit-notes').value.trim();
+  const social  = document.getElementById('edit-social').value.trim();
+  const coords  = document.getElementById('edit-coords').value.trim();
+  const status  = document.getElementById('edit-status').value;
+
+  if (!name) {
+    const err = document.getElementById('edit-error');
+    err.textContent = 'الاسم التجاري مطلوب'; err.classList.remove('hidden'); return;
+  }
+
+  const saveBtn = document.querySelector('#edit-overlay button[onclick="saveEdit()"]');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ جاري الحفظ...'; }
+
+  const patchData = {
+    'اسم المكان':                   name,
+    'القسم':                        main,
+    'الوصف':                        sub,
+    'العنوان بالتفصيل':             address,
+    'الهاتف / الجوال':              phone,
+    'اوقات الدوام ':                notes,
+    'رابط الفيسبوك / انستغرام':     social,
+    'الخريطة':                      coords,
+    'الحالة':                       status,
   };
 
   try {
-    await apiPatch(rowIndex, data);
+    await apiPatch(rowIndex, patchData);
+
+    /* ── تحديث محلي فوري في allData ── */
+    const idx = allData.findIndex(r => r.id === entryId || String(r.rowIndex) === String(rowIndex));
+    if (idx !== -1) {
+      allData[idx] = { ...allData[idx], name, main, sub, address, phone, notes, social, coords, status };
+    }
+    /* تحديث في pendingEntries إن وُجد */
+    const pi = pendingEntries.findIndex(r => r.id === entryId);
+    if (pi !== -1) {
+      pendingEntries[pi] = { ...pendingEntries[pi], name, main, sub, address, phone, notes, social, coords, status };
+    }
+
+    buildTabs();
+    buildSubFilter();
+    buildTopRated();
+    renderCards();
+    document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
+
     closeEdit();
     showToast('✅ تم التعديل بنجاح', '#059669');
-    await fetchData();
+
+    /* مزامنة خلفية بعد 4 ثوانٍ */
+    setTimeout(() => fetchData(), 4000);
+
   } catch (e) {
     const err = document.getElementById('edit-error');
     err.textContent = 'خطأ: ' + e.message; err.classList.remove('hidden');
+  } finally {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 حفظ التعديلات'; }
   }
 }
 
