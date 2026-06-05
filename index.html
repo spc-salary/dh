@@ -721,60 +721,74 @@ async function apiDelete(rowIndex) {
 }
 
 /* ════════════════════════════════════════════
-   AUTH SYSTEM (localStorage-based, static site)
+   AUTH SYSTEM — نظام مصادقة موثوق
    ════════════════════════════════════════════ */
-/* ── تشفير كلمة المرور بشكل آمن يدعم الأحرف العربية والرموز ── */
+
+/* تشفير بسيط وموثوق 100% يعمل مع كل الأحرف */
 function hashPw(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+  }
+  return 'h' + (h >>> 0).toString(36);
+}
+
+/* ── قاعدة بيانات المستخدمين في localStorage ── */
+const DB_KEY      = 'homsDB_v3';
+const SESSION_KEY = 'homsSession_v3';
+
+function getDB() {
   try {
-    return btoa(unescape(encodeURIComponent(str)));
-  } catch(e) {
-    /* fallback: حرف بحرف */
-    let r = '';
-    for (let i = 0; i < str.length; i++) r += str.charCodeAt(i).toString(16);
-    return r;
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return { users: [] };
+    return JSON.parse(raw);
+  } catch { return { users: [] }; }
+}
+
+function saveDB(db) {
+  try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch(e) {
+    alert('خطأ في حفظ البيانات: ' + e.message);
   }
 }
 
-function getUsers() {
-  try { return JSON.parse(localStorage.getItem('homs_users') || '[]'); } catch { return []; }
-}
-function saveUsers(users) { localStorage.setItem('homs_users', JSON.stringify(users)); }
 function getCurrentUser() {
-  try { return localStorage.getItem('homs_session') || null; } catch { return null; }
+  try { return localStorage.getItem(SESSION_KEY) || null; } catch { return null; }
 }
 function setCurrentUser(u) {
-  try { localStorage.setItem('homs_session', u); } catch {}
+  try { localStorage.setItem(SESSION_KEY, u); } catch {}
 }
 function clearCurrentUser() {
-  try { localStorage.removeItem('homs_session'); } catch {}
+  try { localStorage.removeItem(SESSION_KEY); } catch {}
 }
 
-/* ── تأكد من وجود حساب admin الافتراضي دائماً ── */
-(function ensureDefaultAdmin() {
-  try {
-    const users = getUsers();
-    if (!users.find(u => u.username === 'admin')) {
-      users.push({ username: 'admin', pw: hashPw('homs2024') });
-      saveUsers(users);
-    }
-  } catch(e) {}
-})();
+/* ── إنشاء حساب admin الافتراضي عند أول تشغيل ── */
+function ensureDefaultAdmin() {
+  const db = getDB();
+  if (!db.users) db.users = [];
+  const hasAdmin = db.users.some(u => u.n === 'admin');
+  if (!hasAdmin) {
+    db.users.push({ n: 'admin', h: hashPw('homs2024') });
+    saveDB(db);
+  }
+}
 
 function doLogin() {
-  const username = (document.getElementById('login-username').value || '').trim();
-  const password = document.getElementById('login-password').value || '';
-  document.getElementById('login-error').classList.add('hidden');
+  const username = (document.getElementById('login-username').value || '').trim().toLowerCase();
+  const password  = (document.getElementById('login-password').value  || '');
+  const errEl = document.getElementById('login-error');
+  errEl.classList.add('hidden');
 
   if (!username || !password) {
     showLoginError('الرجاء إدخال اسم المستخدم وكلمة المرور'); return;
   }
 
-  const users = getUsers();
+  const db = getDB();
   const hashed = hashPw(password);
-  const user = users.find(u =>
-    u.username === username && (u.pw === hashed || u.password === hashed)
-  );
-  if (!user) { showLoginError('اسم المستخدم أو كلمة المرور غير صحيحة'); return; }
+  const user = (db.users || []).find(u => u.n === username && u.h === hashed);
+
+  if (!user) {
+    showLoginError('اسم المستخدم أو كلمة المرور غير صحيحة'); return;
+  }
 
   setCurrentUser(username);
   closeLogin();
@@ -783,40 +797,41 @@ function doLogin() {
 }
 
 function doRegister() {
-  const username = (document.getElementById('reg-username').value || '').trim();
-  const password  = document.getElementById('reg-password').value  || '';
-  const password2 = document.getElementById('reg-password2').value || '';
+  const username  = (document.getElementById('reg-username').value  || '').trim().toLowerCase();
+  const password  = (document.getElementById('reg-password').value  || '');
+  const password2 = (document.getElementById('reg-password2').value || '');
   const errEl = document.getElementById('reg-error');
   const sucEl = document.getElementById('reg-success');
-  errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+  errEl.classList.add('hidden');
+  sucEl.classList.add('hidden');
 
-  if (!username) { showRegError('الرجاء كتابة اسم المستخدم'); return; }
-  if (!password)  { showRegError('الرجاء كتابة كلمة المرور'); return; }
-  if (username.length < 3) { showRegError('اسم المستخدم يجب أن يكون 3 أحرف على الأقل'); return; }
-  if (password.length < 6) { showRegError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
-  if (password !== password2) { showRegError('كلمتا المرور غير متطابقتين'); return; }
-
-  const users = getUsers();
-  if (users.find(u => u.username === username)) {
-    showRegError('اسم المستخدم موجود مسبقاً، اختر اسماً آخر'); return;
+  if (!username)            { showRegError('الرجاء كتابة اسم المستخدم'); return; }
+  if (!password)            { showRegError('الرجاء كتابة كلمة المرور'); return; }
+  if (username.length < 3)  { showRegError('اسم المستخدم 3 أحرف على الأقل'); return; }
+  if (password.length < 4)  { showRegError('كلمة المرور 4 أحرف على الأقل'); return; }
+  if (password !== password2){ showRegError('كلمتا المرور غير متطابقتين'); return; }
+  if (!/^[a-z0-9_\-\.]+$/.test(username)) {
+    showRegError('اسم المستخدم يقبل فقط: حروف إنجليزية، أرقام، _ أو -'); return;
   }
 
-  users.push({ username, pw: hashPw(password) });
-  saveUsers(users);
+  const db = getDB();
+  if (!db.users) db.users = [];
+  if (db.users.some(u => u.n === username)) {
+    showRegError('اسم المستخدم موجود مسبقاً — اختر اسماً آخر'); return;
+  }
 
-  sucEl.textContent = '✅ تم إنشاء الحساب بنجاح! سيتم تحويلك لتسجيل الدخول...';
+  db.users.push({ n: username, h: hashPw(password) });
+  saveDB(db);
+
+  sucEl.textContent = '✅ تم إنشاء الحساب! اضغط "دخول" الآن.';
   sucEl.classList.remove('hidden');
-  errEl.classList.add('hidden');
 
-  /* تنظيف الحقول وانتقال تلقائي */
-  document.getElementById('reg-username').value  = '';
-  document.getElementById('reg-password').value  = '';
-  document.getElementById('reg-password2').value = '';
   setTimeout(() => {
     switchLoginTab('login');
     document.getElementById('login-username').value = username;
+    document.getElementById('login-password').value = '';
     document.getElementById('login-password').focus();
-  }, 1800);
+  }, 1500);
 }
 
 function doLogout() {
@@ -890,40 +905,63 @@ const userRatings = {};
 /* ════════════════════════════════════════════
    FETCH DATA
    ════════════════════════════════════════════ */
+
+/* قراءة مرنة للأعمدة — تتجاهل المسافات الزائدة */
+function col(row, ...keys) {
+  for (const k of keys) {
+    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return String(row[k]);
+  }
+  /* بحث بدون مسافات */
+  const flat = k => k.replace(/\s+/g, '').toLowerCase();
+  for (const [rk, rv] of Object.entries(row)) {
+    for (const k of keys) {
+      if (flat(rk) === flat(k) && rv !== undefined && rv !== null && rv !== '') return String(rv);
+    }
+  }
+  return '';
+}
+
 async function fetchData() {
   showError(null);
   const icon = document.getElementById('refresh-icon');
-  icon.style.animation = 'spin 1s linear infinite';
-  icon.style.setProperty('animation', 'spin 1s linear infinite');
+  icon.style.cssText += ';animation:spin 1s linear infinite';
 
   try {
     let allRows = [];
     let skip = 0;
     const limit = 100;
-    while (true) {
+    let tries = 0;
+    while (tries++ < 20) {
       const res = await apiGet({ limit, skip });
-      const rows = res.results || res || [];
-      if (!Array.isArray(rows) || rows.length === 0) break;
+      /* Sheetson v2 returns { results:[...], totalResults:N } */
+      const rows = Array.isArray(res) ? res
+                 : Array.isArray(res.results) ? res.results
+                 : [];
+      if (rows.length === 0) break;
       allRows = allRows.concat(rows);
       if (rows.length < limit) break;
       skip += limit;
     }
 
-    allData = allRows.map((r, i) => ({
-      rowIndex: r.rowIndex || (i + 2),
-      id:       r['معرف  id'] || r['معرف id'] || String(i + 1),
-      name:     r['اسم المكان'] || '',
-      main:     r['القسم'] || '',
-      sub:      r['الوصف'] || '',
-      address:  r['العنوان بالتفصيل'] || '',
-      coords:   r['الخريطة'] || '',
-      phone:    r['الهاتف / الجوال'] || '',
-      notes:    r['اوقات الدوام '] || r['اوقات الدوام'] || '',
-      social:   r['رابط الفيسبوك / انستغرام'] || '',
-      rating:   parseFloat(r['التقييم']) || 0,
-      status:   r['الحالة'] || '',
-      ratingCount: parseInt(r['عدد_التقييمات']) || 0,
-    })).filter(r => r.name);
+    allData = allRows.map((r, i) => {
+      const name = col(r, 'اسم المكان', 'الاسم', 'name');
+      const main = col(r, 'القسم', 'القسم الرئيسي', 'main');
+      return {
+        rowIndex:    r.rowIndex || (i + 2),
+        id:          col(r, 'معرف  id', 'معرف id', 'معرفid', 'id') || String(i + 1),
+        name,
+        main,
+        sub:         col(r, 'الوصف', 'التخصص', 'القسم الفرعي', 'sub'),
+        address:     col(r, 'العنوان بالتفصيل', 'العنوان', 'address'),
+        coords:      col(r, 'الخريطة', 'الموقع', 'coords'),
+        phone:       col(r, 'الهاتف / الجوال', 'الهاتف', 'الجوال', 'phone'),
+        notes:       col(r, 'اوقات الدوام ', 'اوقات الدوام', 'ملاحظات', 'notes'),
+        social:      col(r, 'رابط الفيسبوك / انستغرام', 'رابط', 'social'),
+        rating:      parseFloat(col(r, 'التقييم', 'rating')) || 0,
+        status:      col(r, 'الحالة', 'status'),
+        ratingCount: parseInt(col(r, 'عدد_التقييمات', 'عدد التقييمات')) || 0,
+      };
+    }).filter(r => r.name.trim() !== '');
 
     document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
 
@@ -1537,6 +1575,7 @@ function showError(msg) {
    ════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('homs_dark') === '1') document.getElementById('body').classList.add('dark-mode');
+  ensureDefaultAdmin();
   updateAuthUI();
   fetchData();
 });
