@@ -82,10 +82,6 @@
       padding:6px 16px; font-size:11px; color:#94a3b8; text-align:center;
       font-family:monospace; background:#f8fafc; border-top:1px solid #f1f5f9;
     }
-    .dark-mode #view-map-panel  { background:#1e293b; border-color:#334155; }
-    .dark-mode #view-map-panel-header { background:#0f172a; border-color:#334155; }
-    .dark-mode #view-map-title  { color:#f1f5f9; }
-    .dark-mode #view-map-status { background:#0f172a; border-color:#334155; }
     .dot-pulse {
       display:inline-block; width:.5rem; height:.5rem; background:#10b981;
       border-radius:50%; animation:dotPulse 2s ease-in-out infinite;
@@ -93,22 +89,17 @@
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
     .entry-card { transition:transform .2s ease, box-shadow .2s ease; }
     .entry-card:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.1); }
-    .card-details            { display:none; flex-direction:column; gap:3px; padding:6px 10px 8px; border-top:1px solid #f3f4f6; }
-    .card-details.open       { display:flex; }
-    .card-toggle-bar         { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:6px 10px; background:#f8fafc; border:none; border-top:1px solid #e5e7eb; cursor:pointer; font-size:11px; font-weight:600; color:#3b82f6; transition:background .15s; }
-    .card-toggle-bar:hover   { background:#eff6ff; }
-    .card-toggle-bar:active  { background:#dbeafe; }
-    .card-toggle-arrow       { font-size:9px; transition:transform .2s; display:inline-block; }
+    .card-details      { display:none; flex-direction:column; gap:3px; padding:6px 10px 8px; border-top:1px solid #f3f4f6; }
+    .card-details.open { display:flex; }
+    .card-toggle-bar       { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:6px 10px; background:#f8fafc; border:none; border-top:1px solid #e5e7eb; cursor:pointer; font-size:11px; font-weight:600; color:#3b82f6; transition:background .15s; }
+    .card-toggle-bar:hover { background:#eff6ff; }
+    .card-toggle-arrow { font-size:9px; transition:transform .2s; display:inline-block; }
     .card-toggle-bar[aria-expanded="true"] .card-toggle-arrow { transform:rotate(180deg); }
-
-    /* ═══ Star Rating ═══ */
     .star-row { display:flex; align-items:flex-end; gap:2px; direction:ltr; }
     .star-btn {
-      background:none; border:none; padding:2px 1px; cursor:pointer;
-      line-height:1; color:#d1d5db;
+      background:none; border:none; padding:2px 1px; cursor:pointer; line-height:1; color:#d1d5db;
       transition:color .12s ease, transform .12s ease, text-shadow .12s ease, opacity .12s ease;
-      -webkit-tap-highlight-color:transparent;
-      touch-action:manipulation; will-change:transform;
+      -webkit-tap-highlight-color:transparent; touch-action:manipulation; will-change:transform;
     }
     .star-btn:disabled { cursor:default; }
     .star-btn[data-star="1"] { font-size:14px; }
@@ -116,56 +107,31 @@
     .star-btn[data-star="3"] { font-size:20px; }
     .star-btn[data-star="4"] { font-size:23px; }
     .star-btn[data-star="5"] { font-size:27px; }
-    .star-btn.filled  { color:#f59e0b; }
-    .star-btn.hover-fill {
-      color:#f59e0b !important;
-      text-shadow:0 0 10px rgba(245,158,11,.8), 0 0 4px rgba(245,158,11,.5);
-    }
+    .star-btn.filled        { color:#f59e0b; }
+    .star-btn.hover-fill    { color:#f59e0b !important; text-shadow:0 0 10px rgba(245,158,11,.8); }
     .star-btn.hover-fill[data-star="1"] { transform:scale(1.2); }
     .star-btn.hover-fill[data-star="2"] { transform:scale(1.18); }
     .star-btn.hover-fill[data-star="3"] { transform:scale(1.15); }
     .star-btn.hover-fill[data-star="4"] { transform:scale(1.12); }
     .star-btn.hover-fill[data-star="5"] { transform:scale(1.1); }
-    .star-btn.hover-dim {
-      color:#d1d5db !important; opacity:.4;
-      transform:scale(0.9); text-shadow:none;
-    }
-    .star-btn.pending { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
+    .star-btn.hover-dim     { color:#d1d5db !important; opacity:.4; transform:scale(0.9); text-shadow:none; }
+    .star-btn.pending       { color:#fbbf24; animation:starPulse .6s ease-in-out infinite alternate; }
     @keyframes starPulse { from{opacity:.6} to{opacity:1} }
-    .rating-avg-badge { font-size:12px; font-weight:700; color:#d97706; line-height:1; }
-    .rating-avg-sep { font-size:9px; color:#9ca3af; font-weight:400; }
-    .rating-cnt-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
-    .rating-label { font-size:10px; color:#9ca3af; white-space:nowrap; }
-    .rated-badge {
-      display:inline-flex; align-items:center; gap:3px; font-size:10px;
-      font-weight:700; color:#059669; background:#d1fae5; border-radius:6px; padding:2px 6px;
-    }
-    .dark-mode .star-btn            { color:#4b5563; }
-    .dark-mode .star-btn.filled     { color:#f59e0b; }
-    .dark-mode .star-btn.hover-dim  { color:#374151 !important; }
-    .dark-mode .rating-avg-badge    { color:#f59e0b; }
-    .dark-mode .rating-avg-sep,
-    .dark-mode .rating-cnt-label,
-    .dark-mode .rating-label        { color:#64748b; }
-    .dark-mode .rated-badge         { background:#064e3b; color:#6ee7b7; }
-
-    /* ═══ Top Rated Section ═══ */
-    .top-rated-chip { min-width:110px; max-width:140px; cursor:pointer; text-align:right; }
+    .rating-avg-badge   { font-size:12px; font-weight:700; color:#d97706; line-height:1; }
+    .rating-avg-sep     { font-size:9px; color:#9ca3af; font-weight:400; }
+    .rating-cnt-label   { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    .rating-label       { font-size:10px; color:#9ca3af; white-space:nowrap; }
+    .rated-badge        { display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:700; color:#059669; background:#d1fae5; border-radius:6px; padding:2px 6px; }
+    .top-rated-chip     { min-width:110px; max-width:140px; cursor:pointer; text-align:right; }
     .scrollbar-hide::-webkit-scrollbar { display:none; }
-    .scrollbar-hide { -ms-overflow-style:none; scrollbar-width:none; }
+    .scrollbar-hide     { -ms-overflow-style:none; scrollbar-width:none; }
     .top-rated-highlight { animation:highlightPulse 1.5s ease-out; }
-    @keyframes highlightPulse {
-      0%  { box-shadow:0 0 0 3px rgba(245,158,11,.6); }
-      100%{ box-shadow:0 0 0 0 rgba(245,158,11,0); }
-    }
+    @keyframes highlightPulse { 0%{box-shadow:0 0 0 3px rgba(245,158,11,.6)} 100%{box-shadow:0 0 0 0 rgba(245,158,11,0)} }
     .dark-mode .top-rated-chip { background:#1e293b!important; border-color:#334155!important; }
-
-    /* ═══ DARK MODE ═══ */
     .dark-mode { background:#0f172a!important; color:#f1f5f9!important; }
     .dark-mode .bg-white        { background:#1e293b!important; }
     .dark-mode .bg-gray-50      { background:#0f172a!important; }
     .dark-mode .bg-blue-50      { background:rgba(29,78,216,.15)!important; }
-    .dark-mode .bg-amber-50     { background:rgba(180,83,9,.15)!important; }
     .dark-mode .text-gray-800   { color:#f1f5f9!important; }
     .dark-mode .text-gray-700   { color:#e2e8f0!important; }
     .dark-mode .text-gray-600   { color:#cbd5e1!important; }
@@ -174,9 +140,7 @@
     .dark-mode .border-gray-100 { border-color:#334155!important; }
     .dark-mode .border-gray-200 { border-color:#334155!important; }
     .dark-mode input, .dark-mode select, .dark-mode textarea { background:#0f172a!important; border-color:#334155!important; color:#f1f5f9!important; }
-    .dark-mode input::placeholder { color:#475569!important; }
     .dark-mode .bg-gray-100     { background:#334155!important; }
-    .dark-mode .text-blue-800   { color:#93c5fd!important; }
     .dark-mode .badge-medical   { background:#064e3b!important; color:#6ee7b7!important; }
     .dark-mode .badge-legal     { background:#2e1065!important; color:#c4b5fd!important; }
     .dark-mode .badge-shopping  { background:#451a03!important; color:#fde68a!important; }
@@ -185,10 +149,11 @@
     .dark-mode .badge-default   { background:#1f2937!important; color:#9ca3af!important; }
     .dark-mode .subtab-active   { background:#3b82f6!important; }
     .dark-mode .skeleton        { background:#374151!important; }
-    .dark-mode .entry-card:hover { box-shadow:0 12px 24px rgba(0,0,0,.4); }
+    .dark-mode #view-map-panel  { background:#1e293b; border-color:#334155; }
+    .dark-mode #view-map-panel-header { background:#0f172a; border-color:#334155; }
+    .dark-mode #view-map-title  { color:#f1f5f9; }
+    .dark-mode #view-map-status { background:#0f172a; border-color:#334155; }
     input[type="search"]::-webkit-search-cancel-button { display:none; }
-
-    /* ═══ LOGIN MODAL ═══ */
     #login-overlay {
       position:fixed; inset:0; z-index:10000;
       background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
@@ -220,10 +185,7 @@
       box-shadow:0 4px 16px rgba(29,78,216,.35);
     }
     .btn-login:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(29,78,216,.4); }
-    .btn-login:active { transform:none; }
     .btn-login:disabled { opacity:.6; cursor:not-allowed; transform:none; }
-
-    /* ═══ ADMIN BAR ═══ */
     #admin-bar {
       display:none; background:linear-gradient(135deg,#0f172a,#1e293b);
       padding:8px 16px; align-items:center; justify-content:space-between; gap:8px;
@@ -231,8 +193,6 @@
     #admin-bar.visible { display:flex; }
     #admin-bar .admin-user { font-size:12px; color:#94a3b8; }
     #admin-bar .admin-user span { color:#60a5fa; font-weight:700; }
-
-    /* ═══ EDIT MODAL ═══ */
     #edit-overlay {
       position:fixed; inset:0; z-index:9900;
       background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
@@ -243,86 +203,79 @@
     #edit-box {
       background:#fff; border-radius:24px; padding:28px 24px;
       width:100%; max-width:600px; box-shadow:0 24px 60px rgba(0,0,0,.25);
-      animation:loginDrop .3s cubic-bezier(.34,1.56,.64,1);
-      margin:auto;
+      animation:loginDrop .3s cubic-bezier(.34,1.56,.64,1); margin:auto;
     }
     .dark-mode #edit-box { background:#1e293b; }
+    #confirm-overlay {
+      position:fixed; inset:0; z-index:10001;
+      background:rgba(0,0,0,.6); backdrop-filter:blur(4px);
+      display:none; align-items:center; justify-content:center;
+    }
+    #confirm-overlay.open { display:flex; }
+    #confirm-box {
+      background:#fff; border-radius:20px; padding:28px 24px; width:90%; max-width:360px;
+      box-shadow:0 24px 60px rgba(0,0,0,.3); animation:loginDrop .2s ease; text-align:center;
+    }
+    .dark-mode #confirm-box { background:#1e293b; }
   </style>
 </head>
-
 <body id="body" class="min-h-screen flex flex-col text-gray-800">
 
-<!-- ══════════════ LOGIN OVERLAY ══════════════ -->
+<!-- ═══ CONFIRM DIALOG ═══ -->
+<div id="confirm-overlay">
+  <div id="confirm-box">
+    <div class="text-4xl mb-3">🗑️</div>
+    <h3 class="text-base font-bold text-gray-800 mb-2" id="confirm-title">تأكيد الحذف</h3>
+    <p class="text-sm text-gray-500 mb-6" id="confirm-msg">هل أنت متأكد؟</p>
+    <div class="flex gap-3">
+      <button id="confirm-yes" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all">نعم، احذف</button>
+      <button onclick="closeConfirm()" class="flex-1 border-2 border-gray-200 rounded-xl py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOGIN OVERLAY ═══ -->
 <div id="login-overlay">
   <div id="login-box">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-bold text-gray-800 dark:text-white">
-        <span class="text-blue-700">🔐</span> بوابة المشرفين
-      </h2>
-      <button onclick="closeLogin()" class="text-gray-400 hover:text-gray-600 transition-colors">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+      <h2 class="text-xl font-bold text-gray-800">🔐 بوابة المشرفين</h2>
+      <button onclick="closeLogin()" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-
-    <!-- Tabs -->
-    <div id="login-tabs" class="flex gap-2 mb-6 p-1 bg-gray-100 rounded-2xl" style="display:flex">
+    <div class="flex gap-2 mb-6 p-1 bg-gray-100 rounded-2xl">
       <button class="login-tab active flex-1" onclick="switchLoginTab('login')" id="tab-login">تسجيل الدخول</button>
       <button class="login-tab flex-1" onclick="switchLoginTab('register')" id="tab-register">إنشاء حساب</button>
     </div>
-
-    <!-- Login Form -->
     <div id="login-form-section">
       <div class="space-y-4 mb-5">
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">اسم المستخدم</label>
-          <input id="login-username" type="text" class="login-input" placeholder="admin" autocomplete="username" />
+          <input id="login-username" type="text" class="login-input" placeholder="admin" autocomplete="username"/>
         </div>
-        <div class="relative">
+        <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">كلمة المرور</label>
           <input id="login-password" type="password" class="login-input" placeholder="••••••••" autocomplete="current-password"
-            onkeydown="if(event.key==='Enter')doLogin()" />
-          <button type="button" onclick="togglePwVis('login-password',this)"
-            class="absolute left-3 top-9 text-gray-400 hover:text-gray-600">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-            </svg>
-          </button>
+            onkeydown="if(event.key==='Enter')doLogin()"/>
         </div>
       </div>
       <div id="login-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mb-4 font-bold text-center"></div>
-      <button onclick="doLogin()" id="btn-do-login" class="btn-login">دخول</button>
-      <p class="text-center text-xs text-gray-400 mt-4">
-        بيانات المشرف الافتراضية: <b class="text-blue-600">admin</b> / <b class="text-blue-600">homs2024</b>
-      </p>
+      <button onclick="doLogin()" class="btn-login">دخول</button>
+      <p class="text-center text-xs text-gray-400 mt-4">بيانات افتراضية: <b class="text-blue-600">admin</b> / <b class="text-blue-600">homs2024</b></p>
     </div>
-
-    <!-- Register Form -->
     <div id="register-form-section" style="display:none">
       <div class="space-y-4 mb-5">
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">اسم المستخدم الجديد</label>
-          <input id="reg-username" type="text" class="login-input" placeholder="مثال: ahmed123" autocomplete="username" />
+          <input id="reg-username" type="text" class="login-input" placeholder="مثال: ahmed123"/>
         </div>
-        <div class="relative">
+        <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">كلمة المرور</label>
-          <input id="reg-password" type="password" class="login-input" placeholder="6 أحرف على الأقل" autocomplete="new-password" />
-          <button type="button" onclick="togglePwVis('reg-password',this)"
-            class="absolute left-3 top-9 text-gray-400 hover:text-gray-600">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-            </svg>
-          </button>
+          <input id="reg-password" type="password" class="login-input" placeholder="4 أحرف على الأقل"/>
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1.5">تأكيد كلمة المرور</label>
-          <input id="reg-password2" type="password" class="login-input" placeholder="أعد كتابة كلمة المرور" autocomplete="new-password"
-            onkeydown="if(event.key==='Enter')doRegister()" />
+          <input id="reg-password2" type="password" class="login-input" onkeydown="if(event.key==='Enter')doRegister()"/>
         </div>
       </div>
       <div id="reg-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mb-4 font-bold text-center"></div>
@@ -332,52 +285,25 @@
   </div>
 </div>
 
-<!-- ══════════════ EDIT OVERLAY ══════════════ -->
+<!-- ═══ EDIT OVERLAY ═══ -->
 <div id="edit-overlay">
   <div id="edit-box">
     <div class="flex justify-between items-center mb-5">
       <h3 class="text-lg font-bold text-gray-800">✏️ تعديل المدخل</h3>
       <button onclick="closeEdit()" class="text-gray-400 hover:text-gray-600">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <input type="hidden" id="edit-rowIndex" />
-      <input type="hidden" id="edit-id" />
-      <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري *</label>
-        <input id="edit-name" type="text" class="login-input" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
-        <input id="edit-main" type="text" class="login-input" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">التخصص / القسم الفرعي</label>
-        <input id="edit-sub" type="text" class="login-input" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص</label>
-        <input id="edit-address" type="text" class="login-input" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
-        <input id="edit-phone" type="text" dir="ltr" class="login-input text-left" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام</label>
-        <input id="edit-notes" type="text" class="login-input" />
-      </div>
-      <div class="md:col-span-2">
-        <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
-        <input id="edit-social" type="url" dir="ltr" class="login-input text-left" />
-      </div>
-      <div class="md:col-span-2">
-        <label class="block text-xs font-bold text-gray-600 mb-1">إحداثيات الخريطة (خط العرض,خط الطول)</label>
-        <input id="edit-coords" type="text" dir="ltr" class="login-input text-left" placeholder="34.7294,36.7095" />
-      </div>
+      <input type="hidden" id="edit-entry-id"/>
+      <div><label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري *</label><input id="edit-name" type="text" class="login-input"/></div>
+      <div><label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label><input id="edit-main" type="text" class="login-input"/></div>
+      <div><label class="block text-xs font-bold text-gray-600 mb-1">التخصص / القسم الفرعي</label><input id="edit-sub" type="text" class="login-input"/></div>
+      <div><label class="block text-xs font-bold text-gray-600 mb-1">العنوان</label><input id="edit-address" type="text" class="login-input"/></div>
+      <div><label class="block text-xs font-bold text-gray-600 mb-1">الهاتف</label><input id="edit-phone" type="text" dir="ltr" class="login-input text-left"/></div>
+      <div><label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام</label><input id="edit-notes" type="text" class="login-input"/></div>
+      <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">رابط التواصل</label><input id="edit-social" type="url" dir="ltr" class="login-input text-left"/></div>
+      <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">الإحداثيات (خط العرض,خط الطول)</label><input id="edit-coords" type="text" dir="ltr" class="login-input text-left" placeholder="34.7294,36.7095"/></div>
       <div>
         <label class="block text-xs font-bold text-gray-600 mb-1">الحالة</label>
         <select id="edit-status" class="login-input">
@@ -389,27 +315,24 @@
     </div>
     <div id="edit-error" class="hidden text-xs text-red-600 bg-red-50 rounded-xl p-3 mt-4 font-bold text-center"></div>
     <div class="flex gap-3 mt-6">
-      <button onclick="saveEdit()" class="btn-login flex-1">💾 حفظ التعديلات</button>
+      <button onclick="saveEdit()" id="save-edit-btn" class="btn-login flex-1">💾 حفظ التعديلات</button>
       <button onclick="closeEdit()" class="flex-1 border-2 border-gray-200 rounded-xl py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">إلغاء</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════ ADMIN BAR ══════════════ -->
+<!-- ═══ ADMIN BAR ═══ -->
 <div id="admin-bar">
   <div class="admin-user">مرحباً، <span id="admin-name-display"></span> 👋</div>
   <div class="flex items-center gap-2">
     <span class="text-xs text-emerald-400 font-bold flex items-center gap-1">
       <span class="dot-pulse bg-emerald-400 w-2 h-2"></span> وضع المشرف
     </span>
-    <button onclick="doLogout()"
-      class="text-xs font-bold text-red-400 hover:text-red-300 border border-red-800 rounded-lg px-3 py-1 hover:bg-red-900/30 transition-all">
-      خروج
-    </button>
+    <button onclick="doLogout()" class="text-xs font-bold text-red-400 hover:text-red-300 border border-red-800 rounded-lg px-3 py-1 hover:bg-red-900/30 transition-all">خروج</button>
   </div>
 </div>
 
-<!-- ══════════════ HEADER ══════════════ -->
+<!-- ═══ HEADER ═══ -->
 <header class="relative overflow-hidden">
   <div class="absolute inset-0 bg-gradient-to-l from-blue-900 via-blue-800 to-indigo-900"></div>
   <div class="relative max-w-7xl mx-auto px-4 py-5 sm:py-7">
@@ -418,10 +341,8 @@
         <div class="flex items-center justify-center sm:justify-start gap-3 mb-1">
           <div class="bg-white/20 rounded-xl p-2">
             <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold text-white">دليل مدينة حمص الخدمي والتجاري</h1>
@@ -436,22 +357,19 @@
         <button onclick="openLogin()" id="btn-login-header" title="تسجيل دخول المشرف"
           class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
         </button>
-        <button onclick="fetchData()" title="تحديث"
+        <button onclick="fetchData(true)" title="تحديث"
           class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
           <svg id="refresh-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
         </button>
         <button onclick="toggleDark()" title="تبديل المظهر"
           class="bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl p-2.5 transition-all">
-          <svg id="dark-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
           </svg>
         </button>
       </div>
@@ -459,22 +377,21 @@
   </div>
 </header>
 
-<!-- ══════════════ MAIN ══════════════ -->
+<!-- ═══ MAIN ═══ -->
 <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
 
   <div id="error-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-center gap-2">
     ⚠️ <span id="error-msg"></span>
   </div>
 
-  <!-- ══ نموذج الإضافة ══ -->
+  <!-- نموذج الإضافة -->
   <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <button type="button" onclick="toggleForm()"
       class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-all">
       <div class="flex items-center gap-3">
         <div class="bg-blue-100 text-blue-700 rounded-xl p-2">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
         <div class="text-right">
@@ -482,40 +399,30 @@
           <p class="text-xs text-gray-400 mt-0.5" id="form-hint-txt">انقر لفتح نموذج الإضافة (يتطلب تسجيل الدخول)</p>
         </div>
       </div>
-      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s"
-        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg id="form-chevron" class="w-5 h-5 text-gray-400" style="transition:transform .25s" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
       </svg>
     </button>
-
     <div id="form-body">
       <div class="border-t border-gray-100 p-5">
         <div class="bg-blue-50 border-r-4 border-blue-500 rounded-l-xl p-3 mb-5">
-          <p class="text-xs text-blue-800 leading-relaxed">
-            💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> من القائمة
-            وسيظهر تبويبه تلقائياً بعد الحفظ.
-          </p>
+          <p class="text-xs text-blue-800 leading-relaxed">💡 إذا لم تجد القسم المناسب، اختر <b>"إضافة قسم جديد"</b> وسيظهر تبويبه تلقائياً بعد الحفظ.</p>
         </div>
-
-        <form id="dir-form" onsubmit="handleSubmit(event)"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
+        <form id="dir-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">الاسم التجاري / اسم المهني *</label>
             <input id="f-name" type="text" required placeholder="مثال: د. أحمد فلان — عيادة الأطفال"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"/>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">القسم الرئيسي *</label>
             <select id="f-main" onchange="onMainChange()" required
               class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="">— اختر القسم الرئيسي —</option>
             </select>
-            <input id="f-new-main" type="text" placeholder="اكتب اسم القسم الرئيسي الجديد" style="display:none"
-              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
+            <input id="f-new-main" type="text" placeholder="اكتب اسم القسم الجديد" style="display:none"
+              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none"/>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">التصنيف الفرعي / التخصص *</label>
             <select id="f-sub" onchange="onSubChange()" required
@@ -523,52 +430,38 @@
               <option value="">— اختر التصنيف الفرعي —</option>
             </select>
             <input id="f-new-sub" type="text" placeholder="اكتب اسم التخصص الجديد" style="display:none"
-              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none" />
+              class="mt-2 w-full border border-amber-300 bg-amber-50 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-amber-400 outline-none"/>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">العنوان في حمص *</label>
             <input id="f-address" type="text" required placeholder="مثال: الإنشاءات — شارع البرازيل"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"/>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">الهاتف / الجوال</label>
             <input id="f-phone" type="text" dir="ltr" placeholder="09xxxxxxxx"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none"/>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">أوقات الدوام / ملاحظات</label>
             <input id="f-notes" type="text" placeholder="مثال: السبت–الأربعاء (4–8 مساءً)"
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"/>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-600 mb-1">رابط الفيسبوك / انستغرام</label>
             <input id="f-social" type="url" dir="ltr" placeholder="https://facebook.com/..."
-              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none" />
+              class="w-full border border-gray-200 rounded-xl p-2.5 text-sm text-left focus:ring-2 focus:ring-blue-500 outline-none"/>
           </div>
-
           <div class="md:col-span-2 lg:col-span-2">
             <label class="block text-xs font-bold text-gray-600 mb-1">الموقع الجغرافي (اختياري)</label>
             <div class="flex flex-wrap gap-2">
               <button type="button" onclick="toggleMap()"
                 class="flex items-center gap-2 text-xs text-blue-700 border border-blue-200 bg-blue-50 px-3 py-2 rounded-xl hover:bg-blue-100 transition-all">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                </svg>
-                <span id="map-toggle-txt">تحديد الموقع على الخريطة</span>
+                🗺️ <span id="map-toggle-txt">تحديد الموقع على الخريطة</span>
               </button>
               <button type="button" onclick="locateMe()"
                 class="flex items-center gap-2 text-xs text-emerald-700 border border-emerald-200 bg-emerald-50 px-3 py-2 rounded-xl hover:bg-emerald-100 transition-all">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                موقعي الحالي
+                📍 موقعي الحالي
               </button>
               <span id="coords-badge" class="hidden text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl font-mono"></span>
             </div>
@@ -577,7 +470,6 @@
               <p class="text-[10px] text-gray-400 mt-1 text-center">انقر على الخريطة لتحديد الموقع</p>
             </div>
           </div>
-
           <div class="md:col-span-2 lg:col-span-3 flex gap-3 pt-2">
             <button type="submit" id="submit-btn"
               class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-sm">
@@ -593,7 +485,7 @@
     </div>
   </div>
 
-  <!-- ══ الأعلى تقييماً ══ -->
+  <!-- الأعلى تقييماً -->
   <div id="top-rated-section" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hidden">
     <div class="flex items-center gap-2 mb-3">
       <span class="text-lg">⭐</span>
@@ -602,7 +494,7 @@
     <div id="top-rated-list" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1"></div>
   </div>
 
-  <!-- ══ خريطة العرض ══ -->
+  <!-- خريطة العرض -->
   <div id="view-map-panel">
     <div id="view-map-panel-header">
       <button id="close-view-map-btn" onclick="closeViewMap()">✕ إغلاق</button>
@@ -612,7 +504,7 @@
     <div id="view-map-status"></div>
   </div>
 
-  <!-- ══ بحث وتصفية ══ -->
+  <!-- بحث وتصفية -->
   <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
     <div class="flex flex-col sm:flex-row gap-3">
       <div class="relative flex-grow">
@@ -620,7 +512,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
         <input id="search-input" type="search" placeholder="ابحث بالاسم، العنوان، التخصص..."
-          oninput="renderCards()" class="w-full border border-gray-200 rounded-xl pr-9 pl-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          oninput="renderCards()" class="w-full border border-gray-200 rounded-xl pr-9 pl-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"/>
       </div>
       <select id="sub-filter" onchange="renderCards()"
         class="border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none min-w-[160px]">
@@ -636,12 +528,11 @@
     <div id="result-count" class="text-xs text-gray-400 mt-2 text-left hidden"></div>
   </div>
 
-  <!-- ══ تبويبات الأقسام ══ -->
+  <!-- تبويبات + البطاقات -->
   <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <div id="tabs-bar" class="flex flex-wrap gap-2 p-3 border-b border-gray-100"></div>
     <div id="subtabs-bar" class="flex flex-wrap gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100 hidden"></div>
     <div id="cards-grid" class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[200px]">
-      <!-- skeleton -->
       <div class="skeleton h-32 rounded-2xl"></div>
       <div class="skeleton h-32 rounded-2xl"></div>
       <div class="skeleton h-32 rounded-2xl"></div>
@@ -658,359 +549,286 @@
 <div id="toast"></div>
 
 <script>
-/* ════════════════════════════════════════════
-   SHEETSON API CONFIG
-   ════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   SHEETSON API
+══════════════════════════════════════════════ */
 const API_KEY        = 'eNx0s9qu7lEIuykRKQdhjaq6vlt75XAd7d5JJGiTOlvD15vdNndNvEKLiE4';
 const SPREADSHEET_ID = '1H219HS_3WqfGn_mz8sHvtTx0rlKcQtiDgx7G0nzzfNI';
 const SHEET_NAME     = 'Sheet1';
-const BASE_URL       = 'https://api.sheetson.com/v2/sheets';
+const BASE_API       = 'https://api.sheetson.com/v2/sheets';
 
-/* Sheetson v2: Authorization header + spreadsheetId query param */
 function buildUrl(path, params = {}) {
-  const url = new URL(`${BASE_URL}/${path}`);
-  url.searchParams.append('spreadsheetId', SPREADSHEET_ID);
+  const url = new URL(`${BASE_API}/${path}`);
+  url.searchParams.set('spreadsheetId', SPREADSHEET_ID);
   Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) url.searchParams.append(k, String(v));
+    if (v != null) url.searchParams.set(k, String(v));
   });
   return url.toString();
 }
 
-function authHeaders(extra = {}) {
-  return {
-    'Authorization': `Bearer ${API_KEY}`,
-    'Content-Type': 'application/json',
-    ...extra
-  };
-}
+const HDRS = () => ({
+  'Authorization': `Bearer ${API_KEY}`,
+  'Content-Type': 'application/json',
+});
 
 async function apiGet(params = {}) {
-  const r = await fetch(buildUrl(SHEET_NAME, params), {
-    headers: authHeaders()
-  });
+  const r = await fetch(buildUrl(SHEET_NAME, params), { headers: HDRS() });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
 async function apiPost(data) {
   const r = await fetch(buildUrl(SHEET_NAME), {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(data)
+    method: 'POST', headers: HDRS(), body: JSON.stringify(data),
   });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) { const t = await r.text().catch(() => ''); throw new Error(`HTTP ${r.status}: ${t.slice(0,100)}`); }
   return r.json();
 }
 
-async function apiPatch(rowIndex, data) {
+async function apiPut(rowIndex, data) {
   const r = await fetch(buildUrl(`${SHEET_NAME}/${rowIndex}`), {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(data)
+    method: 'PUT', headers: HDRS(), body: JSON.stringify(data),
   });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) { const t = await r.text().catch(() => ''); throw new Error(`HTTP ${r.status}: ${t.slice(0,100)}`); }
   return r.json();
 }
 
-async function apiDelete(rowIndex) {
+async function apiDel(rowIndex) {
   const r = await fetch(buildUrl(`${SHEET_NAME}/${rowIndex}`), {
-    method: 'DELETE',
-    headers: authHeaders()
+    method: 'DELETE', headers: HDRS(),
   });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) { const t = await r.text().catch(() => ''); throw new Error(`HTTP ${r.status}: ${t.slice(0,100)}`); }
   return true;
 }
 
-/* ════════════════════════════════════════════
-   AUTH SYSTEM — نظام مصادقة موثوق
-   ════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   AUTH (localStorage)
+══════════════════════════════════════════════ */
+const DB_KEY  = 'homsDB_v3';
+const SES_KEY = 'homsSession_v3';
 
-/* تشفير بسيط وموثوق 100% يعمل مع كل الأحرف */
-function hashPw(str) {
+function hashPw(s) {
   let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
-  }
+  for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
   return 'h' + (h >>> 0).toString(36);
 }
 
-/* ── قاعدة بيانات المستخدمين في localStorage ── */
-const DB_KEY      = 'homsDB_v3';
-const SESSION_KEY = 'homsSession_v3';
+function getDB()  { try { return JSON.parse(localStorage.getItem(DB_KEY) || '{"users":[]}'); } catch { return { users: [] }; } }
+function saveDB(db) { try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch {} }
+function getUser()  { try { return localStorage.getItem(SES_KEY) || null; } catch { return null; } }
+function setUser(u) { try { localStorage.setItem(SES_KEY, u); } catch {} }
+function clrUser()  { try { localStorage.removeItem(SES_KEY); } catch {} }
 
-function getDB() {
-  try {
-    const raw = localStorage.getItem(DB_KEY);
-    if (!raw) return { users: [] };
-    return JSON.parse(raw);
-  } catch { return { users: [] }; }
-}
-
-function saveDB(db) {
-  try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch(e) {
-    alert('خطأ في حفظ البيانات: ' + e.message);
-  }
-}
-
-function getCurrentUser() {
-  try { return localStorage.getItem(SESSION_KEY) || null; } catch { return null; }
-}
-function setCurrentUser(u) {
-  try { localStorage.setItem(SESSION_KEY, u); } catch {}
-}
-function clearCurrentUser() {
-  try { localStorage.removeItem(SESSION_KEY); } catch {}
-}
-
-/* ── إنشاء حساب admin الافتراضي عند أول تشغيل ── */
-function ensureDefaultAdmin() {
+function ensureAdmin() {
   const db = getDB();
   if (!db.users) db.users = [];
-  const hasAdmin = db.users.some(u => u.n === 'admin');
-  if (!hasAdmin) {
+  if (!db.users.some(u => u.n === 'admin')) {
     db.users.push({ n: 'admin', h: hashPw('homs2024') });
     saveDB(db);
   }
 }
 
 function doLogin() {
-  const username = (document.getElementById('login-username').value || '').trim().toLowerCase();
-  const password  = (document.getElementById('login-password').value  || '');
-  const errEl = document.getElementById('login-error');
-  errEl.classList.add('hidden');
-
-  if (!username || !password) {
-    showLoginError('الرجاء إدخال اسم المستخدم وكلمة المرور'); return;
-  }
-
-  const db = getDB();
-  const hashed = hashPw(password);
-  const user = (db.users || []).find(u => u.n === username && u.h === hashed);
-
-  if (!user) {
-    showLoginError('اسم المستخدم أو كلمة المرور غير صحيحة'); return;
-  }
-
-  setCurrentUser(username);
+  const uname = (document.getElementById('login-username').value || '').trim().toLowerCase();
+  const pw    = document.getElementById('login-password').value || '';
+  document.getElementById('login-error').classList.add('hidden');
+  if (!uname || !pw) { showLoginErr('الرجاء إدخال اسم المستخدم وكلمة المرور'); return; }
+  const db   = getDB();
+  const user = (db.users || []).find(u => u.n === uname && u.h === hashPw(pw));
+  if (!user) { showLoginErr('اسم المستخدم أو كلمة المرور غير صحيحة'); return; }
+  setUser(uname);
   closeLogin();
   updateAuthUI();
-  showToast('✅ مرحباً ' + username + '! أنت الآن في وضع المشرف', '#059669');
+  showToast(`✅ مرحباً ${uname}! أنت الآن في وضع المشرف`, '#059669');
 }
 
 function doRegister() {
-  const username  = (document.getElementById('reg-username').value  || '').trim().toLowerCase();
-  const password  = (document.getElementById('reg-password').value  || '');
-  const password2 = (document.getElementById('reg-password2').value || '');
-  const errEl = document.getElementById('reg-error');
-  const sucEl = document.getElementById('reg-success');
-  errEl.classList.add('hidden');
-  sucEl.classList.add('hidden');
-
-  if (!username)            { showRegError('الرجاء كتابة اسم المستخدم'); return; }
-  if (!password)            { showRegError('الرجاء كتابة كلمة المرور'); return; }
-  if (username.length < 3)  { showRegError('اسم المستخدم 3 أحرف على الأقل'); return; }
-  if (password.length < 4)  { showRegError('كلمة المرور 4 أحرف على الأقل'); return; }
-  if (password !== password2){ showRegError('كلمتا المرور غير متطابقتين'); return; }
-  if (!/^[a-z0-9_\-\.]+$/.test(username)) {
-    showRegError('اسم المستخدم يقبل فقط: حروف إنجليزية، أرقام، _ أو -'); return;
-  }
-
+  const uname = (document.getElementById('reg-username').value || '').trim().toLowerCase();
+  const pw    = document.getElementById('reg-password').value  || '';
+  const pw2   = document.getElementById('reg-password2').value || '';
+  document.getElementById('reg-error').classList.add('hidden');
+  document.getElementById('reg-success').classList.add('hidden');
+  if (!uname || uname.length < 3)    { showRegErr('اسم المستخدم 3 أحرف على الأقل'); return; }
+  if (!/^[a-z0-9_\-\.]+$/.test(uname)) { showRegErr('فقط: حروف إنجليزية، أرقام، _ أو -'); return; }
+  if (!pw || pw.length < 4)          { showRegErr('كلمة المرور 4 أحرف على الأقل'); return; }
+  if (pw !== pw2)                    { showRegErr('كلمتا المرور غير متطابقتين'); return; }
   const db = getDB();
   if (!db.users) db.users = [];
-  if (db.users.some(u => u.n === username)) {
-    showRegError('اسم المستخدم موجود مسبقاً — اختر اسماً آخر'); return;
-  }
-
-  db.users.push({ n: username, h: hashPw(password) });
+  if (db.users.some(u => u.n === uname)) { showRegErr('اسم المستخدم موجود مسبقاً'); return; }
+  db.users.push({ n: uname, h: hashPw(pw) });
   saveDB(db);
-
-  sucEl.textContent = '✅ تم إنشاء الحساب! اضغط "دخول" الآن.';
-  sucEl.classList.remove('hidden');
-
+  const s = document.getElementById('reg-success');
+  s.textContent = '✅ تم إنشاء الحساب! اضغط "دخول" الآن.';
+  s.classList.remove('hidden');
   setTimeout(() => {
     switchLoginTab('login');
-    document.getElementById('login-username').value = username;
+    document.getElementById('login-username').value = uname;
     document.getElementById('login-password').value = '';
     document.getElementById('login-password').focus();
   }, 1500);
 }
 
 function doLogout() {
-  clearCurrentUser();
+  clrUser();
   updateAuthUI();
+  renderCards();
   showToast('👋 تم تسجيل الخروج', '#64748b');
 }
 
 function updateAuthUI() {
-  const user = getCurrentUser();
-  const adminBar = document.getElementById('admin-bar');
-  const btnLogin = document.getElementById('btn-login-header');
-  const nameDisplay = document.getElementById('admin-name-display');
-  const hintTxt = document.getElementById('form-hint-txt');
-
-  if (user) {
-    adminBar.classList.add('visible');
-    nameDisplay.textContent = user;
-    btnLogin.style.display = 'none';
-    if (hintTxt) hintTxt.textContent = 'انقر لفتح نموذج الإضافة';
-  } else {
-    adminBar.classList.remove('visible');
-    btnLogin.style.display = '';
-    if (hintTxt) hintTxt.textContent = 'انقر لفتح نموذج الإضافة (يتطلب تسجيل الدخول)';
-  }
+  const user = getUser();
+  document.getElementById('admin-bar').classList.toggle('visible', !!user);
+  document.getElementById('admin-name-display').textContent = user || '';
+  document.getElementById('btn-login-header').style.display = user ? 'none' : '';
+  const hint = document.getElementById('form-hint-txt');
+  if (hint) hint.textContent = user ? 'انقر لفتح نموذج الإضافة' : 'انقر لفتح نموذج الإضافة (يتطلب تسجيل الدخول)';
 }
 
-function showLoginError(msg) {
-  const el = document.getElementById('login-error');
-  el.textContent = msg; el.classList.remove('hidden');
-}
-function showRegError(msg) {
-  const el = document.getElementById('reg-error');
-  el.textContent = msg; el.classList.remove('hidden');
-}
+function showLoginErr(msg) { const e = document.getElementById('login-error'); e.textContent = msg; e.classList.remove('hidden'); }
+function showRegErr(msg)   { const e = document.getElementById('reg-error');   e.textContent = msg; e.classList.remove('hidden'); }
 
-/* ══ Login UI ══ */
-function openLogin() {
-  if (getCurrentUser()) { doLogout(); return; }
-  document.getElementById('login-overlay').classList.add('open');
-  document.getElementById('login-username').focus();
-}
+function openLogin()  { if (getUser()) { doLogout(); return; } document.getElementById('login-overlay').classList.add('open'); setTimeout(() => document.getElementById('login-username').focus(), 100); }
 function closeLogin() { document.getElementById('login-overlay').classList.remove('open'); }
 
 function switchLoginTab(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
-  document.getElementById('login-form-section').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('register-form-section').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tab-register').classList.toggle('active', tab !== 'login');
+  document.getElementById('login-form-section').style.display    = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form-section').style.display = tab !== 'login' ? 'block' : 'none';
 }
 
-function togglePwVis(inputId, btn) {
-  const input = document.getElementById(inputId);
-  input.type = input.type === 'password' ? 'text' : 'password';
+/* ══════════════════════════════════════════════
+   CONFIRM DIALOG
+══════════════════════════════════════════════ */
+let _confirmResolve = null;
+
+function showConfirm(title, msg) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent   = msg;
+  document.getElementById('confirm-overlay').classList.add('open');
+  return new Promise(resolve => {
+    _confirmResolve = resolve;
+    document.getElementById('confirm-yes').onclick = () => { closeConfirm(); resolve(true); };
+  });
 }
 
-/* ════════════════════════════════════════════
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('open');
+  if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
+}
+
+/* ══════════════════════════════════════════════
    STATE
-   ════════════════════════════════════════════ */
-let allData = [];
-let pendingEntries = [];   /* بطاقات مضافة محلياً ولم تُثبَّت بعد في Sheetson */
-let activeTab = '';
+   entriesMap: { [id]: entry }  ← فهرس سريع يحلّ محل JSON في onclick
+══════════════════════════════════════════════ */
+let allData      = [];
+let entriesMap   = {};   /* ← الإصلاح الرئيسي: مرجع آمن بدل JSON.stringify */
+let pendingList  = [];
+let activeTab    = '';
 let activeSubTab = '';
-let formMap = null;
-let formMarker = null;
-let viewMap = null;
-let viewMarker = null;
-let formLat = null;
-let formLng = null;
+let formMap = null, formMarker = null, formLat = null, formLng = null;
+let viewMap = null, viewMarker = null;
 const userRatings = {};
 
-/* ════════════════════════════════════════════
-   FETCH DATA
-   ════════════════════════════════════════════ */
-
-/* قراءة مرنة للأعمدة — تتجاهل المسافات الزائدة */
+/* قراءة مرنة للأعمدة العربية */
 function col(row, ...keys) {
   for (const k of keys) {
-    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return String(row[k]);
+    if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return String(row[k]).trim();
   }
-  /* بحث بدون مسافات */
-  const flat = k => k.replace(/\s+/g, '').toLowerCase();
+  const flat = s => s.replace(/\s+/g, '').toLowerCase();
   for (const [rk, rv] of Object.entries(row)) {
     for (const k of keys) {
-      if (flat(rk) === flat(k) && rv !== undefined && rv !== null && rv !== '') return String(rv);
+      if (flat(rk) === flat(k) && rv !== undefined && rv !== null && String(rv).trim() !== '') return String(rv).trim();
     }
   }
   return '';
 }
 
-async function fetchData() {
+/* ══════════════════════════════════════════════
+   FETCH DATA — جلب متوازٍ سريع
+══════════════════════════════════════════════ */
+async function fetchData(spinner = false) {
   showError(null);
   const icon = document.getElementById('refresh-icon');
-  icon.style.cssText += ';animation:spin 1s linear infinite';
+  if (spinner) icon.style.animation = 'spin 1s linear infinite';
 
   try {
-    let allRows = [];
-    let skip = 0;
-    const limit = 100;
-    let tries = 0;
-    while (tries++ < 20) {
-      const res = await apiGet({ limit, skip });
-      /* Sheetson v2 returns { results:[...], totalResults:N } */
-      const rows = Array.isArray(res) ? res
-                 : Array.isArray(res.results) ? res.results
-                 : [];
-      if (rows.length === 0) break;
-      allRows = allRows.concat(rows);
-      if (rows.length < limit) break;
-      skip += limit;
+    const LIMIT = 200;
+
+    /* الجلب الأول */
+    const first = await apiGet({ limit: LIMIT, skip: 0 });
+    const firstRows = Array.isArray(first) ? first : (first.results || []);
+    const total     = first.totalResults || firstRows.length;
+
+    let allRows = [...firstRows];
+
+    /* جلب متوازٍ للصفحات المتبقية */
+    if (total > LIMIT) {
+      const skips = [];
+      for (let s = LIMIT; s < total; s += LIMIT) skips.push(s);
+      const pages = await Promise.all(
+        skips.map(s => apiGet({ limit: LIMIT, skip: s }).then(r => Array.isArray(r) ? r : (r.results || [])))
+      );
+      pages.forEach(p => allRows = allRows.concat(p));
     }
 
-    const serverData = allRows.map((r, i) => {
-      const name = col(r, 'اسم المكان', 'الاسم', 'name');
-      const main = col(r, 'القسم', 'القسم الرئيسي', 'main');
-      return {
-        rowIndex:    r.rowIndex || (i + 2),
-        id:          col(r, 'معرف  id', 'معرف id', 'معرفid', 'id') || String(i + 1),
-        name,
-        main,
-        sub:         col(r, 'الوصف', 'التخصص', 'القسم الفرعي', 'sub'),
-        address:     col(r, 'العنوان بالتفصيل', 'العنوان', 'address'),
-        coords:      col(r, 'الخريطة', 'الموقع', 'coords'),
-        phone:       col(r, 'الهاتف / الجوال', 'الهاتف', 'الجوال', 'phone'),
-        notes:       col(r, 'اوقات الدوام ', 'اوقات الدوام', 'ملاحظات', 'notes'),
-        social:      col(r, 'رابط الفيسبوك / انستغرام', 'رابط', 'social'),
-        rating:      parseFloat(col(r, 'التقييم', 'rating')) || 0,
-        status:      col(r, 'الحالة', 'status'),
-        ratingCount: parseInt(col(r, 'عدد_التقييمات', 'عدد التقييمات')) || 0,
-      };
-    }).filter(r => r.name.trim() !== '');
+    /* تحويل الصفوف */
+    const serverData = allRows.map((r, i) => ({
+      rowIndex:    r.rowIndex != null ? Number(r.rowIndex) : (i + 2),
+      id:          col(r, 'معرف  id', 'معرف id', 'id') || String(i + 1),
+      name:        col(r, 'اسم المكان', 'الاسم', 'name'),
+      main:        col(r, 'القسم', 'القسم الرئيسي', 'main'),
+      sub:         col(r, 'الوصف', 'التخصص', 'القسم الفرعي', 'sub'),
+      address:     col(r, 'العنوان بالتفصيل', 'العنوان', 'address'),
+      coords:      col(r, 'الخريطة', 'الموقع', 'coords'),
+      phone:       col(r, 'الهاتف / الجوال', 'الهاتف', 'phone'),
+      notes:       col(r, 'اوقات الدوام ', 'اوقات الدوام', 'ملاحظات', 'notes'),
+      social:      col(r, 'رابط الفيسبوك / انستغرام', 'رابط', 'social'),
+      rating:      parseFloat(col(r, 'التقييم', 'rating')) || 0,
+      status:      col(r, 'الحالة', 'status'),
+      ratingCount: parseInt(col(r, 'عدد_التقييمات', 'عدد التقييمات')) || 0,
+    })).filter(r => r.name !== '');
 
-    /* ── أزل من pending أي بطاقة وصلت من الخادم ── */
+    /* حذف pending التي وصلت من الخادم */
     const serverIds = new Set(serverData.map(r => r.id));
-    pendingEntries = pendingEntries.filter(p => !serverIds.has(p.id));
+    pendingList = pendingList.filter(p => !serverIds.has(p.id));
+    allData = [...pendingList, ...serverData];
 
-    /* ── اجمع: البطاقات المعلّقة أولاً ثم بيانات الخادم ── */
-    allData = [...pendingEntries, ...serverData];
+    /* بناء الفهرس السريع */
+    entriesMap = {};
+    allData.forEach(r => { entriesMap[r.id] = r; });
 
     document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
+    buildTabs(); buildSubFilter(); buildTopRated(); renderCards(); populateFormSelects();
 
-    buildTabs();
-    buildSubFilter();
-    buildTopRated();
-    renderCards();
-    populateFormSelects();
-
-  } catch (e) {
-    showError('تعذّر الاتصال بـ Sheetson API: ' + e.message);
+  } catch (err) {
+    showError('تعذّر الاتصال بـ Sheetson: ' + err.message);
   } finally {
     icon.style.animation = '';
   }
 }
 
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    TABS
-   ════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function buildTabs() {
   const mains = [...new Set(allData.map(r => r.main).filter(Boolean))];
   const bar = document.getElementById('tabs-bar');
   bar.innerHTML = '';
 
-  const allBtn = document.createElement('button');
-  allBtn.textContent = 'الكل';
-  allBtn.className = 'tab-btn text-xs font-bold px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
-  if (!activeTab) allBtn.classList.add('tab-active');
-  allBtn.onclick = () => { activeTab = ''; activeSubTab = ''; buildTabs(); renderCards(); };
-  bar.appendChild(allBtn);
+  const btn = (label, active, onClick) => {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.className = 'tab-btn text-xs font-bold px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
+    if (active) b.classList.add('tab-active');
+    b.onclick = onClick;
+    return b;
+  };
 
-  mains.forEach(m => {
-    const btn = document.createElement('button');
-    btn.textContent = m;
-    btn.className = 'tab-btn text-xs font-bold px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
-    if (activeTab === m) btn.classList.add('tab-active');
-    btn.onclick = () => { activeTab = m; activeSubTab = ''; buildTabs(); buildSubTabs(); renderCards(); };
-    bar.appendChild(btn);
-  });
-
+  bar.appendChild(btn('الكل', !activeTab, () => { activeTab = ''; activeSubTab = ''; buildTabs(); renderCards(); }));
+  mains.forEach(m => bar.appendChild(btn(m, activeTab === m, () => {
+    activeTab = m; activeSubTab = ''; buildTabs(); buildSubTabs(); renderCards();
+  })));
   buildSubTabs();
 }
 
@@ -1018,64 +836,48 @@ function buildSubTabs() {
   const bar = document.getElementById('subtabs-bar');
   if (!activeTab) { bar.classList.add('hidden'); return; }
   const subs = [...new Set(allData.filter(r => r.main === activeTab).map(r => r.sub).filter(Boolean))];
-  if (subs.length === 0) { bar.classList.add('hidden'); return; }
-
+  if (!subs.length) { bar.classList.add('hidden'); return; }
   bar.classList.remove('hidden');
   bar.innerHTML = '';
 
-  const allBtn = document.createElement('button');
-  allBtn.textContent = 'الكل';
-  allBtn.className = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
-  if (!activeSubTab) allBtn.classList.add('subtab-active');
-  allBtn.onclick = () => { activeSubTab = ''; buildSubTabs(); renderCards(); };
-  bar.appendChild(allBtn);
+  const btn = (label, active, onClick) => {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.className = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
+    if (active) b.classList.add('subtab-active');
+    b.onclick = onClick;
+    return b;
+  };
 
-  subs.forEach(s => {
-    const btn = document.createElement('button');
-    btn.textContent = s;
-    btn.className = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
-    if (activeSubTab === s) btn.classList.add('subtab-active');
-    btn.onclick = () => { activeSubTab = s; buildSubTabs(); renderCards(); };
-    bar.appendChild(btn);
-  });
+  bar.appendChild(btn('الكل', !activeSubTab, () => { activeSubTab = ''; buildSubTabs(); renderCards(); }));
+  subs.forEach(s => bar.appendChild(btn(s, activeSubTab === s, () => { activeSubTab = s; buildSubTabs(); renderCards(); })));
 }
 
-/* ════════════════════════════════════════════
-   SUB-FILTER DROPDOWN
-   ════════════════════════════════════════════ */
 function buildSubFilter() {
   const sel = document.getElementById('sub-filter');
-  const val = sel.value;
+  const prev = sel.value;
   sel.innerHTML = '<option value="">كل التخصصات</option>';
-  const subs = [...new Set(allData.map(r => r.sub).filter(Boolean))].sort();
-  subs.forEach(s => {
+  [...new Set(allData.map(r => r.sub).filter(Boolean))].sort().forEach(s => {
     const o = document.createElement('option');
     o.value = s; o.textContent = s;
-    if (s === val) o.selected = true;
+    if (s === prev) o.selected = true;
     sel.appendChild(o);
   });
 }
 
-/* ════════════════════════════════════════════
-   TOP RATED
-   ════════════════════════════════════════════ */
 function buildTopRated() {
   const top = allData.filter(r => r.rating >= 4).sort((a, b) => b.rating - a.rating).slice(0, 10);
-  const section = document.getElementById('top-rated-section');
-  const list = document.getElementById('top-rated-list');
-  if (top.length === 0) { section.classList.add('hidden'); return; }
-  section.classList.remove('hidden');
-  list.innerHTML = top.map(r => `
+  const sec = document.getElementById('top-rated-section');
+  if (!top.length) { sec.classList.add('hidden'); return; }
+  sec.classList.remove('hidden');
+  document.getElementById('top-rated-list').innerHTML = top.map(r => `
     <div class="top-rated-chip bg-white border border-gray-200 rounded-2xl p-2.5 flex-shrink-0 hover:border-amber-300 transition-all"
-      onclick="scrollToCard('${r.id}')">
-      <div class="text-[11px] font-bold text-gray-700 truncate">${r.name}</div>
-      <div class="text-[10px] text-gray-400 truncate">${r.sub || r.main}</div>
-      <div class="flex items-center gap-1 mt-1">
-        <span class="text-amber-500 text-xs">⭐</span>
-        <span class="rating-avg-badge">${r.rating.toFixed(1)}</span>
-      </div>
-    </div>
-  `).join('');
+      onclick="scrollToCard('${esc(r.id)}')">
+      <div class="text-[11px] font-bold text-gray-700 truncate">${esc(r.name)}</div>
+      <div class="text-[10px] text-gray-400 truncate">${esc(r.sub || r.main)}</div>
+      <div class="flex items-center gap-1 mt-1"><span class="text-amber-500 text-xs">⭐</span>
+        <span class="rating-avg-badge">${r.rating.toFixed(1)}</span></div>
+    </div>`).join('');
 }
 
 function scrollToCard(id) {
@@ -1086,91 +888,86 @@ function scrollToCard(id) {
   setTimeout(() => el.classList.remove('top-rated-highlight'), 1600);
 }
 
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    RENDER CARDS
-   ════════════════════════════════════════════ */
-function getCardClass(main) {
+══════════════════════════════════════════════ */
+function cardCls(main) {
   const m = (main || '').toLowerCase();
-  if (m.includes('طب') || m.includes('صيدل') || m.includes('مستشفى') || m.includes('عيادة') || m.includes('health') || m.includes('medical')) return 'card-medical';
-  if (m.includes('قانون') || m.includes('محامي') || m.includes('legal') || m.includes('محكمة')) return 'card-legal';
-  if (m.includes('تسوق') || m.includes('محل') || m.includes('ملابس') || m.includes('بيع') || m.includes('shopping')) return 'card-shopping';
-  if (m.includes('مطعم') || m.includes('طعام') || m.includes('food') || m.includes('مقهى') || m.includes('كافيه')) return 'card-food';
-  if (m.includes('خدم') || m.includes('service') || m.includes('صيانة') || m.includes('نقل')) return 'card-services';
+  if (m.includes('طب') || m.includes('صيدل') || m.includes('مستشفى') || m.includes('عيادة')) return 'card-medical';
+  if (m.includes('قانون') || m.includes('محامي') || m.includes('محكمة'))                  return 'card-legal';
+  if (m.includes('تسوق') || m.includes('محل')   || m.includes('ملابس'))                  return 'card-shopping';
+  if (m.includes('مطعم') || m.includes('طعام')  || m.includes('مقهى'))                   return 'card-food';
+  if (m.includes('خدم')  || m.includes('صيانة') || m.includes('نقل'))                    return 'card-services';
   return 'card-default';
 }
-
-function getBadgeClass(main) {
-  return getCardClass(main).replace('card-', 'badge-');
-}
+function badgeCls(main) { return cardCls(main).replace('card-', 'badge-'); }
 
 function renderCards() {
-  const q = (document.getElementById('search-input').value || '').trim().toLowerCase();
-  const subF = document.getElementById('sub-filter').value;
+  const q     = (document.getElementById('search-input').value || '').trim().toLowerCase();
+  const subF  = document.getElementById('sub-filter').value;
   const statF = document.getElementById('status-filter').value;
 
   let data = allData;
-  if (activeTab) data = data.filter(r => r.main === activeTab);
-  if (activeSubTab) data = data.filter(r => r.sub === activeSubTab);
-  if (subF) data = data.filter(r => r.sub === subF);
-  if (statF) data = data.filter(r => r.status === statF);
-  if (q) data = data.filter(r =>
-    (r.name + r.sub + r.main + r.address + r.notes).toLowerCase().includes(q)
-  );
+  if (activeTab)    data = data.filter(r => r.main    === activeTab);
+  if (activeSubTab) data = data.filter(r => r.sub     === activeSubTab);
+  if (subF)         data = data.filter(r => r.sub     === subF);
+  if (statF)        data = data.filter(r => r.status  === statF);
+  if (q)            data = data.filter(r => (r.name + r.sub + r.main + r.address + r.notes).toLowerCase().includes(q));
+
+  const cntEl = document.getElementById('result-count');
+  if (q || subF || statF) { cntEl.textContent = `${data.length} نتيجة`; cntEl.classList.remove('hidden'); }
+  else cntEl.classList.add('hidden');
 
   const grid = document.getElementById('cards-grid');
-  const countEl = document.getElementById('result-count');
-
-  if (q || subF || statF) {
-    countEl.textContent = `${data.length} نتيجة`;
-    countEl.classList.remove('hidden');
-  } else { countEl.classList.add('hidden'); }
-
-  if (data.length === 0) {
+  if (!data.length) {
     grid.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center py-16 text-gray-400">
       <svg class="w-14 h-14 mb-3 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       <p class="font-bold text-sm">لا توجد نتائج</p>
-      <p class="text-xs mt-1">جرّب تغيير مصطلح البحث أو الفلاتر</p>
-    </div>`;
+      <p class="text-xs mt-1">جرّب تغيير مصطلح البحث أو الفلاتر</p></div>`;
     return;
   }
-
   grid.innerHTML = data.map(r => buildCard(r)).join('');
 }
 
 function buildCard(r) {
-  const cardClass = getCardClass(r.main);
-  const badgeClass = getBadgeClass(r.main);
-  const statusColor = r.status === 'نشط' ? 'bg-emerald-100 text-emerald-700' : r.status === 'مغلق' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500';
-  const isAdmin = !!getCurrentUser();
-
-  const userRat = userRatings[r.id] || 0;
-  const avgRat = r.rating || 0;
-  const ratCount = r.ratingCount || 0;
-
-  const ratingHtml = `
-    <div class="flex items-center gap-2 flex-wrap">
-      <div class="star-row" id="stars-${r.id}" onmouseleave="starLeave('${r.id}')">
-        ${[1,2,3,4,5].map(s => `
-          <button class="star-btn ${avgRat > 0 && s <= Math.round(avgRat) ? 'filled' : ''}" 
-            data-star="${s}" data-id="${r.id}"
-            onmouseenter="starHover('${r.id}',${s})"
-            onclick="submitRating('${r.id}',${s},${r.rowIndex})"
-            ${userRat > 0 ? 'disabled' : ''}
-            aria-label="تقييم ${s} نجوم">★</button>
-        `).join('')}
-      </div>
-      ${avgRat > 0 ? `<span class="rating-avg-badge">${avgRat.toFixed(1)}</span><span class="rating-avg-sep">/5</span>
-        <span class="rating-cnt-label">(${ratCount})</span>` : ''}
-      ${userRat > 0 ? `<span class="rated-badge">✓ قيّمت</span>` : `<span class="rating-label">قيّم</span>`}
-    </div>
-  `;
-
+  const cc = cardCls(r.main);
+  const bc = badgeCls(r.main);
+  const scl = r.status === 'نشط'  ? 'bg-emerald-100 text-emerald-700'
+            : r.status === 'مغلق' ? 'bg-red-100 text-red-700'
+            : 'bg-gray-100 text-gray-500';
+  const isAdmin   = !!getUser();
+  const userRat   = userRatings[r.id] || 0;
+  const avgRat    = r.rating || 0;
+  const ratCount  = r.ratingCount || 0;
   const hasCoords = r.coords && r.coords.includes(',');
 
+  /* ★ نجوم — تمرير ID فقط (لا JSON) */
+  const stars = [1,2,3,4,5].map(s => `
+    <button class="star-btn ${avgRat > 0 && s <= Math.round(avgRat) ? 'filled' : ''}" data-star="${s}"
+      onmouseenter="starHover('${esc(r.id)}',${s})"
+      onclick="submitRating('${esc(r.id)}',${s})"
+      ${userRat > 0 ? 'disabled' : ''} aria-label="تقييم ${s} نجوم">★</button>`).join('');
+
+  const ratingHtml = `<div class="flex items-center gap-2 flex-wrap">
+    <div class="star-row" id="stars-${esc(r.id)}" onmouseleave="starLeave('${esc(r.id)}')">${stars}</div>
+    ${avgRat > 0 ? `<span class="rating-avg-badge">${avgRat.toFixed(1)}</span><span class="rating-avg-sep">/5</span>
+      <span class="rating-cnt-label">(${ratCount})</span>` : ''}
+    ${userRat > 0 ? '<span class="rated-badge">✓ قيّمت</span>' : '<span class="rating-label">قيّم</span>'}
+  </div>`;
+
+  /* ✏️🗑️ — تمرير ID فقط عبر esc() */
+  const adminBtns = isAdmin ? `
+    <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+      <button onclick="openEdit('${esc(r.id)}')"
+        class="flex-1 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg py-1 hover:bg-blue-100 transition-all">✏️ تعديل</button>
+      <button onclick="deleteEntry('${esc(r.id)}')"
+        class="flex-1 text-[11px] font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg py-1 hover:bg-red-100 transition-all">🗑️ حذف</button>
+    </div>` : '';
+
   return `
-  <div class="entry-card bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden ${cardClass}" id="card-${r.id}">
+  <div class="entry-card bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden ${cc}" id="card-${esc(r.id)}">
     <div class="p-3">
       <div class="flex items-start justify-between gap-2 mb-2">
         <div class="flex-1 min-w-0">
@@ -1178,105 +975,82 @@ function buildCard(r) {
           <p class="text-xs text-gray-500 truncate mt-0.5">${esc(r.sub || r.main)}</p>
         </div>
         <div class="flex flex-col items-end gap-1 flex-shrink-0">
-          <span class="${badgeClass} text-[10px] font-bold px-2 py-0.5 rounded-lg">${esc(r.main)}</span>
-          ${r.status ? `<span class="${statusColor} text-[9px] font-bold px-1.5 py-0.5 rounded-md">${esc(r.status)}</span>` : ''}
+          <span class="${bc} text-[10px] font-bold px-2 py-0.5 rounded-lg">${esc(r.main)}</span>
+          ${r.status ? `<span class="${scl} text-[9px] font-bold px-1.5 py-0.5 rounded-md">${esc(r.status)}</span>` : ''}
         </div>
       </div>
-      ${r.address ? `<p class="text-[11px] text-gray-500 flex items-center gap-1"><span>📍</span><span class="truncate">${esc(r.address)}</span></p>` : ''}
+      ${r.address ? `<p class="text-[11px] text-gray-500 flex items-center gap-1 mb-1"><span>📍</span><span class="truncate">${esc(r.address)}</span></p>` : ''}
       ${ratingHtml}
     </div>
-
-    <!-- Toggle details bar -->
     <button class="card-toggle-bar" aria-expanded="false" onclick="toggleCard(this)">
-      <span>تفاصيل</span>
-      <span class="card-toggle-arrow">▼</span>
+      <span>تفاصيل</span><span class="card-toggle-arrow">▼</span>
     </button>
-
     <div class="card-details">
-      ${r.phone ? `<a href="tel:${r.phone}" class="text-[11px] text-blue-600 flex items-center gap-1.5 hover:underline"><span>📞</span>${esc(r.phone)}</a>` : ''}
-      ${r.notes ? `<p class="text-[11px] text-gray-500 flex items-center gap-1.5"><span>🕐</span>${esc(r.notes)}</p>` : ''}
-      ${r.social ? `<a href="${esc(r.social)}" target="_blank" rel="noopener" class="text-[11px] text-blue-600 flex items-center gap-1.5 hover:underline"><span>🔗</span>صفحة التواصل</a>` : ''}
-      ${hasCoords ? `<button onclick="showOnMap('${r.id}','${esc(r.name)}','${esc(r.coords)}')"
-        class="text-[11px] text-emerald-700 flex items-center gap-1.5 hover:underline bg-none border-none cursor-pointer p-0 text-right">
-        <span>🗺️</span>عرض على الخريطة</button>` : ''}
-      ${isAdmin ? `
-        <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
-          <button onclick="openEdit(${JSON.stringify(r).replace(/"/g, '&quot;')})"
-            class="flex-1 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg py-1 hover:bg-blue-100 transition-all">✏️ تعديل</button>
-          <button onclick="deleteEntry('${r.id}',${r.rowIndex})"
-            class="flex-1 text-[11px] font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg py-1 hover:bg-red-100 transition-all">🗑️ حذف</button>
-        </div>
-      ` : ''}
+      ${r.phone  ? `<a href="tel:${esc(r.phone)}" class="text-[11px] text-blue-600 flex items-center gap-1.5 hover:underline">📞 ${esc(r.phone)}</a>` : ''}
+      ${r.notes  ? `<p class="text-[11px] text-gray-500 flex items-center gap-1.5">🕐 ${esc(r.notes)}</p>` : ''}
+      ${r.social ? `<a href="${esc(r.social)}" target="_blank" rel="noopener" class="text-[11px] text-blue-600 flex items-center gap-1.5 hover:underline">🔗 صفحة التواصل</a>` : ''}
+      ${hasCoords ? `<button onclick="showOnMap('${esc(r.id)}')"
+        class="text-[11px] text-emerald-700 flex items-center gap-1.5 hover:underline bg-transparent border-none cursor-pointer p-0">
+        🗺️ عرض على الخريطة</button>` : ''}
+      ${adminBtns}
     </div>
   </div>`;
 }
 
-function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function toggleCard(btn) {
-  const expanded = btn.getAttribute('aria-expanded') === 'true';
-  btn.setAttribute('aria-expanded', String(!expanded));
-  btn.nextElementSibling.classList.toggle('open', !expanded);
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-/* ════════════════════════════════════════════
+function toggleCard(btn) {
+  const exp = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!exp));
+  btn.nextElementSibling.classList.toggle('open', !exp);
+}
+
+/* ══════════════════════════════════════════════
    MAP — VIEW
-   ════════════════════════════════════════════ */
-function showOnMap(id, name, coords) {
-  const panel = document.getElementById('view-map-panel');
-  const title = document.getElementById('view-map-title');
-  const status = document.getElementById('view-map-status');
-  const parts = coords.split(',').map(Number);
-  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
-    showToast('إحداثيات غير صالحة', '#ef4444'); return;
-  }
+══════════════════════════════════════════════ */
+function showOnMap(id) {
+  const r = entriesMap[id];
+  if (!r || !r.coords) return;
+  const parts = r.coords.split(',').map(Number);
+  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) { showToast('إحداثيات غير صالحة', '#ef4444'); return; }
   const [lat, lng] = parts;
-  title.textContent = name;
-  status.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  document.getElementById('view-map-title').textContent  = r.name;
+  document.getElementById('view-map-status').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  const panel = document.getElementById('view-map-panel');
   panel.classList.add('open');
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
   setTimeout(() => {
     if (!viewMap) {
       viewMap = L.map('view-leaflet-map').setView([lat, lng], 16);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors', maxZoom: 19
-      }).addTo(viewMap);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(viewMap);
     } else {
       viewMap.setView([lat, lng], 16);
       if (viewMarker) viewMap.removeLayer(viewMarker);
     }
-    viewMarker = L.marker([lat, lng]).addTo(viewMap).bindPopup(name).openPopup();
+    viewMarker = L.marker([lat, lng]).addTo(viewMap).bindPopup(r.name).openPopup();
     viewMap.invalidateSize();
   }, 200);
 }
+function closeViewMap() { document.getElementById('view-map-panel').classList.remove('open'); }
 
-function closeViewMap() {
-  document.getElementById('view-map-panel').classList.remove('open');
-}
-
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    MAP — FORM
-   ════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function toggleMap() {
   const sec = document.getElementById('map-section');
   const txt = document.getElementById('map-toggle-txt');
-  const isOpen = sec.classList.contains('open');
-  if (isOpen) { sec.classList.remove('open'); txt.textContent = 'تحديد الموقع على الخريطة'; return; }
-  sec.classList.add('open');
-  txt.textContent = 'إخفاء الخريطة';
-  setTimeout(() => {
+  const isOpen = sec.classList.toggle('open');
+  txt.textContent = isOpen ? 'إخفاء الخريطة' : 'تحديد الموقع على الخريطة';
+  if (isOpen) setTimeout(() => {
     if (!formMap) {
       formMap = L.map('leaflet-map').setView([34.7294, 36.7095], 14);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors', maxZoom: 19
-      }).addTo(formMap);
-      formMap.on('click', function(e) { setFormPin(e.latlng.lat, e.latlng.lng); });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(formMap);
+      formMap.on('click', e => setFormPin(e.latlng.lat, e.latlng.lng));
     }
     formMap.invalidateSize();
-    if (formLat && formLng && formMarker) {
-      formMarker.setLatLng([formLat, formLng]);
-    }
   }, 100);
 }
 
@@ -1284,121 +1058,89 @@ function setFormPin(lat, lng) {
   formLat = lat; formLng = lng;
   if (!formMarker) {
     formMarker = L.marker([lat, lng], { draggable: true }).addTo(formMap);
-    formMarker.on('dragend', function(e) {
-      const p = e.target.getLatLng();
-      formLat = p.lat; formLng = p.lng;
-      updateCoordsBadge();
-    });
+    formMarker.on('dragend', e => { const p = e.target.getLatLng(); formLat = p.lat; formLng = p.lng; updateCoordsBadge(); });
   } else { formMarker.setLatLng([lat, lng]); }
   updateCoordsBadge();
   formMap.setView([lat, lng], 16);
 }
 
 function updateCoordsBadge() {
-  const badge = document.getElementById('coords-badge');
-  if (formLat !== null && formLng !== null) {
-    badge.textContent = `${formLat.toFixed(5)}, ${formLng.toFixed(5)}`;
-    badge.classList.remove('hidden');
-  } else { badge.classList.add('hidden'); }
+  const b = document.getElementById('coords-badge');
+  if (formLat != null) { b.textContent = `${formLat.toFixed(5)}, ${formLng.toFixed(5)}`; b.classList.remove('hidden'); }
+  else b.classList.add('hidden');
 }
 
 function locateMe() {
   if (!navigator.geolocation) { showToast('المتصفح لا يدعم تحديد الموقع', '#ef4444'); return; }
   showToast('⏳ جاري تحديد موقعك...', '#1d4ed8');
   navigator.geolocation.getCurrentPosition(p => {
-    const lat = p.coords.latitude, lng = p.coords.longitude;
     if (!document.getElementById('map-section').classList.contains('open')) toggleMap();
-    setTimeout(() => { setFormPin(lat, lng); }, 200);
+    setTimeout(() => setFormPin(p.coords.latitude, p.coords.longitude), 200);
     showToast('✅ تم تحديد موقعك', '#059669');
-  }, () => { showToast('تعذّر تحديد الموقع', '#ef4444'); });
+  }, () => showToast('تعذّر تحديد الموقع', '#ef4444'));
 }
 
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    FORM SELECTS
-   ════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function populateFormSelects() {
-  const mains = [...new Set(allData.map(r => r.main).filter(Boolean))];
+  const mains   = [...new Set(allData.map(r => r.main).filter(Boolean))];
   const mainSel = document.getElementById('f-main');
-  const current = mainSel.value;
+  const prev    = mainSel.value;
   mainSel.innerHTML = '<option value="">— اختر القسم الرئيسي —</option>';
-  mains.forEach(m => {
-    const o = document.createElement('option');
-    o.value = m; o.textContent = m;
-    mainSel.appendChild(o);
-  });
-  const addNew = document.createElement('option');
-  addNew.value = '__new__'; addNew.textContent = '+ إضافة قسم جديد';
-  mainSel.appendChild(addNew);
-  if (current) mainSel.value = current;
+  mains.forEach(m => { const o = document.createElement('option'); o.value = o.textContent = m; mainSel.appendChild(o); });
+  const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = '+ إضافة قسم جديد'; mainSel.appendChild(nw);
+  if (prev) mainSel.value = prev;
   onMainChange();
 }
 
 function onMainChange() {
   const val = document.getElementById('f-main').value;
-  const newMainInp = document.getElementById('f-new-main');
+  document.getElementById('f-new-main').style.display = val === '__new__' ? 'block' : 'none';
   const subSel = document.getElementById('f-sub');
-
-  newMainInp.style.display = val === '__new__' ? 'block' : 'none';
   subSel.innerHTML = '<option value="">— اختر التصنيف الفرعي —</option>';
-
   if (val && val !== '__new__') {
-    const subs = [...new Set(allData.filter(r => r.main === val).map(r => r.sub).filter(Boolean))];
-    subs.forEach(s => {
-      const o = document.createElement('option');
-      o.value = s; o.textContent = s;
-      subSel.appendChild(o);
+    [...new Set(allData.filter(r => r.main === val).map(r => r.sub).filter(Boolean))].forEach(s => {
+      const o = document.createElement('option'); o.value = o.textContent = s; subSel.appendChild(o);
     });
   }
-  const addNew = document.createElement('option');
-  addNew.value = '__new__'; addNew.textContent = '+ إضافة تخصص جديد';
-  subSel.appendChild(addNew);
+  const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = '+ إضافة تخصص جديد'; subSel.appendChild(nw);
   onSubChange();
 }
-
 function onSubChange() {
-  const val = document.getElementById('f-sub').value;
-  document.getElementById('f-new-sub').style.display = val === '__new__' ? 'block' : 'none';
+  document.getElementById('f-new-sub').style.display = document.getElementById('f-sub').value === '__new__' ? 'block' : 'none';
 }
 
-/* ════════════════════════════════════════════
-   FORM TOGGLE
-   ════════════════════════════════════════════ */
 function toggleForm() {
-  if (!getCurrentUser()) {
-    openLogin();
-    showToast('🔐 يجب تسجيل الدخول أولاً للإضافة', '#1d4ed8');
-    return;
-  }
-  const body = document.getElementById('form-body');
+  if (!getUser()) { openLogin(); showToast('🔐 يجب تسجيل الدخول للإضافة', '#1d4ed8'); return; }
+  const body    = document.getElementById('form-body');
   const chevron = document.getElementById('form-chevron');
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+  const open    = body.classList.toggle('open');
+  chevron.style.transform = open ? 'rotate(180deg)' : '';
 }
 
 function resetForm() {
   document.getElementById('dir-form').reset();
-  formLat = null; formLng = null;
+  formLat = formLng = null;
   updateCoordsBadge();
   if (formMarker && formMap) { formMap.removeLayer(formMarker); formMarker = null; }
   document.getElementById('f-new-main').style.display = 'none';
-  document.getElementById('f-new-sub').style.display = 'none';
-  const ms = document.getElementById('map-section');
-  ms.classList.remove('open');
+  document.getElementById('f-new-sub').style.display  = 'none';
+  document.getElementById('map-section').classList.remove('open');
   document.getElementById('map-toggle-txt').textContent = 'تحديد الموقع على الخريطة';
 }
 
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    SUBMIT
-   ════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 async function handleSubmit(e) {
   e.preventDefault();
-  if (!getCurrentUser()) { openLogin(); return; }
+  if (!getUser()) { openLogin(); return; }
 
-  const mainVal = document.getElementById('f-main').value;
-  const subVal  = document.getElementById('f-sub').value;
-  const mainFinal = mainVal === '__new__' ? document.getElementById('f-new-main').value.trim() : mainVal;
-  const subFinal  = subVal  === '__new__' ? document.getElementById('f-new-sub').value.trim()  : subVal;
+  const mainVal   = document.getElementById('f-main').value;
+  const subVal    = document.getElementById('f-sub').value;
+  const mainFinal = mainVal === '__new__' ? (document.getElementById('f-new-main').value || '').trim() : mainVal;
+  const subFinal  = subVal  === '__new__' ? (document.getElementById('f-new-sub').value  || '').trim() : subVal;
 
   if (!mainFinal) { showToast('الرجاء اختيار أو كتابة القسم الرئيسي', '#ef4444'); return; }
   if (!subFinal)  { showToast('الرجاء اختيار أو كتابة التخصص', '#ef4444'); return; }
@@ -1407,57 +1149,41 @@ async function handleSubmit(e) {
   btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
 
   const newId = Date.now().toString();
-  const row = {
-    'معرف  id': newId,
-    'اسم المكان': document.getElementById('f-name').value.trim(),
-    'القسم': mainFinal,
-    'الوصف': subFinal,
-    'العنوان بالتفصيل': document.getElementById('f-address').value.trim(),
-    'الهاتف / الجوال': document.getElementById('f-phone').value.trim(),
-    'اوقات الدوام ': document.getElementById('f-notes').value.trim(),
-    'رابط الفيسبوك / انستغرام': document.getElementById('f-social').value.trim(),
-    'الخريطة': (formLat && formLng) ? `${formLat},${formLng}` : '',
-    'التقييم': '0',
-    'الحالة': 'نشط',
-    'عدد_التقييمات': '0',
+  const row   = {
+    'معرف  id':                    newId,
+    'اسم المكان':                   document.getElementById('f-name').value.trim(),
+    'القسم':                        mainFinal,
+    'الوصف':                        subFinal,
+    'العنوان بالتفصيل':             document.getElementById('f-address').value.trim(),
+    'الهاتف / الجوال':              document.getElementById('f-phone').value.trim(),
+    'اوقات الدوام ':                 document.getElementById('f-notes').value.trim(),
+    'رابط الفيسبوك / انستغرام':     document.getElementById('f-social').value.trim(),
+    'الخريطة':                      (formLat && formLng) ? `${formLat},${formLng}` : '',
+    'التقييم': '0', 'الحالة': 'نشط', 'عدد_التقييمات': '0',
   };
 
   try {
-    const saved = await apiPost(row);
-
-    /* ── تحديث محلي فوري بدون انتظار Sheetson ── */
-    const localEntry = {
-      rowIndex:    saved.rowIndex || (allData.length + 2),
-      id:          newId,
-      name:        row['اسم المكان'],
-      main:        row['القسم'],
-      sub:         row['الوصف'],
-      address:     row['العنوان بالتفصيل'],
-      coords:      row['الخريطة'],
-      phone:       row['الهاتف / الجوال'],
-      notes:       row['اوقات الدوام '],
-      social:      row['رابط الفيسبوك / انستغرام'],
-      rating:      0,
-      status:      'نشط',
-      ratingCount: 0,
+    const saved   = await apiPost(row);
+    const pending = {
+      rowIndex:    saved.rowIndex != null ? Number(saved.rowIndex) : (allData.length + 2),
+      id: newId, name: row['اسم المكان'], main: row['القسم'], sub: row['الوصف'],
+      address: row['العنوان بالتفصيل'], coords: row['الخريطة'],
+      phone: row['الهاتف / الجوال'], notes: row['اوقات الدوام '],
+      social: row['رابط الفيسبوك / انستغرام'], rating: 0, status: 'نشط', ratingCount: 0,
     };
-    /* احفظها في pending حتى يؤكدها الخادم */
-    pendingEntries.unshift(localEntry);
-    allData = [...pendingEntries, ...allData.filter(r => !pendingEntries.some(p => p.id === r.id))];
+    pendingList.unshift(pending);
+    entriesMap[newId] = pending;
+    allData = [...pendingList, ...allData.filter(r => !pendingList.some(p => p.id === r.id))];
 
-    buildTabs();
-    buildSubFilter();
-    buildTopRated();
-    renderCards();
+    buildTabs(); buildSubFilter(); buildTopRated(); renderCards();
     document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
-
     showToast('✅ تمت الإضافة بنجاح!', '#059669');
     resetForm();
     document.getElementById('form-body').classList.remove('open');
     document.getElementById('form-chevron').style.transform = '';
 
-    /* مزامنة خلفية — pending تبقى حتى يُرجعها الخادم */
-    setTimeout(() => fetchData(), 4000);
+    /* مزامنة بعد 1.5 ثانية */
+    setTimeout(() => fetchData(), 1500);
 
   } catch (err) {
     showToast('خطأ في الحفظ: ' + err.message, '#ef4444');
@@ -1466,22 +1192,26 @@ async function handleSubmit(e) {
   }
 }
 
-/* ════════════════════════════════════════════
-   EDIT
-   ════════════════════════════════════════════ */
-function openEdit(r) {
-  if (!getCurrentUser()) { openLogin(); return; }
-  document.getElementById('edit-rowIndex').value = r.rowIndex;
-  document.getElementById('edit-id').value       = r.id || '';
-  document.getElementById('edit-name').value     = r.name    || '';
-  document.getElementById('edit-main').value     = r.main    || '';
-  document.getElementById('edit-sub').value      = r.sub     || '';
-  document.getElementById('edit-address').value  = r.address || '';
-  document.getElementById('edit-phone').value    = r.phone   || '';
-  document.getElementById('edit-notes').value    = r.notes   || '';
-  document.getElementById('edit-social').value   = r.social  || '';
-  document.getElementById('edit-coords').value   = r.coords  || '';
-  document.getElementById('edit-status').value   = r.status  || 'نشط';
+/* ══════════════════════════════════════════════
+   EDIT — مُصلح: يستخدم entriesMap[id] لا JSON
+══════════════════════════════════════════════ */
+function openEdit(id) {
+  if (!getUser()) { openLogin(); return; }
+
+  /* ← الإصلاح الجوهري: بحث في الفهرس بدل parse JSON */
+  const r = entriesMap[id];
+  if (!r) { showToast('لم يُعثر على المدخل', '#ef4444'); return; }
+
+  document.getElementById('edit-entry-id').value  = r.id      || '';
+  document.getElementById('edit-name').value       = r.name    || '';
+  document.getElementById('edit-main').value       = r.main    || '';
+  document.getElementById('edit-sub').value        = r.sub     || '';
+  document.getElementById('edit-address').value    = r.address || '';
+  document.getElementById('edit-phone').value      = r.phone   || '';
+  document.getElementById('edit-notes').value      = r.notes   || '';
+  document.getElementById('edit-social').value     = r.social  || '';
+  document.getElementById('edit-coords').value     = r.coords  || '';
+  document.getElementById('edit-status').value     = r.status  || 'نشط';
   document.getElementById('edit-error').classList.add('hidden');
   document.getElementById('edit-overlay').classList.add('open');
 }
@@ -1489,10 +1219,12 @@ function openEdit(r) {
 function closeEdit() { document.getElementById('edit-overlay').classList.remove('open'); }
 
 async function saveEdit() {
-  if (!getCurrentUser()) { openLogin(); return; }
-  const rowIndex = document.getElementById('edit-rowIndex').value;
-  const entryId  = document.getElementById('edit-id').value;
-  if (!rowIndex) return;
+  if (!getUser()) { openLogin(); return; }
+
+  const entryId = document.getElementById('edit-entry-id').value;
+  const r = entriesMap[entryId];
+  if (!r) { showToast('لم يُعثر على المدخل', '#ef4444'); return; }
+  if (!r.rowIndex) { showToast('رقم الصف غير متوفر — أعد التحميل', '#ef4444'); return; }
 
   const name    = document.getElementById('edit-name').value.trim();
   const main    = document.getElementById('edit-main').value.trim();
@@ -1506,174 +1238,155 @@ async function saveEdit() {
 
   if (!name) {
     const err = document.getElementById('edit-error');
-    err.textContent = 'الاسم التجاري مطلوب'; err.classList.remove('hidden'); return;
+    err.textContent = 'الاسم التجاري مطلوب'; err.classList.remove('hidden');
+    return;
   }
 
-  const saveBtn = document.querySelector('#edit-overlay button[onclick="saveEdit()"]');
-  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ جاري الحفظ...'; }
-
-  const patchData = {
-    'اسم المكان':                   name,
-    'القسم':                        main,
-    'الوصف':                        sub,
-    'العنوان بالتفصيل':             address,
-    'الهاتف / الجوال':              phone,
-    'اوقات الدوام ':                notes,
-    'رابط الفيسبوك / انستغرام':     social,
-    'الخريطة':                      coords,
-    'الحالة':                       status,
-  };
+  const saveBtn = document.getElementById('save-edit-btn');
+  saveBtn.disabled = true; saveBtn.textContent = '⏳ جاري الحفظ...';
 
   try {
-    await apiPatch(rowIndex, patchData);
+    await apiPut(r.rowIndex, {
+      'اسم المكان': name, 'القسم': main, 'الوصف': sub,
+      'العنوان بالتفصيل': address, 'الهاتف / الجوال': phone,
+      'اوقات الدوام ': notes, 'رابط الفيسبوك / انستغرام': social,
+      'الخريطة': coords, 'الحالة': status,
+    });
 
-    /* ── تحديث محلي فوري في allData ── */
-    const idx = allData.findIndex(r => r.id === entryId || String(r.rowIndex) === String(rowIndex));
-    if (idx !== -1) {
-      allData[idx] = { ...allData[idx], name, main, sub, address, phone, notes, social, coords, status };
-    }
-    /* تحديث في pendingEntries إن وُجد */
-    const pi = pendingEntries.findIndex(r => r.id === entryId);
-    if (pi !== -1) {
-      pendingEntries[pi] = { ...pendingEntries[pi], name, main, sub, address, phone, notes, social, coords, status };
-    }
+    /* تحديث محلي فوري */
+    const updated = { ...r, name, main, sub, address, phone, notes, social, coords, status };
+    entriesMap[entryId] = updated;
+    const idx = allData.findIndex(x => x.id === entryId);
+    if (idx !== -1) allData[idx] = updated;
+    const pi = pendingList.findIndex(x => x.id === entryId);
+    if (pi !== -1) pendingList[pi] = updated;
 
-    buildTabs();
-    buildSubFilter();
-    buildTopRated();
-    renderCards();
+    buildTabs(); buildSubFilter(); buildTopRated(); renderCards();
     document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
-
     closeEdit();
     showToast('✅ تم التعديل بنجاح', '#059669');
+    setTimeout(() => fetchData(), 1500);
 
-    /* مزامنة خلفية بعد 4 ثوانٍ */
-    setTimeout(() => fetchData(), 4000);
-
-  } catch (e) {
-    const err = document.getElementById('edit-error');
-    err.textContent = 'خطأ: ' + e.message; err.classList.remove('hidden');
+  } catch (err) {
+    const el = document.getElementById('edit-error');
+    el.textContent = 'خطأ: ' + err.message; el.classList.remove('hidden');
   } finally {
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 حفظ التعديلات'; }
+    saveBtn.disabled = false; saveBtn.textContent = '💾 حفظ التعديلات';
   }
 }
 
-/* ════════════════════════════════════════════
-   DELETE
-   ════════════════════════════════════════════ */
-async function deleteEntry(id, rowIndex) {
-  if (!getCurrentUser()) { openLogin(); return; }
-  if (!confirm('هل أنت متأكد من حذف هذا المدخل؟')) return;
+/* ══════════════════════════════════════════════
+   DELETE — مُصلح: entriesMap[id]، حذف مؤقت فوري
+══════════════════════════════════════════════ */
+async function deleteEntry(id) {
+  if (!getUser()) { openLogin(); return; }
+
+  const r = entriesMap[id];
+  if (!r) { showToast('لم يُعثر على المدخل', '#ef4444'); return; }
+
+  const ok = await showConfirm('تأكيد الحذف', `هل تريد حذف "${r.name}"؟`);
+  if (!ok) return;
+
+  if (!r.rowIndex) { showToast('رقم الصف غير متوفر — أعد التحميل', '#ef4444'); return; }
+
+  /* حذف فوري من الواجهة */
+  allData      = allData.filter(x => x.id !== id);
+  pendingList  = pendingList.filter(x => x.id !== id);
+  delete entriesMap[id];
+  buildTabs(); buildSubFilter(); buildTopRated(); renderCards();
+  document.getElementById('hdr-count').textContent = `${allData.length} مدخل`;
+
   try {
-    await apiDelete(rowIndex);
-    showToast('🗑️ تم الحذف', '#64748b');
-    await fetchData();
-  } catch (e) {
-    showToast('خطأ في الحذف: ' + e.message, '#ef4444');
+    await apiDel(r.rowIndex);
+    showToast('🗑️ تم الحذف بنجاح', '#64748b');
+    /* مزامنة سريعة لتحديث rowIndexes بعد انزياح الصفوف */
+    setTimeout(() => fetchData(), 800);
+  } catch (err) {
+    showToast('خطأ في الحذف: ' + err.message, '#ef4444');
+    fetchData();   /* استعادة البيانات عند الفشل */
   }
 }
 
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    RATING
-   ════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 function starHover(id, n) {
-  const container = document.getElementById('stars-' + id);
-  if (!container) return;
-  container.querySelectorAll('.star-btn').forEach(btn => {
-    const s = parseInt(btn.dataset.star);
-    btn.classList.toggle('hover-fill', s <= n);
-    btn.classList.toggle('hover-dim', s > n);
+  const c = document.getElementById('stars-' + id); if (!c) return;
+  c.querySelectorAll('.star-btn').forEach(b => {
+    const s = parseInt(b.dataset.star);
+    b.classList.toggle('hover-fill', s <= n);
+    b.classList.toggle('hover-dim',  s > n);
   });
 }
-
 function starLeave(id) {
-  const container = document.getElementById('stars-' + id);
-  if (!container) return;
-  container.querySelectorAll('.star-btn').forEach(btn => {
-    btn.classList.remove('hover-fill', 'hover-dim');
-  });
+  const c = document.getElementById('stars-' + id); if (!c) return;
+  c.querySelectorAll('.star-btn').forEach(b => b.classList.remove('hover-fill', 'hover-dim'));
 }
 
-async function submitRating(id, stars, rowIndex) {
+async function submitRating(id, stars) {
   if (userRatings[id]) { showToast('لقد قيّمت هذا المكان مسبقاً', '#f59e0b'); return; }
-  userRatings[id] = stars;
-
-  const entry = allData.find(r => r.id === id);
+  const entry = entriesMap[id];
   if (!entry) return;
-  const oldCount = entry.ratingCount || 0;
-  const oldAvg = entry.rating || 0;
-  const newCount = oldCount + 1;
-  const newAvg = ((oldAvg * oldCount) + stars) / newCount;
-  entry.rating = newAvg;
-  entry.ratingCount = newCount;
+  if (!entry.rowIndex) { showToast('لا يمكن التقييم الآن — أعد التحميل', '#ef4444'); return; }
+
+  userRatings[id] = stars;
+  const oldC = entry.ratingCount || 0;
+  const oldA = entry.rating || 0;
+  const newC = oldC + 1;
+  const newA = ((oldA * oldC) + stars) / newC;
+
+  entry.rating      = newA;
+  entry.ratingCount = newC;
+  const idx = allData.findIndex(r => r.id === id);
+  if (idx !== -1) { allData[idx].rating = newA; allData[idx].ratingCount = newC; }
 
   const starsEl = document.getElementById('stars-' + id);
   if (starsEl) starsEl.querySelectorAll('.star-btn').forEach(b => { b.disabled = true; b.classList.add('pending'); });
   showToast('⭐ شكراً على تقييمك!', '#d97706');
 
   try {
-    await apiPatch(rowIndex, {
-      'التقييم': newAvg.toFixed(2),
-      'عدد_التقييمات': String(newCount),
-    });
-    renderCards();
-    buildTopRated();
-  } catch { /* silent — local rating saved */ }
+    await apiPut(entry.rowIndex, { 'التقييم': newA.toFixed(2), 'عدد_التقييمات': String(newC) });
+    renderCards(); buildTopRated();
+  } catch { /* التقييم محفوظ محلياً */ }
 }
 
-/* ════════════════════════════════════════════
-   DARK MODE
-   ════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════ */
 function toggleDark() {
-  const body = document.getElementById('body');
-  const isDark = body.classList.toggle('dark-mode');
-  localStorage.setItem('homs_dark', isDark ? '1' : '0');
+  const d = document.getElementById('body').classList.toggle('dark-mode');
+  localStorage.setItem('homs_dark', d ? '1' : '0');
 }
 
-/* ════════════════════════════════════════════
-   TOAST
-   ════════════════════════════════════════════ */
 let toastTimer;
 function showToast(msg, color = '#1d4ed8') {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.style.background = color;
-  t.style.display = 'block';
+  t.textContent = msg; t.style.background = color; t.style.display = 'block';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3000);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
 }
 
-/* ════════════════════════════════════════════
-   ERROR BANNER
-   ════════════════════════════════════════════ */
 function showError(msg) {
   const b = document.getElementById('error-banner');
-  const m = document.getElementById('error-msg');
-  if (msg) { m.textContent = msg; b.classList.remove('hidden'); }
+  if (msg) { document.getElementById('error-msg').textContent = msg; b.classList.remove('hidden'); }
   else b.classList.add('hidden');
 }
 
-/* ════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    INIT
-   ════════════════════════════════════════════ */
+══════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('homs_dark') === '1') document.getElementById('body').classList.add('dark-mode');
-  ensureDefaultAdmin();
+  document.head.insertAdjacentHTML('beforeend', '<style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>');
+  ensureAdmin();
   updateAuthUI();
   fetchData();
 });
 
-// Close modals on overlay click
-document.getElementById('login-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeLogin();
-});
-document.getElementById('edit-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeEdit();
-});
-
-// CSS spin animation
-const style = document.createElement('style');
-style.textContent = '@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }';
-document.head.appendChild(style);
+/* إغلاق عند الضغط خارج النوافذ */
+document.getElementById('login-overlay').addEventListener('click',  function(e) { if (e.target === this) closeLogin(); });
+document.getElementById('edit-overlay').addEventListener('click',   function(e) { if (e.target === this) closeEdit();  });
+document.getElementById('confirm-overlay').addEventListener('click',function(e) { if (e.target === this) closeConfirm(); });
 </script>
 </body>
 </html>
