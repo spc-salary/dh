@@ -639,6 +639,7 @@ function doLogin() {
   setUser(uname);
   closeLogin();
   updateAuthUI();
+  renderCards();   /* ← إعادة رسم البطاقات لإظهار أزرار التعديل والحذف */
   showToast(`✅ مرحباً ${uname}! أنت الآن في وضع المشرف`, '#059669');
 }
 
